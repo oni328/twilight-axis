@@ -165,3 +165,42 @@
 		message,
 		admin_notes_channel
 	)
+
+/world/proc/TgsAnnounceAdminMessageEntry(admin_ckey, target_key, type, text)
+	if(!TgsAvailable())
+		return
+
+	var/admin_notes_channel = CONFIG_GET(string/admin_notes_channel)
+
+	if(!admin_notes_channel)
+		return
+
+	var/datum/tgs_chat_embed/structure/embed = new()
+	embed.title = type
+	embed.description = text
+	embed.colour = "#ef9f76"
+	embed.footer = new(GLOB.rogue_round_id)
+
+	var/datum/tgs_chat_embed/field/field_player_ckey = new(
+		"Игрок", "`[target_key]`"
+	)
+
+	var/datum/tgs_chat_embed/field/field_admin_ckey = new(
+		"Администратор", "`[admin_ckey]`"
+	)
+
+	field_player_ckey.is_inline = TRUE
+	field_admin_ckey.is_inline = TRUE
+
+	embed.fields = list(
+		field_player_ckey,
+		field_admin_ckey,
+	)
+
+	var/datum/tgs_message_content/message = new("")
+	message.embed = embed
+
+	send2chat(
+		message,
+		admin_notes_channel
+	)
