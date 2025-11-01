@@ -89,6 +89,7 @@
 			msg += " - RSN: [reason]"
 		message_admins("[admin] adjusted [key]'s PQ by [amt] for reason: [reason]")
 		log_admin("[admin] adjusted [key]'s PQ by [amt] for reason: [reason]")
+		world.TgsAnnouncePQChanges(amt2change, ckey, admin, raisin)
 
 /client/proc/check_pq()
 	set category = "-Special Verbs-"

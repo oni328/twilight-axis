@@ -364,8 +364,6 @@
 	adjust_playerquality(amt2change, ckey, admin, raisin)
 	to_chat(M.client, "<span class=\"admin\"><span class=\"prefix\">ADMIN LOG:</span> <span class=\"message linkify\">Your PQ has been adjusted by [amt2change] by [admin] for reason: [raisin]</span></span>")
 
-	world.TgsAnnouncePQChanges(amt2change, ckey, admin, raisin)
-
 /datum/admins/proc/Game()
 	if(!check_rights(0))
 		return
