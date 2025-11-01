@@ -62,7 +62,7 @@
 	)
 
 	var/datum/tgs_chat_embed/field/field_reason = new(
-		"Причина", "[reason]"
+		"Причина", "[copytext_char(reason, 1)]"
 	)
 
 	field_player_ckey.is_inline = TRUE
@@ -114,7 +114,7 @@
 
 	if(reason)
 		var/datum/tgs_chat_embed/field/field_reason = new(
-			"Причина", "[reason]"
+			"Причина", "[copytext_char(reason, 1)]"
 		)
 		field_reason.is_inline = FALSE
 		embed.fields.Add(field_reason)
