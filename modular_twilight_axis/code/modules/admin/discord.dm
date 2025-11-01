@@ -137,7 +137,7 @@
 		return
 
 	var/datum/tgs_chat_embed/structure/embed = new()
-	embed.title = "[player_ckey]: новый нотес!"
+	embed.title = "PQ Note"
 	embed.description = note
 	embed.colour = "#8aadf4"
 	embed.footer = new(GLOB.rogue_round_id)
