@@ -14,17 +14,17 @@
 	if(!admin_bans_channel)
 		return
 
-	var/is_role_ban = roles[1] == "Server"
+	var/is_role_ban = roles[1] != "Server"
 
 	var/title = is_role_ban ? "Бан ролей!" : "Бан!"
-	var/description = ""
+	var/description = "Игрок теряет возможность играть на сервере."
 
 	if(is_role_ban)
-		description = "### Заблокированные роли\n"
+		description = "Игрок теряет указанные роли:\n"
 		for(var/role_name in roles)
 			description += "- [role_name]\n"
 
-	description += "Срок: [duration ? "***НАВСЕГДА***" : time_message]"
+	description += "Срок наказания: [duration ? time_message : "***НАВСЕГДА***"]"
 
 	var/datum/tgs_chat_embed/structure/embed = new()
 	embed.title = title
