@@ -14,6 +14,13 @@
 	if(!admin_bans_channel)
 		return
 
+	var/severity_dict = list(
+		"high" = "высокая",
+		"medium" = "средняя",
+		"minor" = "малая",
+		"none" = "none",
+	)
+
 	var/is_role_ban = roles[1] != "Server"
 
 	var/title = is_role_ban ? "Бан ролей!" : "Бан!"
@@ -24,8 +31,13 @@
 		for(var/role_name in roles)
 			description += "- [role_name]\n"
 
-	description += "Тяжесть наказания: [severity]\n"
-	description += "Срок наказания: [duration ? time_message : "***НАВСЕГДА***"]"
+	description += "\n"
+
+	var/localized_severity = severity_dict[severity.lowertext()]
+	if(localized_severity != "none")
+		description += "**Тяжесть наказания:** [severity]\n"
+
+	description += "**Срок наказания:** [duration ? time_message : "*НАВСЕГДА*"]"
 
 	if(applies_to_admins)
 		description += "\n*Применено к администратору*"
