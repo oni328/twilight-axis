@@ -5,7 +5,7 @@
 	default = null
 
 /// Отправляет средствами TGS сообщение о блокировке игрока или его ролей.
-/world/proc/TgsAnnounceBan(player_ckey, admin_ckey, duration, time_message, roles, reason)
+/world/proc/TgsAnnounceBan(player_ckey, admin_ckey, duration, time_message, roles, reason, severity)
 	if(!TgsAvailable())
 		return
 
@@ -24,6 +24,7 @@
 		for(var/role_name in roles)
 			description += "- [role_name]\n"
 
+	description += "Тяжесть наказания: [severity]\n"
 	description += "Срок наказания: [duration ? time_message : "***НАВСЕГДА***"]"
 
 	var/datum/tgs_chat_embed/structure/embed = new()
