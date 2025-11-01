@@ -90,7 +90,7 @@
 
 	var/datum/tgs_chat_embed/structure/embed = new()
 	embed.title = "Изменение PQ!"
-	embed.description = "```diff\n[value > 0 ? "+[value]" : "-[value]"]\n```"
+	embed.description = "```diff\n[value > 0 ? "+[value]" : value]\n```"
 	embed.colour = value > 0 ? "#a6da95" : "#ed8796"
 	embed.footer = new(GLOB.rogue_round_id)
 
