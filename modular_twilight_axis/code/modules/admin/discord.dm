@@ -4,6 +4,8 @@
 /datum/config_entry/string/admin_notes_channel
 	default = null
 
+// TODO: Обрати внимание на каждый прок. Их нужно будет упростить по DRY.
+
 /// Отправляет средствами TGS сообщение о блокировке игрока или его ролей.
 /world/proc/TgsAnnounceBan(player_ckey, admin_ckey, duration, time_message, roles, reason, severity, applies_to_admins)
 	if(!TgsAvailable())
@@ -116,6 +118,45 @@
 		)
 		field_reason.is_inline = FALSE
 		embed.fields.Add(field_reason)
+
+	var/datum/tgs_message_content/message = new("")
+	message.embed = embed
+
+	send2chat(
+		message,
+		admin_notes_channel
+	)
+
+/world/proc/TgsAnnounceNote(note, player_ckey, admin_ckey)
+	if(!TgsAvailable())
+		return
+
+	var/admin_notes_channel = CONFIG_GET(string/admin_notes_channel)
+
+	if(!admin_notes_channel)
+		return
+
+	var/datum/tgs_chat_embed/structure/embed = new()
+	embed.title = "[player_ckey]: новый нотес!"
+	embed.description = note
+	embed.colour = "#8aadf4"
+	embed.footer = new(GLOB.rogue_round_id)
+
+	var/datum/tgs_chat_embed/field/field_player_ckey = new(
+		"Игрок", "`[player_ckey]`"
+	)
+
+	var/datum/tgs_chat_embed/field/field_admin_ckey = new(
+		"Администратор", "`[admin_ckey]`"
+	)
+
+	field_player_ckey.is_inline = TRUE
+	field_admin_ckey.is_inline = TRUE
+
+	embed.fields = list(
+		field_player_ckey,
+		field_admin_ckey,
+	)
 
 	var/datum/tgs_message_content/message = new("")
 	message.embed = embed
