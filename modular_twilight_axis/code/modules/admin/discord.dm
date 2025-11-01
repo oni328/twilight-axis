@@ -35,7 +35,7 @@
 
 	var/localized_severity = severity_dict[lowertext(severity)]
 	if(localized_severity != "none")
-		description += "**Тяжесть наказания:** [severity]\n"
+		description += "**Тяжесть наказания:** [localized_severity]\n"
 
 	description += "**Срок наказания:** [duration ? time_message : "*НАВСЕГДА*"]"
 
