@@ -102,19 +102,20 @@
 		"Администратор", "`[admin_ckey]`"
 	)
 
-	var/datum/tgs_chat_embed/field/field_reason = new(
-		"Причина", "[reason]"
-	)
-
 	field_player_ckey.is_inline = TRUE
 	field_admin_ckey.is_inline = TRUE
-	field_reason.is_inline = FALSE
 
 	embed.fields = list(
 		field_player_ckey,
 		field_admin_ckey,
-		field_reason,
 	)
+
+	if(reason)
+		var/datum/tgs_chat_embed/field/field_reason = new(
+			"Причина", "[reason]"
+		)
+		field_reason.is_inline = FALSE
+		embed.fields.Add(field_reason)
 
 	var/datum/tgs_message_content/message = new("")
 	message.embed = embed
