@@ -176,7 +176,7 @@
 		return
 
 	var/datum/tgs_chat_embed/structure/embed = new()
-	embed.title = type
+	embed.title = capitalize(type)
 	embed.description = text
 	embed.colour = "#ef9f76"
 	embed.footer = new(GLOB.rogue_round_id)
