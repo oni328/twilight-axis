@@ -22,7 +22,7 @@
 	max_integrity = 200
 	armor = ARMOR_SPELLSINGER
 	body_parts_covered = HEAD|HAIR|EARS
-	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_TWIST)
+	prevent_crits = PREVENT_CRITS_MOST
 	sewrepair = TRUE
 	resistance_flags = FIRE_PROOF
 
