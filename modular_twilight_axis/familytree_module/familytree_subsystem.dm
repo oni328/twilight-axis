@@ -391,6 +391,21 @@ SUBSYSTEM_DEF(familytree)
 
 	return resolve_job_datum(H.job)
 
+/datum/controller/subsystem/familytree/proc/is_familytree_antagonist(mob/living/carbon/human/H)
+	var/datum/mind/mind = H?.mind
+	if(!mind)
+		return FALSE
+	if(mind.special_role)
+		return TRUE
+	return !!mind.has_antag_datum(/datum/antagonist)
+
+/datum/controller/subsystem/familytree/proc/ignore_familytree_antagonist(mob/living/carbon/human/H)
+	if(!H)
+		return
+	viable_spouses -= H
+	H.familytree_assignment_scheduled = FALSE
+	stop_tracking_human(H)
+
 /datum/controller/subsystem/familytree/proc/is_human_job_in_list(mob/living/carbon/human/H, list/title_list)
 	if(!H || !title_list)
 		return FALSE
@@ -459,6 +474,9 @@ SUBSYSTEM_DEF(familytree)
 /datum/controller/subsystem/familytree/proc/try_queue_assignment(mob/living/carbon/human/H)
 	if(!H || QDELETED(H) || istype(H, /mob/living/carbon/human/dummy))
 		return
+	if(is_familytree_antagonist(H))
+		ignore_familytree_antagonist(H)
+		return
 
 	var/datum/job/job = get_familytree_job(H)
 	var/datum/preferences/P = H.client?.prefs
@@ -521,12 +539,12 @@ SUBSYSTEM_DEF(familytree)
 	return 45
 
 /datum/controller/subsystem/familytree/proc/run_local_assignment(mob/living/carbon/human/H, status)
-	if(!H || QDELETED(H) || H.family_datum)
+	if(!H || QDELETED(H) || H.family_datum || is_familytree_antagonist(H))
 		return
 	AddLocal(H, status)
 
 /datum/controller/subsystem/familytree/proc/run_royal_assignment(mob/living/carbon/human/H, status)
-	if(!H || QDELETED(H) || H.family_datum)
+	if(!H || QDELETED(H) || H.family_datum || is_familytree_antagonist(H))
 		return
 	AddRoyal(H, status)
 
@@ -611,6 +629,9 @@ SUBSYSTEM_DEF(familytree)
 /datum/controller/subsystem/familytree/proc/AddLocal(mob/living/carbon/human/H, status)
 	if(!H || !status || istype(H, /mob/living/carbon/human/dummy))
 		return
+	if(is_familytree_antagonist(H))
+		ignore_familytree_antagonist(H)
+		return
 	// Royals are handled by the dedicated royal flow.
 	if(get_royal_status(H))
 		return
@@ -635,6 +656,9 @@ SUBSYSTEM_DEF(familytree)
 			AssignToFamily(H)
 
 /datum/controller/subsystem/familytree/proc/AddRoyal(mob/living/carbon/human/H, status)
+	if(!H || is_familytree_antagonist(H))
+		ignore_familytree_antagonist(H)
+		return
 	if(!ruling_family.housename)
 		ruling_family.housename = " Royal"
 	var/datum/family_member/member = ruling_family.CreateFamilyMember(H)
@@ -1010,11 +1034,17 @@ SUBSYSTEM_DEF(familytree)
 
 
 /datum/controller/subsystem/familytree/proc/AssignNewlyWed(mob/living/carbon/human/H)
+	if(!H || is_familytree_antagonist(H))
+		ignore_familytree_antagonist(H)
+		return
 	viable_spouses += H
 	var/list/potential_matches = list()
 
 	for(var/mob/living/carbon/human/potential_spouse as anything in viable_spouses)
 		if(!potential_spouse || potential_spouse == H || potential_spouse.spouse_mob)
+			continue
+		if(is_familytree_antagonist(potential_spouse))
+			viable_spouses -= potential_spouse
 			continue
 		// Check if they are mutually setspouse
 		var/mutual_setspouse = (H.setspouse == potential_spouse.real_name) && (potential_spouse.setspouse == H.real_name)
