@@ -105,7 +105,7 @@
 			if(isdarkelf(H))
 				H.equip_to_slot_or_del(new /obj/item/clothing/mask/rogue/facemask, SLOT_WEAR_MASK, TRUE)
 			H.put_in_hands(new /obj/item/gun/ballistic/revolver/grenadelauncher/twilight_runelock/rifle(H), TRUE)
-			H.put_in_hands(new /obj/item/rogueweapon/sword/long/oldpsysword(H), TRUE)
+			H.put_in_hands(new /obj/item/rogueweapon/sword/rapier/psyrapier(H), TRUE)
 			var/obj/item/back = H.get_item_by_slot(SLOT_BACK_R)
 			var/obj/item/hook = new /obj/item/grapplinghook(H)
 			if(!SEND_SIGNAL(back, COMSIG_TRY_STORAGE_INSERT, hook, null, TRUE, TRUE))
