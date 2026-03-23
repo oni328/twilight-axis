@@ -43,6 +43,7 @@
 	armor = ARMOR_VINES
 	body_parts_covered = COVERAGE_FULL | NECK | HANDS | FEET
 	unenchantable = TRUE
+	var/obj/effect/proc_holder/spell/self/conjure_armor/linked_conjure_spell
 
 /obj/item/clothing/suit/roguetown/vinearmour/equipped(mob/living/user)
 	. = ..()
@@ -51,6 +52,8 @@
 
 
 /obj/item/clothing/suit/roguetown/vinearmour/proc/dispel()
+	if(linked_conjure_spell)
+		linked_conjure_spell.start_delayed_recharge()
 	if(!QDELETED(src))
 		src.visible_message(span_warning("The [src]'s body no more covered by vines!"))
 		qdel(src)
