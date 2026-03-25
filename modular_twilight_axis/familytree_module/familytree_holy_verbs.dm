@@ -46,32 +46,39 @@
 /proc/bond_type_is_sibling(bond_type)
 	return (bond_type == BOND_BROTHER || bond_type == BOND_SISTER)
 
-/mob/living/carbon/human/proc/familytree_establish_bond()
-	set name = "Установить семейную связь"
-	set category = "Cleric"
+/obj/effect/proc_holder/spell/self/establish_bond
+	name = "Establish Bond"
+	desc = "Establish a family bond between two people. Requires Holy 3+."
+	overlay_state = "recruit_titlegrant"
+	antimagic_allowed = TRUE
+	recharge_time = 50
+	var/bond_range = 7
 
-	if(!mind || !client)
+/obj/effect/proc_holder/spell/self/establish_bond/cast(list/targets, mob/user = usr)
+	. = ..()
+	var/mob/living/carbon/human/priest = user
+	if(!istype(priest) || !priest.mind || !priest.client)
 		return
 
-	var/holy_level = get_skill_level(/datum/skill/magic/holy)
+	var/holy_level = priest.get_skill_level(/datum/skill/magic/holy)
 	if(holy_level < SKILL_LEVEL_JOURNEYMAN)
-		to_chat(src, span_warning("Ваша вера недостаточно сильна для проведения обряда."))
+		to_chat(priest, span_warning("Ваших сил недостаточно для проведения обряда."))
 		return
 
 	var/can_bypass = (holy_level >= SKILL_LEVEL_LEGENDARY)
 
 	var/list/candidates = list()
-	for(var/mob/living/carbon/human/H in view(7, src))
-		if(H == src || H.stat == DEAD || !H.client || !H.ckey)
+	for(var/mob/living/carbon/human/H in view(bond_range, priest))
+		if(H == priest || H.stat == DEAD || !H.client || !H.ckey)
 			continue
 		candidates += H
 
 	if(candidates.len < 2)
-		to_chat(src, span_warning("Недостаточно людей рядом для проведения обряда."))
+		to_chat(priest, span_warning("Недостаточно людей рядом для проведения обряда."))
 		return
 
-	var/mob/living/carbon/human/person1 = tgui_input_list(src, "Кто получает роль в связи?", "Establish Bond", candidates)
-	if(!person1 || QDELETED(person1) || !(person1 in view(7, src)))
+	var/mob/living/carbon/human/person1 = tgui_input_list(priest, "Кто готов засвидетельствовать свои отношения перед богами?", "Establish Bond", candidates)
+	if(!person1 || QDELETED(person1) || !(person1 in view(bond_range, priest)))
 		return
 
 	var/list/bond_options = list(
@@ -83,7 +90,7 @@
 		BOND_SISTER,
 	)
 
-	var/bond_type = tgui_input_list(src, "[person1.real_name] становится:", "Bond Type", bond_options)
+	var/bond_type = tgui_input_list(priest, "[person1.real_name] становится:", "Bond Type", bond_options)
 	if(!bond_type)
 		return
 
@@ -108,39 +115,39 @@
 		valid_second += candidate
 
 	if(!valid_second.len)
-		to_chat(src, span_warning("Нет подходящего кандидата."))
+		to_chat(priest, span_warning("Нет подходящего кандидата."))
 		return
 
-	var/mob/living/carbon/human/person2 = tgui_input_list(src, "По отношению к кому?", "Establish Bond", valid_second)
-	if(!person2 || QDELETED(person2) || !(person2 in view(7, src)) || !(person1 in view(7, src)))
+	var/mob/living/carbon/human/person2 = tgui_input_list(priest, "По отношению к кому?", "Establish Bond", valid_second)
+	if(!person2 || QDELETED(person2) || !(person2 in view(bond_range, priest)) || !(person1 in view(bond_range, priest)))
 		return
 
 	if(bond_type_is_marriage(bond_type) && person1.spouse_mob == person2)
-		to_chat(src, span_warning("Они уже состоят в браке."))
+		to_chat(priest, span_warning("Они уже состоят в браке."))
 		return
 
 	var/instr = bond_type_instrumental(bond_type)
 
-	var/priest_confirm = tgui_alert(src, "[person1.real_name] становится [instr] [person2.real_name]. Провести обряд?", "Establish Bond", list("Да", "Нет"))
+	var/priest_confirm = tgui_alert(priest, "[person1.real_name] становится [instr] [person2.real_name]. Провести обряд?", "Establish Bond", list("Да", "Нет"))
 	if(priest_confirm != "Да")
 		return
 
-	if(!(person1 in view(7, src)) || !(person2 in view(7, src)))
-		to_chat(src, span_warning("Участники разошлись."))
+	if(!(person1 in view(bond_range, priest)) || !(person2 in view(bond_range, priest)))
+		to_chat(priest, span_warning("Участники разошлись."))
 		return
 
 	var/offer1 = tgui_alert(person1, "Вы становитесь [instr] [person2.real_name]. Согласны?", "Священный обряд", list("Да", "Нет"))
 	if(offer1 != "Да")
-		to_chat(src, span_warning("[person1.real_name] отказался(ась)."))
+		to_chat(priest, span_warning("[person1.real_name] отказался(ась)."))
 		return
 
 	var/offer2 = tgui_alert(person2, "[person1.real_name] становится вашим(ей) [instr]. Согласны?", "Священный обряд", list("Да", "Нет"))
 	if(offer2 != "Да")
-		to_chat(src, span_warning("[person2.real_name] отказался(ась)."))
+		to_chat(priest, span_warning("[person2.real_name] отказался(ась)."))
 		return
 
-	if(!(person1 in view(7, src)) || !(person2 in view(7, src)))
-		to_chat(src, span_warning("Участники разошлись."))
+	if(!(person1 in view(bond_range, priest)) || !(person2 in view(bond_range, priest)))
+		to_chat(priest, span_warning("Участники разошлись."))
 		return
 
 	var/success = FALSE
@@ -150,7 +157,7 @@
 		if(family)
 			success = TRUE
 			SSfamilytree.on_family_formed(family)
-			SSfamilytree.check_bond_divine_wrath(src, person1, person2)
+			SSfamilytree.check_bond_divine_wrath(priest, person1, person2)
 
 	else if(bond_type_is_adoption(bond_type))
 		success = familytree_holy_adopt(person1, person2)
@@ -159,12 +166,78 @@
 		success = familytree_holy_sibling(person1, person2)
 
 	if(!success)
-		to_chat(src, span_warning("Не удалось провести обряд."))
+		to_chat(priest, span_warning("Не удалось провести обряд."))
 		return
 
-	var/announcement = "[real_name] провёл(а) обряд: [person1.real_name] теперь [instr] [person2.real_name]."
-	for(var/mob/living/carbon/human/M in view(7, src))
+	var/announcement = "[priest.real_name] провёл(а) обряд: [person1.real_name] теперь [instr] [person2.real_name]."
+	for(var/mob/living/carbon/human/M in view(bond_range, priest))
 		to_chat(M, span_love(announcement))
+
+/obj/effect/proc_holder/spell/self/dissolve_marriage
+	name = "Dissolve Marriage"
+	desc = "Dissolve a marriage between two people. Requires Holy 5+."
+	overlay_state = "recruit_titlegrant"
+	antimagic_allowed = TRUE
+	recharge_time = 50
+	var/divorce_range = 7
+
+/obj/effect/proc_holder/spell/self/dissolve_marriage/cast(list/targets, mob/user = usr)
+	. = ..()
+	var/mob/living/carbon/human/priest = user
+	if(!istype(priest) || !priest.mind || !priest.client)
+		return
+
+	var/holy_level = priest.get_skill_level(/datum/skill/magic/holy)
+	if(holy_level < SKILL_LEVEL_MASTER)
+		to_chat(priest, span_warning("Ваших сил недостаточно для расторжения брака."))
+		return
+
+	var/list/married_people = list()
+	for(var/mob/living/carbon/human/H in view(divorce_range, priest))
+		if(H == priest || H.stat == DEAD || !H.client || !H.ckey)
+			continue
+		if(H.spouse_mob && H.family_member_datum?.spouses?.len)
+			married_people += H
+
+	if(!married_people.len)
+		to_chat(priest, span_warning("Рядом нет людей, состоящих в браке."))
+		return
+
+	var/mob/living/carbon/human/person1 = tgui_input_list(priest, "Чей брак расторгнуть?", "Dissolve Marriage", married_people)
+	if(!person1 || QDELETED(person1) || !(person1 in view(divorce_range, priest)))
+		return
+
+	var/mob/living/carbon/human/person2 = person1.spouse_mob
+	if(!person2 || QDELETED(person2) || !(person2 in view(divorce_range, priest)))
+		to_chat(priest, span_warning("Супруг(а) должен(а) быть рядом."))
+		return
+
+	var/confirm1 = tgui_alert(person1, "Согласны на расторжение брака с [person2.real_name]?", "Dissolve Marriage", list("Да", "Нет"))
+	if(confirm1 != "Да")
+		to_chat(priest, span_warning("[person1.real_name] не дал(а) согласие."))
+		return
+
+	var/confirm2 = tgui_alert(person2, "Согласны на расторжение брака с [person1.real_name]?", "Dissolve Marriage", list("Да", "Нет"))
+	if(confirm2 != "Да")
+		to_chat(priest, span_warning("[person2.real_name] не дал(а) согласие."))
+		return
+
+	if(!(person1 in view(divorce_range, priest)) || !(person2 in view(divorce_range, priest)))
+		to_chat(priest, span_warning("Участники разошлись."))
+		return
+
+	var/datum/family_member/member1 = person1.family_member_datum
+	var/datum/family_member/member2 = person2.family_member_datum
+
+	if(member1 && member2)
+		member1.RemoveSpouse(member2, TRUE)
+
+	person1.spouse_mob = null
+	person2.spouse_mob = null
+
+	var/announcement = "[priest.real_name] расторг(ла) брак между [person1.real_name] и [person2.real_name]."
+	for(var/mob/living/carbon/human/M in view(divorce_range, priest))
+		to_chat(M, span_warning(announcement))
 
 /proc/familytree_holy_adopt(mob/living/carbon/human/child, mob/living/carbon/human/parent)
 	if(!child || !parent)
@@ -204,65 +277,6 @@
 
 	target_house.AddToFamily(person1, parent1, parent2, FALSE)
 	return (person1.family_datum != null)
-
-/mob/living/carbon/human/proc/familytree_officiate_divorce()
-	set name = "Расторгнуть брак"
-	set category = "Cleric"
-
-	if(!mind || !client)
-		return
-
-	var/holy_level = get_skill_level(/datum/skill/magic/holy)
-	if(holy_level < SKILL_LEVEL_MASTER)
-		to_chat(src, span_warning("Ваша вера недостаточно сильна для расторжения брака."))
-		return
-
-	var/list/married_people = list()
-	for(var/mob/living/carbon/human/H in view(7, src))
-		if(H == src || H.stat == DEAD || !H.client || !H.ckey)
-			continue
-		if(H.spouse_mob && H.family_member_datum?.spouses?.len)
-			married_people += H
-
-	if(!married_people.len)
-		to_chat(src, span_warning("Рядом нет людей, состоящих в браке."))
-		return
-
-	var/mob/living/carbon/human/person1 = tgui_input_list(src, "Чей брак расторгнуть?", "Dissolve Marriage", married_people)
-	if(!person1 || QDELETED(person1) || !(person1 in view(7, src)))
-		return
-
-	var/mob/living/carbon/human/person2 = person1.spouse_mob
-	if(!person2 || QDELETED(person2) || !(person2 in view(7, src)))
-		to_chat(src, span_warning("Супруг(а) должен(а) быть рядом."))
-		return
-
-	var/confirm1 = tgui_alert(person1, "Согласны на расторжение брака с [person2.real_name]?", "Dissolve Marriage", list("Да", "Нет"))
-	if(confirm1 != "Да")
-		to_chat(src, span_warning("[person1.real_name] не дал(а) согласие."))
-		return
-
-	var/confirm2 = tgui_alert(person2, "Согласны на расторжение брака с [person1.real_name]?", "Dissolve Marriage", list("Да", "Нет"))
-	if(confirm2 != "Да")
-		to_chat(src, span_warning("[person2.real_name] не дал(а) согласие."))
-		return
-
-	if(!(person1 in view(7, src)) || !(person2 in view(7, src)))
-		to_chat(src, span_warning("Участники разошлись."))
-		return
-
-	var/datum/family_member/member1 = person1.family_member_datum
-	var/datum/family_member/member2 = person2.family_member_datum
-
-	if(member1 && member2)
-		member1.RemoveSpouse(member2, TRUE)
-
-	person1.spouse_mob = null
-	person2.spouse_mob = null
-
-	var/announcement = "[real_name] расторг(ла) брак между [person1.real_name] и [person2.real_name]."
-	for(var/mob/living/carbon/human/M in view(7, src))
-		to_chat(M, span_warning(announcement))
 
 /datum/controller/subsystem/familytree/proc/evaluate_pair_negative_influence(mob/living/carbon/human/A, mob/living/carbon/human/B)
 	var/list/harmed_patrons = list()

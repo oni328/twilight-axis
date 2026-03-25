@@ -46,8 +46,8 @@ SUBSYSTEM_DEF(familytree)
 	load_enigma_roles()
 	RegisterSignal(SSdcs, COMSIG_GLOB_MOB_CREATED, PROC_REF(on_mob_created))
 	for(var/mob/living/carbon/human/H in GLOB.mob_list)
-		grant_holy_verbs(H)
 		register_human(H)
+	addtimer(CALLBACK(src, PROC_REF(scan_and_grant_holy_spells)), 30 SECONDS)
 	return ..()
 
 /datum/controller/subsystem/familytree/proc/build_preset_family_species() as /list
@@ -89,15 +89,24 @@ SUBSYSTEM_DEF(familytree)
 	if(!ishuman(new_mob) || QDELETED(new_mob) || istype(new_mob, /mob/living/carbon/human/dummy) || !new_mob.ckey)
 		return
 	var/mob/living/carbon/human/H = new_mob
-	grant_holy_verbs(H)
 	register_human(H)
+	addtimer(CALLBACK(src, PROC_REF(try_grant_holy_spells), H), 10 SECONDS)
 	try_queue_assignment(H)
 
-/datum/controller/subsystem/familytree/proc/grant_holy_verbs(mob/living/carbon/human/H)
-	if(!H || istype(H, /mob/living/carbon/human/dummy) || !H.ckey)
+/datum/controller/subsystem/familytree/proc/scan_and_grant_holy_spells()
+	for(var/mob/living/carbon/human/H in GLOB.player_list)
+		if(QDELETED(H) || !H.ckey || !H.mind)
+			continue
+		try_grant_holy_spells(H)
+
+/datum/controller/subsystem/familytree/proc/try_grant_holy_spells(mob/living/carbon/human/H)
+	if(!H || QDELETED(H) || !H.ckey || !H.mind)
 		return
-	H.verbs |= /mob/living/carbon/human/proc/familytree_establish_bond
-	H.verbs |= /mob/living/carbon/human/proc/familytree_officiate_divorce
+	var/holy_level = H.get_skill_level(/datum/skill/magic/holy)
+	if(holy_level >= SKILL_LEVEL_JOURNEYMAN)
+		H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/establish_bond)
+	if(holy_level >= SKILL_LEVEL_MASTER)
+		H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/dissolve_marriage)
 
 /datum/controller/subsystem/familytree/proc/register_human(mob/living/carbon/human/H)
 	if(!H || istype(H, /mob/living/carbon/human/dummy) || H.familytree_module_signal_bound)
