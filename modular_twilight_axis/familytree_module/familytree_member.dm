@@ -149,6 +149,8 @@
 	return FALSE
 
 /datum/family_member/proc/HandleBiologicalChildren(datum/family_member/spouse)
+	if(SSfamilytree.is_sterile_species(person) || SSfamilytree.is_sterile_species(spouse.person))
+		return
 	for(var/datum/family_member/child as anything in children)
 		if(child in spouse.children)
 			if(family.SpeciesCalculation(child.person, person, spouse.person))

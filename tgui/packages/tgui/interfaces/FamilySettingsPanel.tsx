@@ -79,19 +79,33 @@ export const FamilySettingsPanel = () => {
   }, [settings, initialized]);
 
   useEffect(() => {
-    if (isAdult && familyType === 'parent') {
-      setFamilyType('member');
+    if (isAdult) {
+      if (familyType === 'parent') {
+        setFamilyType('member');
+      }
+      if (desiredRelativeRole === 2) {
+        setDesiredRelativeRole(0);
+      }
     }
-  }, [isAdult, familyType]);
+  }, [isAdult, familyType, desiredRelativeRole]);
+
+  const hintStyle = {
+    padding: '6px 8px',
+    fontSize: '12px',
+    color: '#c9a04e',
+    fontStyle: 'italic' as const,
+    border: '1px solid #6b5a2e',
+    marginTop: '6px',
+  };
 
   const tooltips: Record<FamilyType, string> = {
-    none: 'Ваш персонаж не будет участвовать в семейной системе.',
+    none: 'Персонаж не участвует в семейной системе.',
     member:
-      'Ваш персонаж попадёт в существующую семью как ребёнок, брат или сестра. Учитываются раса, возраст, сословие и социальный статус роли. Можно уточнить через «Желаемая роль в семье».',
+      'Вы попадёте в существующую семью как родственник: ребёнок, брат/сестра, родитель или дядя/тётя. Роль определяется возрастом. Супруг НЕ подбирается.',
     parent:
-      'Ваш персонаж попадёт в семью как взрослый супруг или родитель. Если подходящей семьи нет — может основать новую. Совместимость по расе, полу и сословию обязательна.',
+      'Система ищет вам супруга среди одиноких членов существующих семей. Если никого нет — вы основываете новый дом. Требуется совместимость по расе, полу и сословию.',
     couple:
-      'Ваш персонаж будет ждать подходящего партнёра среди других игроков с настройкой «Супружеская пара». Проверяются раса, анатомия, пол, сословие и социальный статус.',
+      'Вы попадаете в очередь ожидания. Система подберёт партнёра среди других игроков с таким же режимом. Проверяются все параметры совместимости.',
   };
 
   const familyTypeOptions: DropdownOption<FamilyType>[] = isAdult
@@ -132,14 +146,17 @@ export const FamilySettingsPanel = () => {
     { value: 3, displayText: 'Обе опции' },
   ];
 
-  const relativeRoleOptions: DropdownOption<RelativeRole>[] = [
+  const allRelativeRoleOptions: DropdownOption<RelativeRole>[] = [
     { value: 0, displayText: 'Любая роль' },
     { value: 1, displayText: 'Брат / сестра' },
     { value: 2, displayText: 'Родитель' },
     { value: 3, displayText: 'Ребёнок' },
     { value: 4, displayText: 'Дядя / тётя' },
-    { value: 5, displayText: 'Супруг / супруга' },
   ];
+
+  const relativeRoleOptions = isAdult
+    ? allRelativeRoleOptions.filter((opt) => opt.value !== 2)
+    : allRelativeRoleOptions;
 
   const getDisplayText = <T extends string | number>(
     options: DropdownOption<T>[],
@@ -183,16 +200,7 @@ export const FamilySettingsPanel = () => {
               width="100%"
             />
 
-            <Box
-              style={{
-                marginTop: '4px',
-                fontSize: '12px',
-                color: '#aaa',
-                fontStyle: 'italic',
-                paddingLeft: '4px',
-              }}>
-              {tooltips[familyType]}
-            </Box>
+            <Box style={hintStyle}>{tooltips[familyType]}</Box>
           </Stack.Item>
 
           {familyType !== 'none' && (
@@ -335,16 +343,9 @@ export const FamilySettingsPanel = () => {
                     width="100%"
                   />
 
-                  <Box
-                    style={{
-                      marginTop: '4px',
-                      fontSize: '12px',
-                      color: '#aaa',
-                      fontStyle: 'italic',
-                      paddingLeft: '4px',
-                    }}>
-                    Система попытается подобрать вам именно эту роль в семье.
-                    Если не получится — будет использован стандартный алгоритм.
+                  <Box style={hintStyle}>
+                    Система попытается подобрать именно эту роль. Если не
+                    получится — роль определяется по возрасту.
                   </Box>
                 </Stack.Item>
               )}
@@ -384,16 +385,9 @@ export const FamilySettingsPanel = () => {
                     : 'Брак с низким статусом: запрещён'}
                 </Button>
 
-                <Box
-                  style={{
-                    marginTop: '4px',
-                    fontSize: '12px',
-                    color: '#aaa',
-                    fontStyle: 'italic',
-                    paddingLeft: '4px',
-                  }}>
-                  Персонажи с высоким социальным статусом не могут вступать в
-                  брак с низким статусом в любом случае.
+                <Box style={hintStyle}>
+                  Высокий статус + низкий статус = запрещено всегда. Остальные
+                  могут снять защиту вручную.
                 </Box>
               </Stack.Item>
 
@@ -404,9 +398,20 @@ export const FamilySettingsPanel = () => {
                   onChange={(value) => setFavoriteName(String(value))}
                   fluid
                 />
+                <Box style={hintStyle}>
+                  Если указан фаворит — система ищет его первым, игнорируя все
+                  ограничения. Ожидание бессрочное.
+                </Box>
               </Stack.Item>
             </>
           )}
+
+          <Stack.Item>
+            <Box style={{ ...hintStyle, textAlign: 'center' as const }}>
+              При сторителлере Ксайликс все ограничения (кроме пола) могут быть
+              сняты. Семейная рулетка непредсказуема.
+            </Box>
+          </Stack.Item>
 
           <Stack.Item mt={2}>
             <Button

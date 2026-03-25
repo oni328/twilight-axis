@@ -26,11 +26,12 @@
 		return
 
 	var/our_race = H.dna.species.name
+	var/our_isolated = is_isolated(H)
 
 	for(var/datum/heritage/house as anything in families)
 		if(!house.housename || !house.members.len)
 			continue
-		if(house.dominant_race.name != our_race)
+		if(!house_race_compatible(house, our_race, our_isolated))
 			continue
 
 		for(var/datum/family_member/member as anything in house.members)
@@ -55,11 +56,12 @@
 		return
 
 	var/our_race = H.dna.species.name
+	var/our_isolated = is_isolated(H)
 
 	for(var/datum/heritage/house as anything in families)
 		if(!house.housename || !house.members.len)
 			continue
-		if(house.dominant_race.name != our_race)
+		if(!house_race_compatible(house, our_race, our_isolated))
 			continue
 
 		for(var/datum/family_member/member as anything in house.members)
@@ -77,7 +79,7 @@
 
 	var/datum/heritage/empty_house
 	for(var/datum/heritage/house as anything in families)
-		if(!house.housename && house.dominant_race == our_race)
+		if(!house.housename && house_race_compatible(house, our_race, our_isolated))
 			empty_house = house
 			break
 

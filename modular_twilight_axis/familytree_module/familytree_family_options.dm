@@ -56,7 +56,7 @@
 			var/new_family = _ui_to_family(params["familyType"])
 
 			if(new_family == FAMILY_FULL && P.age == AGE_ADULT)
-				to_chat(user, span_warning("You are too young to be a parent."))
+				to_chat(user, span_warning("Вы слишком молоды, чтобы быть родителем."))
 				return TRUE
 
 			P.family = new_family

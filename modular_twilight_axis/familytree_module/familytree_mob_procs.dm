@@ -53,6 +53,11 @@
 	if(primary_member && secondary_member && primary_family)
 		primary_family.MarryMembers(primary_member, secondary_member)
 
+	if(SSfamilytree.xylix_roulette_active)
+		var/xylix_msg = span_danger("<font size='2'>Ксайликс пошутил над вашей судьбой, подтасовав карты.</font>")
+		to_chat(src, xylix_msg)
+		to_chat(spouse, xylix_msg)
+
 	return primary_family
 
 /mob/living/carbon/human/proc/ReturnRelation(mob/living/carbon/human/stranger)
@@ -111,7 +116,7 @@
 		return
 
 	if(!known_people || !known_people.len)
-		to_chat(user, span_warning("I don't know any families."))
+		to_chat(user, span_warning("Я не знаю ни одной семьи."))
 		return
 
 	var/list/house_entries = list()
@@ -168,7 +173,7 @@
 		))
 
 	if(!house_names.len)
-		to_chat(user, span_warning("I don't know any families."))
+		to_chat(user, span_warning("Я не знаю ни одной семьи."))
 		return
 
 	house_names = sortList(house_names)
@@ -190,7 +195,7 @@
 	set category = "IC"
 
 	if(!mind)
-		to_chat(src, span_warning("I don't know any families."))
+		to_chat(src, span_warning("Я не знаю ни одной семьи."))
 		return
 
 	mind.familytree_display_known_families(src)

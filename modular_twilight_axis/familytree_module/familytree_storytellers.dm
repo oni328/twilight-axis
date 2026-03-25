@@ -172,7 +172,7 @@
 	if(!cheater)
 		return
 	cheater_count++
-	to_chat(cheater, span_warning("You have disgraced Eora."))
+	to_chat(cheater, span_warning("Вы опорочили Эору."))
 
 /datum/controller/subsystem/familytree/proc/on_family_formed(datum/heritage/house)
 	if(!house || storyteller_points_calculated)

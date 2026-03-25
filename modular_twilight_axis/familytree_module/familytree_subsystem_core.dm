@@ -6,9 +6,13 @@ SUBSYSTEM_DEF(familytree)
 	var/datum/heritage/ruling_family
 	var/list/families = list()
 	var/list/viable_spouses = list()
-	var/list/banned_species_types = list(
-		/datum/species/goblinp,
+	// Species that can only match within their isolated group (gnolls + antag goblins)
+	var/list/isolated_group_types = list(
 		/datum/species/gnoll,
+		/datum/species/goblin,
+		)
+	// Species that cannot reproduce biologically but can have families
+	var/list/sterile_species_types = list(
 		/datum/species/construct,
 		)
 	var/list/banned_antag_types = list(
@@ -37,6 +41,7 @@ SUBSYSTEM_DEF(familytree)
 			var/datum/heritage/family = new /datum/heritage
 			family.dominant_race = pioneer_household
 			families += family
+	create_isolated_species_houses()
 	check_xylix_roulette()
 	load_enigma_roles()
 	RegisterSignal(SSdcs, COMSIG_GLOB_MOB_CREATED, PROC_REF(on_mob_created))
@@ -47,6 +52,18 @@ SUBSYSTEM_DEF(familytree)
 /datum/controller/subsystem/familytree/proc/build_preset_family_species() as /list
 	. = familytree_module_get_selectable_species_types()
 
+/datum/controller/subsystem/familytree/proc/create_isolated_species_houses()
+	var/list/created_types = list()
+	for(var/species_type in isolated_group_types)
+		if(species_type in created_types)
+			continue
+		created_types += species_type
+		var/datum/species/species_instance = new species_type()
+		for(var/I = 1 to 2)
+			var/datum/heritage/family = new /datum/heritage
+			family.dominant_race = species_instance
+			families += family
+
 /datum/controller/subsystem/familytree/proc/check_xylix_roulette()
 	var/datum/storyteller/current = SSgamemode?.current_storyteller
 	if(!current)
@@ -54,11 +71,21 @@ SUBSYSTEM_DEF(familytree)
 	if(!istype(current, /datum/storyteller/xylix))
 		return FALSE
 	xylix_roulette_active = TRUE
+	notify_xylix_participants()
 	return TRUE
+
+/datum/controller/subsystem/familytree/proc/notify_xylix_participants()
+	var/xylix_msg = span_danger("<font size='2'>Карты вашей судьбы могут быть подтасованы. Ксайликс наблюдает за семейной рулеткой.</font>")
+	for(var/mob/M as anything in GLOB.player_list)
+		if(!M.client || !ishuman(M))
+			continue
+		var/mob/living/carbon/human/H = M
+		if(H.familytree_assignment_scheduled || (H in viable_spouses))
+			to_chat(H, xylix_msg)
 
 /datum/controller/subsystem/familytree/proc/on_mob_created(datum/controller/subsystem/processing/dcs/source, mob/new_mob)
 	SIGNAL_HANDLER
-	if(!ishuman(new_mob) || QDELETED(new_mob) || istype(new_mob, /mob/living/carbon/human/dummy))
+	if(!ishuman(new_mob) || QDELETED(new_mob) || istype(new_mob, /mob/living/carbon/human/dummy) || !new_mob.ckey)
 		return
 	var/mob/living/carbon/human/H = new_mob
 	register_human(H)

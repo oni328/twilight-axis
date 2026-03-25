@@ -52,6 +52,13 @@ GLOBAL_LIST_INIT(familytree_title_prefixes, list(
 	if(!A || !B)
 		return "missing mob"
 
+	// Isolated group: gnolls and goblins can match with each other but not with outsiders
+	var/a_isolated = is_isolated(A)
+	var/b_isolated = is_isolated(B)
+	if(a_isolated || b_isolated)
+		if(!a_isolated || !b_isolated)
+			return "isolated group mismatch"
+
 	if(xylix_roulette_active)
 		return null
 

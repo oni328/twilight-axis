@@ -48,7 +48,7 @@
 		if(FAMILY_FATHER, FAMILY_MOTHER)
 			pass()
 
-	to_chat(person, span_notice("You have joined the [housename] family as [relationship_type]."))
+	to_chat(person, span_notice("Вы вступили в семью [housename] как [relationship_type]."))
 	return member
 
 /datum/heritage/proc/ConductWedding(datum/family_member/bride, datum/family_member/groom, mob/living/carbon/human/officiant)
@@ -58,7 +58,7 @@
 	if(!MarryMembers(bride, groom))
 		return FALSE
 
-	var/announcement = "[bride.person?.real_name] and [groom.person?.real_name] have been wed in the [housename] family!"
+	var/announcement = "[bride.person?.real_name] и [groom.person?.real_name] сочетались браком в семье [housename]!"
 
 	for(var/datum/family_member/member as anything in members)
 		if(member.person && member.person?.client)
@@ -122,7 +122,7 @@
 		if(known_parent && !SingleParentSpeciesCalculation(person, known_parent.person))
 			new_member.adoption_status = TRUE
 
-	to_chat(person, span_notice("You have been added to the [housename] family."))
+	to_chat(person, span_notice("Вы были добавлены в семью [housename]."))
 	InheritCurses(new_member)
 	return new_member
 
@@ -138,8 +138,8 @@
 	if(person1.person && person2.person)
 		pass()
 
-	to_chat(person1.person, span_love("You are now married to [person2.person?.real_name]!"))
-	to_chat(person2.person, span_love("You are now married to [person1.person?.real_name]!"))
+	to_chat(person1.person, span_love("Вы теперь в браке с [person2.person?.real_name]!"))
+	to_chat(person2.person, span_love("Вы теперь в браке с [person1.person?.real_name]!"))
 
 	return TRUE
 

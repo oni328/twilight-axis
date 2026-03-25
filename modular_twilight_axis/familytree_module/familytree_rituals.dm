@@ -115,7 +115,7 @@
 	if(!family)
 		return FALSE
 
-	var/announcement = "[priest.real_name] has united [person1.real_name] and [person2.real_name] in holy matrimony!"
+	var/announcement = "[priest.real_name] сочетал(а) [person1.real_name] и [person2.real_name] священными узами брака!"
 	for(var/mob/living/carbon/human/M in view(7, priest))
 		to_chat(M, span_love(announcement))
 

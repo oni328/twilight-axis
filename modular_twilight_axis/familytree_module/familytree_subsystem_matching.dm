@@ -97,6 +97,8 @@
 			continue
 		if(!candidate.client || candidate.stat == DEAD)
 			continue
+		if(candidate.familytree_pref == FAMILY_NONE)
+			continue
 		if(familytree_names_match(candidate.real_name, H.setspouse))
 			return candidate
 
@@ -118,13 +120,15 @@
 		else
 			low_priority_houses += house
 
+	var/we_are_isolated = is_isolated(H)
+
 	if(!chosen_house)
 		for(var/datum/heritage/house as anything in high_priority_houses)
-			if(house.dominant_race.name == our_race && house.members.len < 4)
+			if(house_race_compatible(house, our_race, we_are_isolated) && house.members.len < 4)
 				if(!WouldCreateAgeConflict(house, H))
 					chosen_house = house
 					break
-			if(prob(20) && house.members.len <= 8)
+			if(!we_are_isolated && prob(20) && house.members.len <= 8)
 				if(!WouldCreateAgeConflict(house, H))
 					chosen_house = house
 					adopted = TRUE
@@ -132,7 +136,7 @@
 
 	if(!chosen_house)
 		for(var/datum/heritage/house as anything in low_priority_houses)
-			if(house.dominant_race.name == our_race)
+			if(house_race_compatible(house, our_race, we_are_isolated))
 				if(!WouldCreateAgeConflict(house, H))
 					chosen_house = house
 					break
@@ -207,10 +211,11 @@
 	if(!H)
 		return
 	var/our_race = H.dna.species.name
+	var/our_isolated = is_isolated(H)
 	var/list/eligible_houses = list()
 
 	for(var/datum/heritage/house as anything in families)
-		if(house.dominant_race.name != our_race)
+		if(!house_race_compatible(house, our_race, our_isolated))
 			continue
 
 		var/has_single_adult = FALSE
@@ -327,10 +332,11 @@
 
 /datum/controller/subsystem/familytree/proc/AssignAuntUncle(mob/living/carbon/human/H)
 	var/base_species = H.dna.species.name
+	var/base_isolated = is_isolated(H)
 	var/datum/heritage/chosen_house
 
 	for(var/datum/heritage/house as anything in families)
-		if(house.dominant_race.name != base_species)
+		if(!house_race_compatible(house, base_species, base_isolated))
 			continue
 		if(!house.housename || house.members.len < 2)
 			continue
