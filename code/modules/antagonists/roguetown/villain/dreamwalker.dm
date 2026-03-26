@@ -9,10 +9,12 @@
 		"HIS FORM IS MAGNICIFENT!",
 	)
 	rogue_enabled = TRUE
+	has_tempo = TRUE
 
 	var/traits_dreamwalker = list(
 		TRAIT_NOHUNGER,
 		TRAIT_NOBREATH,
+		TRAIT_DEATHLESS,
 		TRAIT_NOPAIN,
 		TRAIT_TOXIMMUNE,
 		TRAIT_STEELHEARTED,
