@@ -1,3 +1,38 @@
+/proc/familytree_can_officiate_wedding(mob/living/carbon/human/priest, mob/living/carbon/human/bride, mob/living/carbon/human/groom)
+	if(!priest || !bride || !groom)
+		return FALSE
+
+	if(!priest.mind)
+		return FALSE
+
+	var/datum/job/priest_job = SSfamilytree.get_familytree_job(priest)
+	if(!priest_job)
+		return FALSE
+
+	if(!familytree_is_clergy(priest_job))
+		return FALSE
+
+	var/datum/patron/priest_patron = priest.patron
+	var/datum/patron/bride_patron = bride.patron
+	var/datum/patron/groom_patron = groom.patron
+
+	if(!priest_patron || istype(priest_patron, /datum/patron/godless))
+		return FALSE
+
+	var/priest_rank = familytree_get_clergy_rank(priest)
+	var/bride_rank = familytree_get_social_rank(bride)
+	var/groom_rank = familytree_get_social_rank(groom)
+
+	if(!familytree_rank_can_marry_rank(priest_rank, bride_rank))
+		return FALSE
+	if(!familytree_rank_can_marry_rank(priest_rank, groom_rank))
+		return FALSE
+
+	if(familytree_patron_matches(priest_patron, bride_patron) || familytree_patron_matches(priest_patron, groom_patron))
+		return TRUE
+
+	return FALSE
+
 /proc/familytree_is_clergy(datum/job/job)
 	if(!job)
 		return FALSE
@@ -22,6 +57,24 @@
 		/datum/job/roguetown/templar,
 		/datum/job/roguetown/druid,
 	)
+
+/proc/familytree_patron_matches(datum/patron/priest_p, datum/patron/person_p)
+	if(!priest_p || !person_p)
+		return FALSE
+
+	if(istype(person_p, /datum/patron/godless))
+		return TRUE
+
+	if(priest_p.type == person_p.type)
+		return TRUE
+
+	if(istype(priest_p, /datum/patron/divine/undivided))
+		return istype(person_p, /datum/patron/divine)
+
+	if(istype(person_p, /datum/patron/divine/undivided))
+		return istype(priest_p, /datum/patron/divine)
+
+	return FALSE
 
 #define SOCIAL_RANK_LOW 1
 #define SOCIAL_RANK_MID 2
@@ -48,6 +101,27 @@
 		return SOCIAL_RANK_LOW
 
 	return SOCIAL_RANK_MID
+
+/proc/familytree_rank_can_marry_rank(priest_rank, person_rank)
+	if(priest_rank >= person_rank)
+		return TRUE
+	return FALSE
+
+/proc/familytree_perform_wedding(mob/living/carbon/human/priest, mob/living/carbon/human/person1, mob/living/carbon/human/person2)
+	if(!familytree_can_officiate_wedding(priest, person1, person2))
+		return FALSE
+
+	var/datum/heritage/family = person1.MarryTo(person2)
+	if(!family)
+		return FALSE
+
+	var/announcement = "[priest.real_name] has united [person1.real_name] and [person2.real_name] in holy matrimony!"
+	for(var/mob/living/carbon/human/M in view(7, priest))
+		to_chat(M, span_love(announcement))
+
+	SSfamilytree.on_family_formed(family)
+
+	return TRUE
 
 /proc/familytree_ritual_adopt(mob/living/carbon/human/parent, mob/living/carbon/human/child)
 	if(!parent || !child)

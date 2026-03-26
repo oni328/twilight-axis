@@ -6,13 +6,9 @@ SUBSYSTEM_DEF(familytree)
 	var/datum/heritage/ruling_family
 	var/list/families = list()
 	var/list/viable_spouses = list()
-	// Species that can only match within their isolated group (gnolls + antag goblins)
-	var/list/isolated_group_types = list(
+	var/list/banned_species_types = list(
+		/datum/species/goblinp,
 		/datum/species/gnoll,
-		/datum/species/goblin,
-		)
-	// Species that cannot reproduce biologically but can have families
-	var/list/sterile_species_types = list(
 		/datum/species/construct,
 		)
 	var/list/banned_antag_types = list(
@@ -30,24 +26,10 @@ SUBSYSTEM_DEF(familytree)
 
 	var/list/intimacy_pairs = list()
 	var/xylix_roulette_active = FALSE
-	var/familytree_log_file
-
-/datum/controller/subsystem/familytree/proc/ftlog(msg)
-#ifdef FAMILYTREE_DEBUG_LOGGING
-	if(!familytree_log_file)
-		if(GLOB.log_directory)
-			familytree_log_file = "[GLOB.log_directory]/ss_family.log"
-		else
-			familytree_log_file = "data/logs/ss_family.log"
-	WRITE_LOG(familytree_log_file, "\[[logtime]] [msg]")
-#endif
-	return
 
 /datum/controller/subsystem/familytree/Initialize()
-	ftlog("Initialize() START")
 	ruling_family = new /datum/heritage(null, "Royal", /datum/species/human/northern)
 	preset_family_species = build_preset_family_species()
-	ftlog("preset_family_species built: [preset_family_species.len] species")
 	ensure_royal_partner_job_baselines()
 	reset_royal_partner_jobs()
 	for(var/pioneer_household in preset_family_species)
@@ -55,35 +37,15 @@ SUBSYSTEM_DEF(familytree)
 			var/datum/heritage/family = new /datum/heritage
 			family.dominant_race = pioneer_household
 			families += family
-	ftlog("families after preset: [families.len]")
-	create_isolated_species_houses()
-	ftlog("families after isolated houses: [families.len]")
 	check_xylix_roulette()
 	load_enigma_roles()
 	RegisterSignal(SSdcs, COMSIG_GLOB_MOB_CREATED, PROC_REF(on_mob_created))
-	var/registered_count = 0
 	for(var/mob/living/carbon/human/H in GLOB.mob_list)
 		register_human(H)
-		registered_count++
-	ftlog("registered [registered_count] humans from GLOB.mob_list")
-	addtimer(CALLBACK(src, PROC_REF(scan_and_grant_holy_spells)), 30 SECONDS)
-	ftlog("Initialize() DONE, holy spell scan scheduled in 30s")
 	return ..()
 
 /datum/controller/subsystem/familytree/proc/build_preset_family_species() as /list
 	. = familytree_module_get_selectable_species_types()
-
-/datum/controller/subsystem/familytree/proc/create_isolated_species_houses()
-	var/list/created_types = list()
-	for(var/species_type in isolated_group_types)
-		if(species_type in created_types)
-			continue
-		created_types += species_type
-		var/datum/species/species_instance = new species_type()
-		for(var/I = 1 to 2)
-			var/datum/heritage/family = new /datum/heritage
-			family.dominant_race = species_instance
-			families += family
 
 /datum/controller/subsystem/familytree/proc/check_xylix_roulette()
 	var/datum/storyteller/current = SSgamemode?.current_storyteller
@@ -92,74 +54,19 @@ SUBSYSTEM_DEF(familytree)
 	if(!istype(current, /datum/storyteller/xylix))
 		return FALSE
 	xylix_roulette_active = TRUE
-	notify_xylix_participants()
 	return TRUE
-
-/datum/controller/subsystem/familytree/proc/notify_xylix_participants()
-	var/xylix_msg = span_danger("<font size='2'>Карты вашей судьбы могут быть подтасованы. Ксайликс наблюдает за семейной рулеткой.</font>")
-	for(var/mob/M as anything in GLOB.player_list)
-		if(!M.client || !ishuman(M))
-			continue
-		var/mob/living/carbon/human/H = M
-		if(H.familytree_assignment_scheduled || (H in viable_spouses))
-			to_chat(H, xylix_msg)
 
 /datum/controller/subsystem/familytree/proc/on_mob_created(datum/controller/subsystem/processing/dcs/source, mob/new_mob)
 	SIGNAL_HANDLER
-	ftlog("on_mob_created: [new_mob?.type] ckey=[new_mob?.ckey] name=[new_mob?.real_name]")
-	if(!ishuman(new_mob))
-		ftlog("on_mob_created SKIP: not human")
-		return
-	if(QDELETED(new_mob))
-		ftlog("on_mob_created SKIP: qdeleted")
-		return
-	if(istype(new_mob, /mob/living/carbon/human/dummy))
-		ftlog("on_mob_created SKIP: dummy")
+	if(!ishuman(new_mob) || QDELETED(new_mob) || istype(new_mob, /mob/living/carbon/human/dummy))
 		return
 	var/mob/living/carbon/human/H = new_mob
-	ftlog("on_mob_created PASS: registering [H.real_name] (ckey=[H.ckey] - may be empty, login will handle)")
 	register_human(H)
-	if(H.ckey)
-		addtimer(CALLBACK(src, PROC_REF(try_grant_holy_spells), H), 10 SECONDS)
-		try_queue_assignment(H)
-
-/datum/controller/subsystem/familytree/proc/scan_and_grant_holy_spells()
-	ftlog("scan_and_grant_holy_spells START, GLOB.player_list=[GLOB.player_list.len]")
-	var/scanned = 0
-	var/granted = 0
-	for(var/mob/living/carbon/human/H in GLOB.player_list)
-		if(QDELETED(H) || !H.ckey || !H.mind)
-			ftlog("scan_holy SKIP: [H?.real_name] ckey=[H?.ckey] mind=[H?.mind ? "yes" : "no"] qdel=[QDELETED(H)]")
-			continue
-		scanned++
-		if(try_grant_holy_spells(H))
-			granted++
-	ftlog("scan_and_grant_holy_spells DONE: scanned=[scanned] granted=[granted]")
-
-/datum/controller/subsystem/familytree/proc/try_grant_holy_spells(mob/living/carbon/human/H)
-	if(!H || QDELETED(H) || !H.ckey || !H.mind)
-		ftlog("try_grant_holy SKIP: [H?.real_name] null/qdel/nockey/nomind")
-		return FALSE
-	var/holy_level = H.get_skill_level(/datum/skill/magic/holy)
-	ftlog("try_grant_holy: [H.real_name] ([H.ckey]) holy=[holy_level] job=[H.mind?.assigned_role || H.job]")
-	if(holy_level < SKILL_LEVEL_JOURNEYMAN)
-		ftlog("try_grant_holy: [H.real_name] holy [holy_level] < 3, no spells")
-		return FALSE
-	ftlog("try_grant_holy: [H.real_name] GRANTING establish_bond (holy=[holy_level])")
-	H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/establish_bond)
-	if(holy_level >= SKILL_LEVEL_MASTER)
-		ftlog("try_grant_holy: [H.real_name] GRANTING dissolve_marriage (holy=[holy_level])")
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/dissolve_marriage)
-	return TRUE
+	try_queue_assignment(H)
 
 /datum/controller/subsystem/familytree/proc/register_human(mob/living/carbon/human/H)
-	if(!H || istype(H, /mob/living/carbon/human/dummy))
-		ftlog("register_human SKIP: null or dummy")
+	if(!H || istype(H, /mob/living/carbon/human/dummy) || H.familytree_module_signal_bound)
 		return
-	if(H.familytree_module_signal_bound)
-		ftlog("register_human SKIP: [H.real_name] already bound")
-		return
-	ftlog("register_human: [H.real_name] ([H.ckey]) binding signals")
 	H.familytree_module_signal_bound = TRUE
 	RegisterSignal(H, COMSIG_MOB_LOGIN, PROC_REF(on_human_login))
 	RegisterSignal(H, COMSIG_MOB_LOGOUT, PROC_REF(on_human_logout))
@@ -167,36 +74,28 @@ SUBSYSTEM_DEF(familytree)
 	RegisterSignal(H, COMSIG_LIVING_REVIVE, PROC_REF(on_human_revive))
 	RegisterSignal(H, COMSIG_JOB_RECEIVED, PROC_REF(on_human_job_received))
 	RegisterSignal(H, COMSIG_SEX_CLIMAX, PROC_REF(on_human_climax))
-	ftlog("register_human: [H.real_name] signals bound OK")
 
 /datum/controller/subsystem/familytree/proc/stop_tracking_human(mob/living/carbon/human/H, reason = "unspecified")
 	if(!H || !H.familytree_module_signal_bound)
-		ftlog("stop_tracking SKIP: [H?.real_name] null or not bound")
 		return
-	ftlog("stop_tracking: [H.real_name] ([H.ckey]) reason=[reason]")
 	H.familytree_module_signal_bound = FALSE
 	UnregisterSignal(H, list(COMSIG_MOB_LOGIN, COMSIG_MOB_LOGOUT, COMSIG_MOB_DEATH, COMSIG_LIVING_REVIVE, COMSIG_JOB_RECEIVED, COMSIG_SEX_CLIMAX))
 
 /datum/controller/subsystem/familytree/proc/on_human_login(mob/living/carbon/human/H)
 	SIGNAL_HANDLER
-	ftlog("on_human_login: [H?.real_name] ([H?.ckey]) client=[H?.client ? "yes" : "no"]")
 	try_queue_assignment(H)
-	addtimer(CALLBACK(src, PROC_REF(try_grant_holy_spells), H), 5 SECONDS)
 
 /datum/controller/subsystem/familytree/proc/on_human_logout(mob/living/carbon/human/H)
 	SIGNAL_HANDLER
-	ftlog("on_human_logout: [H?.real_name] ([H?.ckey])")
 	if(H)
 		viable_spouses -= H
 
 /datum/controller/subsystem/familytree/proc/on_human_death(mob/living/carbon/human/H, gibbed)
 	SIGNAL_HANDLER
-	ftlog("on_human_death: [H?.real_name] ([H?.ckey]) gibbed=[gibbed]")
 	pause_familytree_human(H, "death")
 
 /datum/controller/subsystem/familytree/proc/on_human_revive(mob/living/carbon/human/H, full_heal, admin_revive)
 	SIGNAL_HANDLER
-	ftlog("on_human_revive: [H?.real_name] ([H?.ckey])")
 	addtimer(CALLBACK(src, PROC_REF(run_revive_recheck), H, full_heal, admin_revive, 1), 2)
 
 /datum/controller/subsystem/familytree/proc/run_revive_recheck(mob/living/carbon/human/H, full_heal, admin_revive, attempt)
@@ -211,7 +110,6 @@ SUBSYSTEM_DEF(familytree)
 
 /datum/controller/subsystem/familytree/proc/on_human_job_received(mob/living/carbon/human/H, rank)
 	SIGNAL_HANDLER
-	ftlog("on_human_job_received: [H?.real_name] ([H?.ckey]) rank=[rank]")
 	try_queue_assignment(H)
 
 /datum/controller/subsystem/familytree/proc/on_human_climax(mob/living/carbon/human/H)
@@ -219,45 +117,34 @@ SUBSYSTEM_DEF(familytree)
 	on_intimacy_event(H)
 
 /datum/controller/subsystem/familytree/proc/try_queue_assignment(mob/living/carbon/human/H)
-	ftlog("try_queue_assignment: [H?.real_name] ([H?.ckey])")
 	if(!H || QDELETED(H) || istype(H, /mob/living/carbon/human/dummy))
-		ftlog("try_queue SKIP: null/qdel/dummy")
 		return
 	var/unsubscribe_reason = get_familytree_unsubscribe_reason(H)
 	if(unsubscribe_reason)
-		ftlog("try_queue UNSUB: [H.real_name] reason=[unsubscribe_reason]")
 		unsubscribe_familytree_human(H, unsubscribe_reason)
 		return
 	if(H.stat == DEAD)
-		ftlog("try_queue SKIP: [H.real_name] dead")
 		return
 	if(!H.client)
-		ftlog("try_queue SKIP: [H.real_name] no client")
 		return
 
 	var/datum/job/job = get_familytree_job(H)
-	ftlog("try_queue: [H.real_name] job=[job?.title] species=[H.dna?.species?.type]")
 	var/datum/preferences/P = H.client?.prefs
 	if(P && is_royal_monarch_job(job) && !current_royal_partner_owner)
-		ftlog("try_queue: [H.real_name] is royal monarch, refreshing partner jobs")
 		P.familytree_module_load_character()
 		refresh_royal_partner_jobs(H, P)
 
 	if(H.family_datum)
-		ftlog("try_queue STOP: [H.real_name] family already assigned ([H.family_datum])")
 		stop_tracking_human(H, "family already assigned")
 		return
 
 	if(H.familytree_assignment_scheduled)
-		ftlog("try_queue SKIP: [H.real_name] assignment already scheduled")
 		return
 
 	if(H in viable_spouses)
-		ftlog("try_queue SKIP: [H.real_name] already in viable_spouses")
 		return
 
 	if(!P)
-		ftlog("try_queue SKIP: [H.real_name] no prefs")
 		return
 
 	P.familytree_module_load_character()
@@ -267,80 +154,61 @@ SUBSYSTEM_DEF(familytree)
 	H.polygamy_mode = P.polygamy_mode
 	H.desired_relative_role = P.desired_relative_role
 	H.allow_low_status_marriage = P.allow_low_status_marriage
-	ftlog("try_queue: [H.real_name] pref=[H.familytree_pref] setspouse=[H.setspouse] role=[H.desired_relative_role]")
 	if(is_royal_suitor_job(job))
-		ftlog("try_queue STOP: [H.real_name] royal suitor job")
 		stop_tracking_human(H, "royal suitor bypasses familytree assignment")
 		return
 
 	var/royal_status = get_royal_status(H)
 	if(royal_status)
-		ftlog("try_queue ROYAL: [H.real_name] status=[royal_status] delay=[get_royal_delay(H)]s")
 		H.familytree_assignment_scheduled = TRUE
 		addtimer(CALLBACK(src, PROC_REF(run_royal_assignment), H, royal_status), get_royal_delay(H) SECONDS)
 		return
 
 	if(H.familytree_pref != FAMILY_NONE)
-		var/timer = rand(1, 30) + 10
-		ftlog("try_queue LOCAL: [H.real_name] pref=[H.familytree_pref] timer=[timer]s")
 		H.familytree_assignment_scheduled = TRUE
+		var/timer = rand(1, 30) + 10
 		addtimer(CALLBACK(src, PROC_REF(run_local_assignment), H, H.familytree_pref), timer SECONDS)
 		return
 
 	if(H.client && (H.mind?.assigned_role || H.job))
-		ftlog("try_queue STOP: [H.real_name] familytree disabled (pref=FAMILY_NONE)")
 		stop_tracking_human(H, "familytree disabled for this character")
 
 /datum/controller/subsystem/familytree/proc/run_local_assignment(mob/living/carbon/human/H, status)
-	ftlog("run_local_assignment: [H?.real_name] ([H?.ckey]) status=[status]")
 	if(!H || QDELETED(H))
-		ftlog("run_local ABORT: null/qdel")
 		return
 	var/block_reason = get_familytree_runtime_block_reason(H, TRUE)
 	if(block_reason == "dead")
-		ftlog("run_local DEFER: [H.real_name] dead")
 		pause_familytree_human(H, "local assignment deferred: dead")
 		return
 	if(block_reason == "no client")
-		ftlog("run_local DEFER: [H.real_name] no client")
 		H.familytree_assignment_scheduled = FALSE
 		return
 	if(block_reason)
-		ftlog("run_local UNSUB: [H.real_name] block=[block_reason]")
 		unsubscribe_familytree_human(H, "local assignment aborted: [block_reason]")
 		return
 	if(H.family_datum)
-		ftlog("run_local SKIP: [H.real_name] already has family")
 		H.familytree_assignment_scheduled = FALSE
 		stop_tracking_human(H, "local assignment skipped; family already assigned")
 		return
 	H.familytree_assignment_scheduled = FALSE
-	ftlog("run_local GO: [H.real_name] calling AddLocal status=[status]")
 	AddLocal(H, status)
 
 /datum/controller/subsystem/familytree/proc/run_royal_assignment(mob/living/carbon/human/H, status)
-	ftlog("run_royal_assignment: [H?.real_name] ([H?.ckey]) status=[status]")
 	if(!H || QDELETED(H))
-		ftlog("run_royal ABORT: null/qdel")
 		return
 	var/block_reason = get_familytree_runtime_block_reason(H, TRUE)
 	if(block_reason == "dead")
-		ftlog("run_royal DEFER: [H.real_name] dead")
 		pause_familytree_human(H, "royal assignment deferred: dead")
 		return
 	if(block_reason == "no client")
-		ftlog("run_royal DEFER: [H.real_name] no client")
 		H.familytree_assignment_scheduled = FALSE
 		return
 	if(block_reason)
-		ftlog("run_royal UNSUB: [H.real_name] block=[block_reason]")
 		unsubscribe_familytree_human(H, "royal assignment aborted: [block_reason]")
 		return
 	if(H.family_datum)
-		ftlog("run_royal SKIP: [H.real_name] already has family")
 		H.familytree_assignment_scheduled = FALSE
 		stop_tracking_human(H, "royal assignment skipped; family already assigned")
 		return
 	H.familytree_assignment_scheduled = FALSE
-	ftlog("run_royal GO: [H.real_name] calling AddRoyal status=[status]")
 	AddRoyal(H, status)

@@ -1,85 +1,61 @@
 /datum/controller/subsystem/familytree/proc/AddLocal(mob/living/carbon/human/H, status)
-	ftlog("AddLocal: [H?.real_name] ([H?.ckey]) status=[status]")
 	if(!H || !status || istype(H, /mob/living/carbon/human/dummy))
-		ftlog("AddLocal SKIP: null/no status/dummy")
 		return
 	var/block_reason = get_familytree_runtime_block_reason(H, TRUE)
 	if(block_reason == "dead")
-		ftlog("AddLocal BLOCK: [H.real_name] dead")
 		pause_familytree_human(H, "local assignment blocked: dead")
 		return
 	if(block_reason == "no client")
-		ftlog("AddLocal BLOCK: [H.real_name] no client")
 		return
 	if(block_reason)
-		ftlog("AddLocal UNSUB: [H.real_name] block=[block_reason]")
 		unsubscribe_familytree_human(H, "local assignment blocked: [block_reason]")
 		return
 	if(get_royal_status(H))
-		ftlog("AddLocal SKIP: [H.real_name] royal flow")
 		stop_tracking_human(H, "local assignment skipped; handled by royal flow")
 		return
 	if(is_royal_suitor_job(get_familytree_job(H)))
-		ftlog("AddLocal SKIP: [H.real_name] suitor job")
 		stop_tracking_human(H, "local assignment skipped; suitor job")
 		return
 
 	if(H.setspouse && length(H.setspouse))
-		ftlog("AddLocal: [H.real_name] has favorite=[H.setspouse], trying favorite assign")
 		var/favorite_result = TryAssignToFavorite(H, status)
-		ftlog("AddLocal: [H.real_name] favorite_result=[favorite_result]")
 		if(favorite_result == "assigned")
 			stop_tracking_human(H, "assigned via favorite")
 			return
 		if(favorite_result == "waiting")
-			ftlog("AddLocal: [H.real_name] favorite not found, waiting 60s")
 			H.familytree_assignment_scheduled = TRUE
 			addtimer(CALLBACK(src, PROC_REF(run_local_assignment), H, status), 60 SECONDS)
 			return
 
 	if(H.desired_relative_role != RELATIVE_ANY)
-		ftlog("AddLocal: [H.real_name] desired_role=[H.desired_relative_role], trying role assign")
 		AssignWithDesiredRole(H)
 		if(H.family_datum || H.spouse_mob)
-			ftlog("AddLocal: [H.real_name] assigned via desired role")
 			stop_tracking_human(H, "assigned via desired relative role")
 			return
-		ftlog("AddLocal: [H.real_name] desired role assignment failed, fallthrough")
 	switch(status)
 		if(FAMILY_PARTIAL)
-			ftlog("AddLocal: [H.real_name] -> AssignToHouse")
 			AssignToHouse(H)
-			ftlog("AddLocal: [H.real_name] house result: family=[H.family_datum ? "YES" : "NO"]")
 			stop_tracking_human(H, H.family_datum ? "assigned to house" : "house assignment completed without family")
 
 		if(FAMILY_NEWLYWED)
-			ftlog("AddLocal: [H.real_name] -> AssignNewlyWed")
 			AssignNewlyWed(H)
-			ftlog("AddLocal: [H.real_name] newlywed result: spouse=[H.spouse_mob ? "YES" : "NO"] family=[H.family_datum ? "YES" : "NO"]")
 			if(H.spouse_mob || H.family_datum)
 				stop_tracking_human(H, "newlywed flow matched spouse")
 
 		if(FAMILY_FULL)
 			if(H.virginity)
-				ftlog("AddLocal: [H.real_name] SKIP: virginity gate")
 				stop_tracking_human(H, "full family flow skipped; virginity gate")
 				return
-			ftlog("AddLocal: [H.real_name] -> AssignToFamily")
 			AssignToFamily(H)
-			ftlog("AddLocal: [H.real_name] family result: family=[H.family_datum ? "YES" : "NO"]")
 			stop_tracking_human(H, H.family_datum ? "assigned to family" : "family assignment completed without family")
 
 /datum/controller/subsystem/familytree/proc/TryAssignToFavorite(mob/living/carbon/human/H, status)
 	if(!H?.setspouse || !length(H.setspouse))
-		ftlog("TryFavorite SKIP: [H?.real_name] no setspouse")
 		return "skip"
 
-	ftlog("TryFavorite: [H.real_name] looking for '[H.setspouse]'")
 	var/mob/living/carbon/human/favorite = FindFavoriteMob(H)
 	if(!favorite)
-		ftlog("TryFavorite: [H.real_name] favorite NOT FOUND, waiting")
 		return "waiting"
-	ftlog("TryFavorite: [H.real_name] found favorite=[favorite.real_name] ([favorite.ckey])")
 
 	if(favorite.setspouse && length(favorite.setspouse))
 		if(!familytree_names_match(favorite.setspouse, H.real_name))
@@ -121,8 +97,6 @@
 			continue
 		if(!candidate.client || candidate.stat == DEAD)
 			continue
-		if(candidate.familytree_pref == FAMILY_NONE)
-			continue
 		if(familytree_names_match(candidate.real_name, H.setspouse))
 			return candidate
 
@@ -131,7 +105,7 @@
 /datum/controller/subsystem/familytree/proc/AssignToHouse(mob/living/carbon/human/H)
 	if(!H)
 		return
-	ftlog("AssignToHouse: [H.real_name] species=[H.dna?.species?.name] isolated=[is_isolated(H)]")
+
 	var/our_race = H.dna.species.name
 	var/adopted = FALSE
 	var/datum/heritage/chosen_house
@@ -144,15 +118,13 @@
 		else
 			low_priority_houses += house
 
-	var/we_are_isolated = is_isolated(H)
-
 	if(!chosen_house)
 		for(var/datum/heritage/house as anything in high_priority_houses)
-			if(house_race_compatible(house, our_race, we_are_isolated) && house.members.len < 4)
+			if(house.dominant_race.name == our_race && house.members.len < 4)
 				if(!WouldCreateAgeConflict(house, H))
 					chosen_house = house
 					break
-			if(!we_are_isolated && prob(20) && house.members.len <= 8)
+			if(prob(20) && house.members.len <= 8)
 				if(!WouldCreateAgeConflict(house, H))
 					chosen_house = house
 					adopted = TRUE
@@ -160,16 +132,13 @@
 
 	if(!chosen_house)
 		for(var/datum/heritage/house as anything in low_priority_houses)
-			if(house_race_compatible(house, our_race, we_are_isolated))
+			if(house.dominant_race.name == our_race)
 				if(!WouldCreateAgeConflict(house, H))
 					chosen_house = house
 					break
 
 	if(chosen_house)
-		ftlog("AssignToHouse: [H.real_name] -> house=[chosen_house.housename] adopted=[adopted]")
 		AddPersonToHouse(chosen_house, H, adopted)
-	else
-		ftlog("AssignToHouse: [H.real_name] NO house found (families=[families.len])")
 
 /datum/controller/subsystem/familytree/proc/AddPersonToHouse(datum/heritage/house, mob/living/carbon/human/person, adopted = FALSE)
 	var/role = DetermineAppropriateRole(house, person, adopted)
@@ -237,13 +206,11 @@
 /datum/controller/subsystem/familytree/proc/AssignToFamily(mob/living/carbon/human/H)
 	if(!H)
 		return
-	ftlog("AssignToFamily: [H.real_name] species=[H.dna?.species?.name] isolated=[is_isolated(H)]")
 	var/our_race = H.dna.species.name
-	var/our_isolated = is_isolated(H)
 	var/list/eligible_houses = list()
 
 	for(var/datum/heritage/house as anything in families)
-		if(!house_race_compatible(house, our_race, our_isolated))
+		if(house.dominant_race.name != our_race)
 			continue
 
 		var/has_single_adult = FALSE
@@ -267,9 +234,7 @@
 		if(!has_single_adult && !house.housename)
 			eligible_houses += house
 
-	ftlog("AssignToFamily: [H.real_name] eligible_houses=[eligible_houses.len]")
 	if(!eligible_houses.len)
-		ftlog("AssignToFamily: [H.real_name] NO eligible houses found")
 		return
 
 	for(var/datum/heritage/house as anything in eligible_houses)
@@ -294,7 +259,6 @@
 /datum/controller/subsystem/familytree/proc/AssignNewlyWed(mob/living/carbon/human/H)
 	if(!H)
 		return
-	ftlog("AssignNewlyWed: [H.real_name] species=[H.dna?.species?.name] viable_spouses=[viable_spouses.len]")
 	var/block_reason = get_familytree_runtime_block_reason(H, TRUE)
 	if(block_reason == "dead")
 		pause_familytree_human(H, "newlywed blocked: dead")
@@ -343,7 +307,6 @@
 
 		potential_matches += list(list(potential_spouse, priority))
 
-	ftlog("AssignNewlyWed: [H.real_name] potential_matches=[potential_matches.len]")
 	if(potential_matches.len)
 		var/best_priority = -1
 		var/list/best_matches = list()
@@ -358,20 +321,16 @@
 
 		if(best_matches.len)
 			var/mob/living/carbon/human/chosen_spouse = pick(best_matches)
-			ftlog("AssignNewlyWed: [H.real_name] MARRIED to [chosen_spouse.real_name]")
 			viable_spouses -= chosen_spouse
 			viable_spouses -= H
 			H.MarryTo(chosen_spouse)
-	else
-		ftlog("AssignNewlyWed: [H.real_name] no matches, staying in viable_spouses")
 
 /datum/controller/subsystem/familytree/proc/AssignAuntUncle(mob/living/carbon/human/H)
 	var/base_species = H.dna.species.name
-	var/base_isolated = is_isolated(H)
 	var/datum/heritage/chosen_house
 
 	for(var/datum/heritage/house as anything in families)
-		if(!house_race_compatible(house, base_species, base_isolated))
+		if(house.dominant_race.name != base_species)
 			continue
 		if(!house.housename || house.members.len < 2)
 			continue

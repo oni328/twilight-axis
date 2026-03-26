@@ -39,22 +39,10 @@
 
 	return resolve_job_datum(H.job)
 
-/datum/controller/subsystem/familytree/proc/is_isolated(mob/living/carbon/human/H)
+/datum/controller/subsystem/familytree/proc/is_banned_species(mob/living/carbon/human/H)
 	if(!H?.dna?.species)
 		return FALSE
-	// Gnolls are always isolated by species alone
-	if(istype(H.dna.species, /datum/species/gnoll))
-		return TRUE
-	// Antag goblins: species goblin + antagonist special_role
-	if(istype(H.dna.species, /datum/species/goblin))
-		if(H.mind?.special_role)
-			return TRUE
-	return FALSE
-
-/datum/controller/subsystem/familytree/proc/is_sterile_species(mob/living/carbon/human/H)
-	if(!H?.dna?.species)
-		return FALSE
-	for(var/species_type in sterile_species_types)
+	for(var/species_type in banned_species_types)
 		if(istype(H.dna.species, species_type))
 			return TRUE
 	return FALSE
@@ -71,64 +59,18 @@
 /datum/controller/subsystem/familytree/proc/is_familytree_wildshape(mob/living/carbon/human/H)
 	return istype(H, /mob/living/carbon/human/species/wildshape)
 
-/datum/controller/subsystem/familytree/proc/is_valid_familytree_species(mob/living/carbon/human/H)
-	if(!H?.dna?.species)
-		return FALSE
-	var/datum/species/S = H.dna.species
-	for(var/species_type in isolated_group_types)
-		if(istype(S, species_type))
-			return TRUE
-	for(var/species_type in sterile_species_types)
-		if(istype(S, species_type))
-			return TRUE
-	if(S.check_roundstart_eligible())
-		return TRUE
-	return FALSE
-
-/datum/controller/subsystem/familytree/proc/is_house_isolated(datum/heritage/house)
-	if(!house?.dominant_race)
-		return FALSE
-	var/house_species_type
-	if(istype(house.dominant_race, /datum/species))
-		house_species_type = house.dominant_race.type
-	else if(ispath(house.dominant_race))
-		house_species_type = house.dominant_race
-	else
-		return FALSE
-	for(var/species_type in isolated_group_types)
-		if(ispath(house_species_type, species_type))
-			return TRUE
-	return FALSE
-
-/datum/controller/subsystem/familytree/proc/house_race_compatible(datum/heritage/house, our_race, we_are_isolated)
-	if(we_are_isolated)
-		return is_house_isolated(house)
-	if(!house.dominant_race)
-		return FALSE
-	if(istype(house.dominant_race, /datum/species))
-		return house.dominant_race.name == our_race
-	return FALSE
-
 /datum/controller/subsystem/familytree/proc/get_familytree_unsubscribe_reason(mob/living/carbon/human/H)
 	if(!H)
 		return "null human"
 	if(QDELETED(H))
 		return "qdeleted"
-	if(!H.ckey)
-		if(!H.client)
-			ftlog("unsub_reason: [H.real_name] no ckey and no client, not ready yet - skip")
-			return "not ready"
-		return "npc"
 	if(istype(H, /mob/living/carbon/human/dummy))
 		return "dummy mob"
 	if(is_familytree_wildshape(H))
-		ftlog("unsub_reason: [H.real_name] is wildshape")
 		return "wildshape form"
-	if(!is_valid_familytree_species(H))
-		ftlog("unsub_reason: [H.real_name] invalid species [H.dna?.species?.type]")
-		return "invalid species"
+	if(is_banned_species(H))
+		return "banned species"
 	if(is_banned_antag(H))
-		ftlog("unsub_reason: [H.real_name] banned antag")
 		return "banned antag"
 	return null
 
@@ -145,14 +87,12 @@
 /datum/controller/subsystem/familytree/proc/pause_familytree_human(mob/living/carbon/human/H, reason)
 	if(!H)
 		return
-	ftlog("pause_human: [H.real_name] ([H.ckey]) reason=[reason]")
 	viable_spouses -= H
 	H.familytree_assignment_scheduled = FALSE
 
 /datum/controller/subsystem/familytree/proc/unsubscribe_familytree_human(mob/living/carbon/human/H, reason)
 	if(!H)
 		return
-	ftlog("unsubscribe_human: [H.real_name] ([H.ckey]) reason=[reason]")
 	viable_spouses -= H
 	H.familytree_assignment_scheduled = FALSE
 	stop_tracking_human(H, reason)

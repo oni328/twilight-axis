@@ -52,6 +52,7 @@
 		/datum/job/roguetown/assassin,
 		/datum/job/roguetown/lunatic,
 		/datum/job/roguetown/vagabond,
+		/datum/job/roguetown/gnoll,
 	)
 
 	// Fallback title list for advclass-based roles without own job datums
