@@ -3,8 +3,12 @@
 		return null
 
 	if(other in parents)
+		if(adoption_status)
+			return "adoptive [other.GetParentTerm()]"
 		return other.GetParentTerm()
 	if(other in children)
+		if(other.adoption_status)
+			return "adopted [other.GetChildTerm()]"
 		return other.GetChildTerm()
 	if(other in spouses)
 		return other.GetSpouseTerm()

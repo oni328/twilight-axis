@@ -167,9 +167,6 @@
 	var/p_are = lookee.p_are()
 	var/relationship_text = "[p_They] [p_are] my [relationship]"
 
-	if(lookee_member.adoption_status && (relationship in list("son", "daughter", "child")))
-		relationship_text += " (adopted)"
-
 	return span_love(span_bold("[relationship_text]."))
 
 /datum/heritage/proc/GetDisplayHouseTitle()
@@ -326,18 +323,29 @@
 	var/parent2_is_human = (parent2_species_type == /datum/species/human/northern)
 	var/parent1_is_elf = ispath(parent1_species_type, /datum/species/elf)
 	var/parent2_is_elf = ispath(parent2_species_type, /datum/species/elf)
-	if((parent1_is_human && parent2_is_elf) || (parent2_is_human && parent1_is_elf))
-		return child_species_type == /datum/species/human/halfelf
+	var/parent1_is_halfelf = (parent1_species_type == /datum/species/human/halfelf)
+	var/parent2_is_halfelf = (parent2_species_type == /datum/species/human/halfelf)
+	var/parent1_is_orcish = ispath(parent1_species_type, /datum/species/orc) || (parent1_species_type == /datum/species/halforc)
+	var/parent2_is_orcish = ispath(parent2_species_type, /datum/species/orc) || (parent2_species_type == /datum/species/halforc)
 
-	var/parent1_is_orcish = ispath(parent1_species_type, /datum/species/orc)
-	var/parent2_is_orcish = ispath(parent2_species_type, /datum/species/orc)
-	var/parent1_is_halforc = (parent1_species_type == /datum/species/halforc)
-	var/parent2_is_halforc = (parent2_species_type == /datum/species/halforc)
-	if((parent1_is_human && (parent2_is_orcish || parent2_is_halforc)) || (parent2_is_human && (parent1_is_orcish || parent1_is_halforc)))
-		return child_species_type == /datum/species/halforc
+	if(child_species_type == /datum/species/human/halfelf)
+		return (parent1_is_human && parent2_is_elf) || (parent2_is_human && parent1_is_elf) \
+			|| (parent1_is_halfelf || parent2_is_halfelf) \
+			|| (parent1_is_human && parent2_is_halfelf) || (parent2_is_human && parent1_is_halfelf) \
+			|| (parent1_is_elf && parent2_is_halfelf) || (parent2_is_elf && parent1_is_halfelf)
 
-	if(parent1_is_elf && parent2_is_elf && ispath(child_species_type, /datum/species/elf))
-		return TRUE
+	if(child_species_type == /datum/species/halforc)
+		return (parent1_is_human && parent2_is_orcish) || (parent2_is_human && parent1_is_orcish)
+
+	if(child_species_type == /datum/species/human/northern)
+		return (parent1_is_human || parent1_is_halfelf || parent1_species_type == /datum/species/halforc) \
+			&& (parent2_is_human || parent2_is_halfelf || parent2_species_type == /datum/species/halforc)
+
+	if(ispath(child_species_type, /datum/species/elf))
+		return (parent1_is_elf || parent1_is_halfelf) && (parent2_is_elf || parent2_is_halfelf)
+
+	if(ispath(child_species_type, /datum/species/orc))
+		return parent1_is_orcish && parent2_is_orcish
 
 	return FALSE
 
@@ -351,21 +359,36 @@
 	if(child_species_type == parent_species_type)
 		return TRUE
 
+	var/child_is_human = (child_species_type == /datum/species/human/northern)
+	var/child_is_elf = ispath(child_species_type, /datum/species/elf)
+	var/child_is_halfelf = (child_species_type == /datum/species/human/halfelf)
+	var/child_is_halforc = (child_species_type == /datum/species/halforc)
+	var/child_is_tiefling = (child_species_type == /datum/species/tieberian)
+
 	var/parent_is_human = (parent_species_type == /datum/species/human/northern)
 	var/parent_is_elf = ispath(parent_species_type, /datum/species/elf)
+	var/parent_is_halfelf = (parent_species_type == /datum/species/human/halfelf)
 	var/parent_is_orcish = ispath(parent_species_type, /datum/species/orc) || (parent_species_type == /datum/species/halforc)
+	var/parent_is_halforc = (parent_species_type == /datum/species/halforc)
+	var/parent_is_tiefling = (parent_species_type == /datum/species/tieberian)
 
-	if(child_species_type == /datum/species/tieberian)
-		return parent_species_type == /datum/species/tieberian
+	if(child_is_tiefling)
+		return parent_is_tiefling
 
-	if(child_species_type == /datum/species/human/halfelf)
-		return parent_is_human || parent_is_elf || parent_species_type == /datum/species/human/halfelf
+	if(child_is_halfelf)
+		return parent_is_human || parent_is_elf || parent_is_halfelf
 
-	if(child_species_type == /datum/species/halforc)
+	if(child_is_halforc)
 		return parent_is_human || parent_is_orcish
 
-	if(ispath(child_species_type, /datum/species/elf))
-		return parent_is_elf
+	if(child_is_human)
+		return parent_is_human || parent_is_halfelf || parent_is_halforc
+
+	if(child_is_elf)
+		return parent_is_elf || parent_is_halfelf
+
+	if(ispath(child_species_type, /datum/species/orc))
+		return parent_is_orcish
 
 	return FALSE
 
