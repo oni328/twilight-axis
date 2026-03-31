@@ -92,7 +92,6 @@
 
 /datum/outfit/job/roguetown/inquisitor/blackpowder/choose_loadout(mob/living/carbon/human/H)
 	. = ..()
-	change_origin(H, /datum/virtue/origin/otava, "Holy Order")
 	H.adjust_blindness(-3)
 	var/classes = list("Vanguard", "Runed Volf")
 	var/classchoice = input(H,"CHOOSE YOUR SPECIFICATION.", "YOUR CURSED LYFE.") as anything in classes
