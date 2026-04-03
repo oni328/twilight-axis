@@ -34,7 +34,7 @@
 //       tgui/packages/tgui/interfaces/FamilyDisplayPanel.tsx
 // Assets: relations.dmi
 
-//#define FAMILYTREE_DEBUG_LOGGING //UNDEFINE IT FOR THE LOCAL TESTING
+#define FAMILYTREE_DEBUG_LOGGING //UNDEFINE IT FOR THE LOCAL TESTING
 
 #ifndef FAMILY_NONE
 #define FAMILY_NONE 1

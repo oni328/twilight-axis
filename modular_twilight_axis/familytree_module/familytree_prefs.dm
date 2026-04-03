@@ -92,6 +92,7 @@
 	polygamy_mode = sanitize_integer(polygamy_mode, POLYGAMY_DISABLED, POLYGAMY_ALLOW_BOTH, POLYGAMY_DISABLED)
 	desired_relative_role = sanitize_integer(desired_relative_role, RELATIVE_ANY, RELATIVE_SPOUSE, RELATIVE_ANY)
 	allow_low_status_marriage = sanitize_integer(allow_low_status_marriage, 0, 1, 0)
+	allow_relatives_in_family = sanitize_integer(allow_relatives_in_family, 0, 1, TRUE)
 
 /datum/preferences/proc/familytree_module_has_enabled_customizer_entry(entry_type)
 	validate_customizer_entries()
@@ -124,6 +125,7 @@
 			S["polygamy_mode"] >> polygamy_mode
 			S["desired_relative_role"] >> desired_relative_role
 			S["allow_low_status_marriage"] >> allow_low_status_marriage
+			S["allow_relatives_in_family"] >> allow_relatives_in_family
 
 	familytree_module_sanitize_character()
 	familytree_module_loaded_slot = slot
@@ -151,6 +153,7 @@
 	WRITE_FILE(S["polygamy_mode"], polygamy_mode)
 	WRITE_FILE(S["desired_relative_role"], desired_relative_role)
 	WRITE_FILE(S["allow_low_status_marriage"], allow_low_status_marriage)
+	WRITE_FILE(S["allow_relatives_in_family"], allow_relatives_in_family)
 
 	familytree_module_loaded_slot = slot
 	familytree_module_loaded_path = path

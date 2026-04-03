@@ -811,6 +811,7 @@ GLOBAL_LIST_INIT(ftdebug_age_pool, list(
 		"Dump system state",
 		"Cleanup debug entities",
 		"Log stats",
+		"Elite Family Control (new logic)",
 	)
 
 	var/choice = tgui_input_list(mob, "FamilyTree Debug Panel", "FT Debug", options)
@@ -949,3 +950,46 @@ GLOBAL_LIST_INIT(ftdebug_age_pool, list(
 	return TRUE
 
 #endif
+
+/datum/controller/subsystem/familytree/proc/ftdebug_scenario_elite_family_control(turf/spawn_loc)
+	ftlog("=== DBGSIM ELITE_FAMILY_CONTROL START ===", FTLOG_INFO)
+	var/list/results = list()
+
+	var/mob/living/carbon/human/knight1 = new /mob/living/carbon/human(spawn_loc)
+	knight1.real_name = "Sir Knight1"
+	knight1.familytree_pref = FAMILY_NEWLYWED
+	knight1.allow_low_status_marriage = 1
+	knight1.allow_relatives_in_family = 1
+	knight1.mind = new /datum/mind("debug_knight1")
+	knight1.mind.assigned_role = "Knight"
+
+	var/mob/living/carbon/human/knight2 = new /mob/living/carbon/human(spawn_loc)
+	knight2.real_name = "Sir Knight2"
+	knight2.familytree_pref = FAMILY_NEWLYWED
+	knight2.allow_low_status_marriage = 1
+	knight2.allow_relatives_in_family = 1
+	knight2.mind = new /datum/mind("debug_knight2")
+	knight2.mind.assigned_role = "Knight"
+
+	var/mob/living/carbon/human/wretch = new /mob/living/carbon/human(spawn_loc)
+	wretch.real_name = "Wretch Low"
+	wretch.familytree_pref = FAMILY_PARTIAL
+	wretch.allow_low_status_marriage = 1
+	wretch.mind = new /datum/mind("debug_wretch")
+	wretch.mind.assigned_role = "Wretch"
+
+	results += "Created: Knight1, Knight2, Wretch (low-tier)"
+
+	knight1.MarryTo(knight2)
+	var/datum/heritage/house = knight1.family_datum
+	results += "Knights married. Is elite family = " + (is_elite_family(house) ? "YES" : "NO")
+
+	AssignToHouse(wretch)
+	results += "Wretch tried to join elite family. Blocked = " + (wretch.family_datum != house ? "YES (correct)" : "NO (BAD)")
+
+	results += "Knight1 allow_relatives_in_family = " + (knight1.allow_relatives_in_family ? "1" : "0")
+
+	ftlog("=== DBGSIM ELITE_FAMILY_CONTROL END ===", FTLOG_INFO)
+	ftlog("Results: " + results.Join(" | "), FTLOG_INFO)
+
+	return results

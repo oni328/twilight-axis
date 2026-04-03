@@ -9,6 +9,7 @@
 	var/allow_low_status_marriage = FALSE
 	var/tmp/familytree_module_loaded_slot
 	var/tmp/familytree_module_loaded_path
+	var/allow_relatives_in_family = TRUE
 
 /mob/living/carbon/human
 	var/family_UI = TRUE
@@ -26,3 +27,4 @@
 	var/tmp/familytree_opted_out = FALSE
 	var/tmp/familytree_setspouse_timeout_offered = FALSE
 	var/tmp/familytree_setspouse_retries = 0
+	var/allow_relatives_in_family = TRUE

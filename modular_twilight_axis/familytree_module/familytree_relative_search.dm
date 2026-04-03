@@ -49,7 +49,7 @@
 			house.AddToFamily(H, parent1, parent2, FALSE)
 			return
 
-	AssignToHouse(H)
+	ftlog("AssignAsSibling: [H.real_name] → NO suitable sibling house found")
 
 /datum/controller/subsystem/familytree/proc/AssignAsParent(mob/living/carbon/human/H)
 	if(!H)

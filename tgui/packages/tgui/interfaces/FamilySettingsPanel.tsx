@@ -27,6 +27,7 @@ type FamilySettingsData = {
   polygamyMode?: PolygamyMode;
   desiredRelativeRole?: RelativeRole;
   allowLowStatusMarriage?: number;
+  allowRelativesInFamily?: number;
 };
 
 type BackendData = {
@@ -55,6 +56,7 @@ export const FamilySettingsPanel = () => {
   const [desiredRelativeRole, setDesiredRelativeRole] =
     useState<RelativeRole>(0);
   const [allowLowStatusMarriage, setAllowLowStatusMarriage] = useState(0);
+  const [allowRelativesInFamily, setAllowRelativesInFamily] = useState(1);
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
@@ -75,6 +77,7 @@ export const FamilySettingsPanel = () => {
     setPolygamyMode(settings.polygamyMode ?? 0);
     setDesiredRelativeRole(settings.desiredRelativeRole ?? 0);
     setAllowLowStatusMarriage(settings.allowLowStatusMarriage ?? 0);
+    setAllowRelativesInFamily(settings.allowRelativesInFamily ?? 1);
     setInitialized(true);
   }, [settings, initialized]);
 
@@ -171,8 +174,10 @@ export const FamilySettingsPanel = () => {
     );
   };
 
+  const isLeaderMode = familyType === 'couple' || familyType === 'parent';
+
   return (
-    <Window title="Настройка семьи" width={600} height={880}>
+    <Window title="Настройка семьи" width={600} height={940}>
       <Window.Content scrollable>
         <Stack vertical fill>
           <Stack.Item>
@@ -403,6 +408,28 @@ export const FamilySettingsPanel = () => {
                   ограничения. Ожидание бессрочное.
                 </Box>
               </Stack.Item>
+
+              {isLeaderMode && (
+                <Stack.Item>
+                  <Button
+                    fluid
+                    selected={allowRelativesInFamily === 1}
+                    color={allowRelativesInFamily === 1 ? 'good' : undefined}
+                    onClick={() =>
+                      setAllowRelativesInFamily(
+                        allowRelativesInFamily === 1 ? 0 : 1
+                      )
+                    }>
+                    {allowRelativesInFamily === 1
+                      ? 'Разрешать впускать в семью родственников: ДА'
+                      : 'Разрешать впускать в семью родственников: НЕТ'}
+                  </Button>
+                  <Box style={hintStyle}>
+                    Если вы станете главой семьи — эта настройка определит,
+                    смогут ли к вам присоединяться родственники.
+                  </Box>
+                </Stack.Item>
+              )}
             </>
           )}
 
@@ -428,6 +455,7 @@ export const FamilySettingsPanel = () => {
                   polygamyMode,
                   desiredRelativeRole,
                   allowLowStatusMarriage,
+                  allowRelativesInFamily,
                 });
               }}>
               Сохранить настройки

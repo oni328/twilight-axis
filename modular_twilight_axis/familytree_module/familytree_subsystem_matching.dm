@@ -1,20 +1,18 @@
 /datum/controller/subsystem/familytree/proc/AddLocal(mob/living/carbon/human/H, status)
 	ftlog("AddLocal: [H?.real_name] ([H?.ckey]) status=[status]")
 	if(!H || !status || istype(H, /mob/living/carbon/human/dummy))
-		ftlog("AddLocal SKIP: null/no status/dummy", FTLOG_WARN)
 		return
+
 	var/block_reason = get_familytree_runtime_block_reason(H, TRUE)
 	if(block_reason == "dead")
-		ftlog("AddLocal BLOCK: [H.real_name] dead")
 		pause_familytree_human(H, "local assignment blocked: dead")
 		return
 	if(block_reason == "no client")
-		ftlog("AddLocal BLOCK: [H.real_name] no client")
 		return
 	if(block_reason)
-		ftlog("AddLocal UNSUB: [H.real_name] block=[block_reason]", FTLOG_WARN)
 		unsubscribe_familytree_human(H, "local assignment blocked: [block_reason]")
 		return
+
 	if(get_royal_status(H))
 		ftlog("AddLocal SKIP: [H.real_name] royal flow")
 		stop_tracking_human(H, "local assignment skipped; handled by royal flow")
@@ -27,7 +25,6 @@
 	if(H.setspouse && length(H.setspouse))
 		ftlog("AddLocal: [H.real_name] has favorite=[H.setspouse], trying favorite assign (retry #[H.familytree_setspouse_retries])")
 		var/favorite_result = TryAssignToFavorite(H, status)
-		ftlog("AddLocal: [H.real_name] favorite_result=[favorite_result]")
 		if(favorite_result == "assigned")
 			stop_tracking_human(H, "assigned via favorite")
 			return
@@ -35,7 +32,7 @@
 			H.familytree_setspouse_retries++
 			if(H.familytree_setspouse_retries >= 30 && !H.familytree_setspouse_timeout_offered)
 				H.familytree_setspouse_timeout_offered = TRUE
-				ftlog("AddLocal: [H.real_name] setspouse timeout, offering reset")
+				ftlog("AddLocal: [H.real_name] setspouse timeout reached (30 retries), offering reset")
 				INVOKE_ASYNC(src, PROC_REF(offer_setspouse_reset), H, status)
 				return
 			ftlog("AddLocal: [H.real_name] favorite not found, waiting 60s")
@@ -53,11 +50,15 @@
 			ftlog("AddLocal: [H.real_name] assigned via desired role")
 			stop_tracking_human(H, "assigned via desired relative role")
 			return
-		ftlog("AddLocal: [H.real_name] desired role assignment failed, fallthrough")
+
 	switch(status)
 		if(FAMILY_PARTIAL)
-			ftlog("AddLocal: [H.real_name] -> AssignToHouse (pending confirm)")
-			request_family_confirmation(H, CALLBACK(src, PROC_REF(do_assign_house), H), "house")
+			if(HasSuitableHouseForRelative(H))
+				ftlog("AddLocal: [H.real_name] -> AssignToHouse (pending confirm)")
+				request_family_confirmation(H, CALLBACK(src, PROC_REF(do_assign_house), H), "house")
+			else
+				ftlog("AddLocal: [H.real_name] → NO suitable house, trying to form sibling house")
+				TryFormSiblingHouseFromPartial(H)
 
 		if(FAMILY_NEWLYWED)
 			ftlog("AddLocal: [H.real_name] -> FindNewlyWedMatch")
@@ -74,10 +75,14 @@
 /datum/controller/subsystem/familytree/proc/do_assign_house(mob/living/carbon/human/H)
 	if(!H || QDELETED(H) || H.family_datum)
 		return
-	ftlog("AddLocal: [H.real_name] -> AssignToHouse (confirmed)")
+	ftlog("do_assign_house: [H.real_name] confirmed, calling AssignToHouse")
 	AssignToHouse(H)
-	ftlog("AddLocal: [H.real_name] house result: family=[H.family_datum ? "YES" : "NO"]")
-	stop_tracking_human(H, H.family_datum ? "assigned to house" : "house assignment completed without family")
+	if(H.family_datum)
+		to_chat(H, span_love("Вы успешно присоединились к семье!"))
+		stop_tracking_human(H, "assigned to house")
+	else
+		to_chat(H, span_warning("Не удалось присоединиться к семье."))
+		ftlog("do_assign_house: [H.real_name] continue working. Has family = NO")
 
 /datum/controller/subsystem/familytree/proc/find_and_confirm_newlywed(mob/living/carbon/human/H)
 	if(!H || QDELETED(H) || H.spouse_mob)
@@ -140,9 +145,11 @@
 
 	ftlog("TryFavorite: [H.real_name] looking for '[H.setspouse]'")
 	var/mob/living/carbon/human/favorite = FindFavoriteMob(H)
+
 	if(!favorite)
 		ftlog("TryFavorite: [H.real_name] favorite NOT FOUND, waiting")
 		return "waiting"
+
 	ftlog("TryFavorite: [H.real_name] found favorite=[favorite.real_name] ([favorite.ckey])")
 
 	if(favorite.setspouse && length(favorite.setspouse))
@@ -212,50 +219,34 @@
 /datum/controller/subsystem/familytree/proc/AssignToHouse(mob/living/carbon/human/H)
 	if(!H)
 		return
-	ftlog("AssignToHouse: [H.real_name] species=[H.dna?.species?.name] isolated=[is_isolated(H)]")
+	ftlog("AssignToHouse START: [H.real_name] race=[H.dna?.species?.name] isolated=[is_isolated(H)] pref=[H.familytree_pref]")
+
 	var/our_race = H.dna.species.name
-	var/adopted = FALSE
-	var/datum/heritage/chosen_house
-	var/list/low_priority_houses = list()
-	var/list/high_priority_houses = list()
+	var/we_are_isolated = is_isolated(H)
+
+	var/list/candidates = list()
 
 	for(var/datum/heritage/house as anything in families)
 		if(house.closed)
 			continue
-		if(house.housename && house.members.len >= 1 && house.members.len < 6)
-			high_priority_houses += house
-		else
-			low_priority_houses += house
+		if(!house.housename || house.housename == "no name")
+			continue
+		if(!house_race_compatible(house, our_race, we_are_isolated))
+			continue
+		if(WouldCreateAgeConflict(house, H))
+			continue
+		if(house.members.len < 1)
+			continue
 
-	var/we_are_isolated = is_isolated(H)
+		candidates += house
 
-	if(!chosen_house)
-		for(var/datum/heritage/house as anything in high_priority_houses)
-			if(house_race_compatible(house, our_race, we_are_isolated) && house.members.len < 4)
-				if(!WouldCreateAgeConflict(house, H))
-					chosen_house = house
-					break
-			if(!we_are_isolated && prob(20) && house.members.len <= 8)
-				if(!WouldCreateAgeConflict(house, H))
-					chosen_house = house
-					adopted = TRUE
-					break
-
-	if(!chosen_house)
-		for(var/datum/heritage/house as anything in low_priority_houses)
-			if(house_race_compatible(house, our_race, we_are_isolated))
-				if(!WouldCreateAgeConflict(house, H))
-					chosen_house = house
-					break
-
-	if(chosen_house)
-		ftlog("AssignToHouse: [H.real_name] -> house=[chosen_house.housename] adopted=[adopted]")
-		AddPersonToHouse(chosen_house, H, adopted)
+	if(candidates.len)
+		var/datum/heritage/chosen_house = pick(candidates)
+		ftlog("AssignToHouse: [H.real_name] → JOINED existing house '[chosen_house.housename || "no name"]' (members=[chosen_house.members.len])")
+		AddPersonToHouse(chosen_house, H, FALSE)
+		stop_tracking_human(H, "assigned to house")
 	else
-		ftlog("AssignToHouse: [H.real_name] no existing house, creating new (families=[families.len])")
-		var/datum/heritage/new_house = new /datum/heritage(H, null)
-		families += new_house
-		ftlog("AssignToHouse: [H.real_name] founded new house '[new_house.housename]'")
+		ftlog("AssignToHouse: [H.real_name] → NO suitable existing house found. Staying without family.")
 
 /datum/controller/subsystem/familytree/proc/AddPersonToHouse(datum/heritage/house, mob/living/carbon/human/person, adopted = FALSE)
 	var/role = DetermineAppropriateRole(house, person, adopted)
@@ -617,3 +608,48 @@
 	else
 		ftlog("SIBLING HOUSE: [leader.real_name] kept house '[house.housename]' closed")
 		to_chat(leader, span_notice("Дом [house.housename] останется закрытым. Вступить можно только через обряд жреца."))
+
+/datum/controller/subsystem/familytree/proc/HasSuitableHouseForRelative(mob/living/carbon/human/H)
+	if(!H)
+		return FALSE
+
+	var/our_race = H.dna.species.name
+	var/we_are_isolated = is_isolated(H)
+
+	for(var/datum/heritage/house as anything in families)
+		if(house.closed)
+			continue
+		if(!house.housename || house.housename == "no name")
+			continue
+		if(!house_race_compatible(house, our_race, we_are_isolated))
+			continue
+		if(WouldCreateAgeConflict(house, H))
+			continue
+		if(house.members.len >= 1)
+			return TRUE
+
+	return FALSE
+
+/datum/controller/subsystem/familytree/proc/TryFormSiblingHouseFromPartial(mob/living/carbon/human/H)
+	if(!H || H.family_datum)
+		return
+
+	for(var/mob/living/carbon/human/candidate as anything in GLOB.alive_mob_list)
+		if(candidate == H || !candidate.client || candidate.stat == DEAD || candidate.familytree_pref != FAMILY_PARTIAL || candidate.family_datum)
+			continue
+		if(!pronouns_compatible(H, candidate))
+			continue
+		if(GetSpeciesCompatibilityFailureReason(H, candidate))
+			continue
+		if(!familytree_estates_compatible(H, candidate))
+			continue
+		if(!familytree_role_tiers_compatible(H, candidate))
+			continue
+		if(!CanBeSiblings(H.age, candidate.age))
+			continue
+
+		ftlog("TryFormSiblingHouseFromPartial: [H.real_name] + [candidate.real_name] → forming sibling house")
+		request_mutual_confirmation(H, candidate, CALLBACK(src, PROC_REF(do_form_sibling_house), H, candidate), "sibling_house")
+		return
+
+	ftlog("TryFormSiblingHouseFromPartial: [H.real_name] → no mutual sibling found")

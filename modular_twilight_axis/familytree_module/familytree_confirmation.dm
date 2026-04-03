@@ -121,9 +121,9 @@
 		on_accept.Invoke()
 		return
 
-	var/msg = "Вам нашли пару!\n\nХотите продолжить?\n\nЕсли вы не сделаете выбор — он будет засчитан как отказ.\nОтказавшись, вы потеряете возможность найти семью в этом раунде."
+	to_chat(H, span_love("Система нашла для вас семью!"))
 
-	var/result = tgui_alert(H, msg, "Семейная система", list("Да", "Нет"), 60 SECONDS)
+	var/result = tgui_alert(H, "Вам нашли пару!\n\nХотите продолжить?\n\nЕсли вы не сделаете выбор — он будет засчитан как отказ.\nОтказавшись, вы потеряете возможность найти семью в этом раунде.", "Семейная система", list("Да", "Нет"), 60 SECONDS)
 
 	if(!H || QDELETED(H))
 		return
@@ -133,9 +133,9 @@
 		on_accept.Invoke()
 	else
 		ftlog("CONFIRM REJECT: [H.real_name] type=[confirm_type] result=[result || "timeout"]")
+		to_chat(H, span_warning("Вы отказались от участия в семейной системе на этот раунд."))
 		H.familytree_opted_out = TRUE
 		unsubscribe_familytree_human(H, "player declined [confirm_type]")
-		to_chat(H, span_warning("Вы отказались от участия в семейной системе на этот раунд."))
 
 /datum/controller/subsystem/familytree/proc/request_mutual_confirmation(mob/living/carbon/human/person_a, mob/living/carbon/human/person_b, datum/callback/on_both_accept, confirm_type = "family")
 	if(person_a?.familytree_opted_out || person_b?.familytree_opted_out)
@@ -164,9 +164,9 @@
 	if(!person?.client || session.resolved)
 		return
 
-	var/msg = "Вам нашли пару!\n\nХотите продолжить?\n\nЕсли вы не сделаете выбор — он будет засчитан как отказ.\nОтказавшись, вы потеряете возможность найти семью в этом раунде."
+	to_chat(person, span_love("Система нашла для вас семью!"))
 
-	var/result = tgui_alert(person, msg, "Семейная система", list("Да", "Нет"), 60 SECONDS)
+	var/result = tgui_alert(person, "Вам нашли пару!\n\nХотите продолжить?\n\nЕсли вы не сделаете выбор — он будет засчитан как отказ.\nОтказавшись, вы потеряете возможность найти семью в этом раунде.", "Семейная система", list("Да", "Нет"), 60 SECONDS)
 
 	if(session.resolved)
 		return
