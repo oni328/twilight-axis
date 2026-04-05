@@ -33,8 +33,8 @@
 	hitsound = 'sound/combat/hits/hi_arrow2.ogg'
 	embedchance = 100
 	woundclass = BCLASS_STAB
-	flag = "stab"
-	armor_penetration = PEN_HEAVY
+	flag = "bullet"
+	armor_penetration = PEN_NONE
 	speed = 0.1
 
 /obj/projectile/bullet/twilight_lead/silver
@@ -42,7 +42,7 @@
 	desc = "Небольшая серебряная сфера. Мягче, чем свинцовая пуля, но крайне эффективна против нежити."
 	ammo_type = /obj/item/ammo_casing/caseless/rogue/twilight_lead/silver
 	damage = 120
-	armor_penetration = PEN_MEDIUM
+	armor_penetration = PEN_NONE
 	silver = TRUE
 	critfactor = 0.8
 
@@ -58,12 +58,12 @@
 	hitsound = 'sound/combat/hits/hi_arrow2.ogg'
 	embedchance = 0
 	woundclass = BCLASS_STAB
-	flag = "stab"
-	armor_penetration = PEN_MEDIUM
+	flag = "bullet"
+	armor_penetration = PEN_NONE
 	speed = 0.1
 	var/cannon_aoe_radius = 1
 	var/cannon_aoe_damage_ratio = 0.25
-	var/cannon_aoe_penetration = PEN_MEDIUM
+	var/cannon_aoe_penetration = PEN_NONE
 
 /obj/projectile/bullet/twilight_grapeshot
 	name = "grapeshot"
@@ -77,8 +77,8 @@
 	hitsound = 'sound/combat/hits/hi_arrow2.ogg'
 	embedchance = 100
 	woundclass = BCLASS_STAB
-	flag = "stab"
-	armor_penetration = PEN_HEAVY
+	flag = "bullet"
+	armor_penetration = PEN_NONE
 	speed = 0.1
 	critfactor = 0.67
 
@@ -100,8 +100,8 @@
 	hitsound = 'sound/combat/hits/hi_bolt (2).ogg'
 	embedchance = 100
 	woundclass = BCLASS_STAB
-	flag = "stab"
-	armor_penetration = PEN_HEAVY
+	flag = "bullet"
+	armor_penetration = PEN_NONE
 
 /obj/projectile/bullet/twilight_lead/twilight_runelock/blessed
 	name = "blessed sphere"
