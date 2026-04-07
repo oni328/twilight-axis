@@ -16,6 +16,7 @@
 	description = "A thick, muddy-brown liquid that feels unnaturally heavy. The bottle seems to pull down on your hand with significant weight."
 	color = "#5a3a22"
 	taste_description = "earth and raw iron"
+	metabolization_rate = REAGENTS_METABOLISM * 0.2
 
 /datum/reagent/advanced/growth/on_mob_add(mob/living/carbon/human/M)
 	if(istype(M))
@@ -33,6 +34,7 @@
 	description = "A liquid that isn't just black—it actively devours the light around it. The container appears as a literal hole in space."
 	color = "#29293f"
 	taste_description = "the absolute void"
+	metabolization_rate = REAGENTS_METABOLISM * 0.2
 
 /datum/reagent/advanced/invisible/on_mob_life(mob/living/M)
 	M.alpha = 0
@@ -48,6 +50,7 @@
 	description = "A viscous, dark purple syrup. It leaves thick, web-like trails against the glass that move on their own."
 	color = "#4b0082"
 	taste_description = "cloying bitterness"
+	metabolization_rate = REAGENTS_METABOLISM * 0.6
 
 /datum/reagent/advanced/paralysis/on_mob_life(mob/living/M)
 	M.Paralyze(40)
@@ -59,6 +62,7 @@
 	description = "A pale blue liquid with a faint, swirling white vapor constantly dancing over its surface."
 	color = "#add8e6"
 	taste_description = "honey and poppies"
+	metabolization_rate = REAGENTS_METABOLISM * 0.6
 
 /datum/reagent/advanced/sleep/on_mob_life(mob/living/M)
 	M.Sleeping(100)
@@ -69,6 +73,7 @@
 	description = "A shimmering golden oil that feels impossibly slippery. The container feels like it could slide from your hand at any moment."
 	color = "#ffd700"
 	taste_description = "creamy butter"
+	metabolization_rate = REAGENTS_METABOLISM * 0.6
 
 /datum/reagent/advanced/grace/on_mob_life(mob/living/M)
 	ADD_TRAIT(M, TRAIT_NOFALLDAMAGE2, src)
@@ -82,6 +87,7 @@
 	description = "A crackling yellow liquid resembling captured lightning. It vibrates with intense, suppressed energy."
 	color = "#ffff00"
 	taste_description = "citric acid"
+	metabolization_rate = REAGENTS_METABOLISM * 0.3
 
 /datum/reagent/advanced/speed/on_mob_add(mob/living/M)
 	M.add_movespeed_modifier("swift_feet", multiplicative_slowdown = -1.5)
@@ -98,7 +104,7 @@
 	color = "#ffd788" 
 	taste_description = "eternal youth and fresh honey"
 	scent_description = "morning dew"
-	metabolization_rate = REAGENTS_METABOLISM * 1.5
+	metabolization_rate = REAGENTS_METABOLISM
 
 /datum/reagent/advanced/elixir_of_life/on_mob_life(mob/living/carbon/M)
 	if(!istype(M)) return ..()
@@ -158,7 +164,7 @@
 	reagent_state = LIQUID
 	color = "#00ff44"
 	taste_description = "burning mint"
-	metabolization_rate = REAGENTS_METABOLISM * 0.4
+	metabolization_rate = REAGENTS_METABOLISM * 0.2
 
 /datum/reagent/advanced/night_vision/on_mob_life(mob/living/carbon/human/M)
 	if(!istype(M)) return ..()
@@ -264,7 +270,7 @@
 	description = "A viscous, dark orange liquid that smells of wet iron and adrenaline. Your muscles ripple and harden just by holding the container."
 	reagent_state = LIQUID
 	color = "#d35400"
-	metabolization_rate = REAGENTS_METABOLISM * 0.5
+	metabolization_rate = REAGENTS_METABOLISM * 0.3
 
 /datum/reagent/advanced/titan_strength/on_mob_add(mob/living/carbon/human/M)
 	if(!istype(M)) return
@@ -352,7 +358,7 @@
 	reagent_state = LIQUID
 	color = "#dcdcdc"
 	alpha = 150
-	metabolization_rate = REAGENTS_METABOLISM 
+	metabolization_rate = REAGENTS_METABOLISM
 	taste_description = "butter"
 
 /datum/reagent/advanced/mist_form/on_mob_add(mob/living/carbon/human/M)
@@ -439,7 +445,7 @@
 	description = "A shimmering, silver liquid that perfectly reflects everything around it."
 	reagent_state = LIQUID
 	color = "#E5E4E2"
-	metabolization_rate = REAGENTS_METABOLISM * 1.5
+	metabolization_rate = REAGENTS_METABOLISM * 1
 	taste_description = "cream"
 
 /datum/reagent/advanced/mirror_potion/on_mob_add(mob/living/carbon/human/M)
@@ -455,7 +461,7 @@
 	description = "A cloud-like, swirling gas trapped in liquid form. It is so light that the bottle almost floats out of your hand."
 	reagent_state = LIQUID
 	color = "#add8e6"
-	metabolization_rate = REAGENTS_METABOLISM * 0.5
+	metabolization_rate = REAGENTS_METABOLISM * 0.3
 	taste_description = "cloud"
 
 /datum/reagent/advanced/levitation/on_mob_add(mob/living/carbon/human/M)
