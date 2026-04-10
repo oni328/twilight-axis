@@ -206,6 +206,12 @@
 	id = "erp_coating_face"
 	coating_zone = "face"
 
+/atom/movable/screen/alert/status_effect/erp_coating
+	name = "Coated"
+	desc = "Something is smeared over your body."
+	icon = 'modular_twilight_axis/icons/roguetown/misc/screen_alert.dmi'
+	icon_state = "full_in"
+
 #undef ERP_COATING_ZONE_GROIN
 #undef ERP_COATING_ZONE_CHEST
 #undef ERP_COATING_ZONE_BODY
