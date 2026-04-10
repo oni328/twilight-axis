@@ -89,7 +89,7 @@
 	. = ..()
 
 	AddComponent(/datum/component/arousal)
-	
+
 
 	RegisterSignal(src, COMSIG_COMPONENT_CLEAN_ACT, PROC_REF(clean_blood))
 	AddComponent(/datum/component/personal_crafting)
@@ -152,14 +152,16 @@
 
 /mob/living/carbon/human/Stat()
 	..()
-	if(mind)
+
+	var/panel = client?.statpanel
+	if(panel == "Stats" && mind)
 		var/datum/antagonist/vampire/VD = mind.has_antag_datum(/datum/antagonist/vampire)
 		if(VD)
-			if(statpanel("Stats"))
-				stat("Vitae:", bloodpool)
+			stat("Vitae:", bloodpool)
+
+	if(panel == "Status" && mind)
 		if((mind.assigned_role == "Shepherd") || (mind.assigned_role == "Inquisitor"))
-			if(statpanel("Status"))
-				stat("Confessions sent: [GLOB.confessors.len]")
+			stat("Confessions sent: [GLOB.confessors.len]")
 
 	return //RTchange
 
@@ -665,9 +667,6 @@
 				else if(energy > 0)
 					hud_used.energy.icon_state = "energy5"
 
-		if(hud_used.zone_select)
-			hud_used.zone_select.update_icon()
-
 /mob/living/carbon/human/fully_heal(admin_revive = FALSE, break_restraints = FALSE)
 	dna?.species.spec_fully_heal(src)
 	if(admin_revive)
@@ -676,7 +675,9 @@
 	spill_embedded_objects()
 	set_heartattack(FALSE)
 	drunkenness = 0
-	return ..()
+	. = ..()
+	if(hud_used?.zone_select)
+		hud_used.zone_select.rebuild_limbs()
 
 /mob/living/carbon/human/check_weakness(obj/item/weapon, mob/living/attacker)
 	. = ..()

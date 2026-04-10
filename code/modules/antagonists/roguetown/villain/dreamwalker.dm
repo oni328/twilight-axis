@@ -1,8 +1,13 @@
+// Scaling (base_antags path, no storyteller slot caps):
+//  Midround event: base=1, denom=80, max=2 → 1-79 pop: 1, 80+: 2
+//  Roundstart (Abyssor only): base=2, max=2 → always 2
 /datum/antagonist/dreamwalker
 	name = "Dreamwalker"
 	roundend_category = "Dreamwalker"
 	antagpanel_category = "Dreamwalker"
 	job_rank = ROLE_DREAMWALKER
+	storyteller_antag_flags = STORYTELLER_ANTAG_SOFT
+	storyteller_favor_flags = STORYTELLER_FAVOR_DREAMWALKER
 	confess_lines = list(
 		"MY VISION ABOVE ALL!",
 		"I'LL TAKE YOU TO MY REALM!",
@@ -554,7 +559,7 @@
 	wdefense = 4
 	possible_item_intents = list(/datum/intent/sword/cut, /datum/intent/sword/chop, /datum/intent/sword/thrust/long)
 	gripped_intents = list(/datum/intent/sword/cut/zwei, /datum/intent/sword/chop, /datum/intent/sword/thrust/estoc/lunge, /datum/intent/sword/thrust/estoc)
-	alt_intents = list(/datum/intent/effect/daze, /datum/intent/sword/strike, /datum/intent/sword/bash)
+	alt_grips = list(/datum/alt_grip/mordhau/broadsword/dream_broadsword)
 
 /obj/item/rogueweapon/greatsword/bsword/dreamscape/active
 	name = "otherworldly sword"
