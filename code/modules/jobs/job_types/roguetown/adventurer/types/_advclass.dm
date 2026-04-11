@@ -157,9 +157,9 @@
 			if(istype(H.client.prefs?.virtue_origin, origintype))
 				correlation = TRUE
 		if(!correlation)
-			var/origin_name = origin_limits[1].origin_name
-			to_chat(H, span_warning("I've spent so many daes in [origin_name] that I've come to call it my home."))
-			change_origin(H, origin_limits[1])
+			var/datum/virtue/origin/first_origin = origin_limits[1]
+			to_chat(H, span_warning("I've spent so many daes in [first_origin.origin_name] that I've come to call it my home."))
+			change_origin(H, first_origin)
 
 /datum/advclass/proc/change_origin(mob/living/carbon/human/H, new_origin = /datum/virtue/none, wording)
 	var/client/player = H?.client
