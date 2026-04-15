@@ -8536,7 +8536,6 @@
 /area/rogue/outdoors/mountains)
 "RP" = (
 /obj/structure/rack/rogue,
-/obj/machinery/light/rogue/candle/r,
 /obj/structure/rack/rogue,
 /obj/machinery/light/rogue/candle/r,
 /obj/structure/rack/rogue/shelf,
@@ -9481,10 +9480,6 @@
 	},
 /turf/open/floor/rogue/twig,
 /area/rogue/indoors/banditcamp)
-"Wu" = (
-/turf/closed/mineral/rogue/bedrock,
-/turf/closed/mineral/rogue/bedrock,
-/area/rogue/outdoors/bograt/safe)
 "Wv" = (
 /obj/structure/mineral_door/bars,
 /obj/structure/fluff/railing/border/west,
@@ -37107,20 +37102,20 @@ CT
 CT
 CT
 CT
-Wu
-Wu
-Wu
-Wu
-Wu
-Wu
+AW
+AW
+AW
+AW
+AW
+AW
 pI
 WO
 WO
 EK
 pI
-Wu
-Dd
-Dd
+AW
+Zm
+Zm
 Zm
 Zm
 Zm
@@ -39271,7 +39266,7 @@ CT
 CT
 CT
 CT
-uK
+CT
 iy
 iy
 iy
@@ -39423,7 +39418,7 @@ Zm
 Zm
 Zm
 Zm
-Dd
+Zm
 iy
 iy
 iy
@@ -39575,7 +39570,7 @@ Zm
 Zm
 Zm
 Zm
-Dd
+Zm
 iy
 iy
 iy
