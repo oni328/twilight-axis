@@ -1,12 +1,12 @@
 /obj/item/clothing/gloves/roguetown/elven_gloves
 	name = "woad elven gloves"
 	desc = "The insides are lined with soft, living leaves and soil. They wick away moisture easily."
+	allowed_race = list(/datum/species/elf/wood, /datum/species/human/halfelf, /datum/species/elf/dark)
 	icon = 'icons/roguetown/clothing/special/race_armor.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/race_armor.dmi'
 	icon_state = "welfhand"
 	item_state = "welfhand"
 	armor = ARMOR_BLACKOAK //Resistant to blunt and stab, super weak to slash.
-	prevent_crits = PREVENT_CRITS_ALL
 	resistance_flags = FIRE_PROOF
 	blocksound = SOFTHIT
 	max_integrity = ARMOR_INT_SIDE_IRON

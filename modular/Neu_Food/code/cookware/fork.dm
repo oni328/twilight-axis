@@ -20,7 +20,7 @@
 	. += span_info("Nobler appetites prefer utensils over simply eating and drinking with one's bare hands.")
 
 /datum/intent/dagger/thrust/fork
-	penfactor = 20
+	penfactor = PEN_LIGHT
 
 /obj/item/kitchen/fork/aalloy
 	name = "decrepit fork"
@@ -49,7 +49,8 @@
 	name = "silver fork"
 	icon_state = "fork_silver"
 	sellprice = 20
-	is_silver = FALSE //temporary measure to prevent people from easily metachecking vampyres. Replace with a more sophisticated alternative if-or-when available.
+	is_silver = TRUE
+	is_lesser_silver = TRUE
 
 /obj/item/kitchen/fork/carved
 	name = "carved fork"

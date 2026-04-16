@@ -1,6 +1,6 @@
 /obj/structure/roguemachine/noticeboard
 	name = "Notice Board"
-	desc = "A large wooden notice board, carrying postings from all across Azurea. A ZAD perch sits atop it."
+	desc = "A large wooden notice board, carrying postings from all across Azuria. A ZAD perch sits atop it."
 	icon = 'icons/roguetown/misc/64x64.dmi'
 	icon_state = "noticeboard0"
 	density = TRUE
@@ -173,10 +173,10 @@
 	guy.apply_status_effect(/datum/status_effect/debuff/postcooldown)
 	message_admins("[ADMIN_LOOKUPFLW(guy)] has made a notice board post. The message was: [inputmessage]")
 	for(var/obj/structure/roguemachine/noticeboard/board in SSroguemachine.noticeboards)
+		board.update_icon()
 		if(board != src)
 			playsound(board, 'sound/ambience/noises/birds (7).ogg', 50, FALSE, -1)
 			board.visible_message(span_smallred("A ZAD lands, delivering a new posting!"))
-			board.update_icon()
 
 /obj/structure/roguemachine/noticeboard/proc/make_post(mob/living/carbon/human/guy)
 	if(guy.has_status_effect(/datum/status_effect/debuff/postcooldown))

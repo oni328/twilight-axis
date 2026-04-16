@@ -178,6 +178,7 @@
 
 /mob/living/simple_animal/hostile/rogue/haunt/Initialize()
 	. = ..()
+	AddComponent(/datum/component/ai_aggro_system)
 	set_light(2, 2, 2, l_color = "#c0523f")
 	ADD_TRAIT(src, TRAIT_IGNOREDAMAGESLOWDOWN, TRAIT_GENERIC)
 	ADD_TRAIT(src, TRAIT_NOPAINSTUN, TRAIT_GENERIC)
@@ -238,7 +239,7 @@
 	blade_class = BCLASS_CHOP
 	hitsound = list('sound/combat/hits/bladed/genchop (1).ogg', 'sound/combat/hits/bladed/genchop (2).ogg', 'sound/combat/hits/bladed/genchop (3).ogg')
 	chargetime = 0
-	penfactor = 10
+	penfactor = PEN_NONE
 	swingdelay = 8
 	clickcd = HAUNT_ATTACK_SPEED
 

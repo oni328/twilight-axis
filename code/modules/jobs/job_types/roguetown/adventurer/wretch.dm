@@ -4,8 +4,8 @@
 	flag = WRETCH
 	department_flag = ANTAGONIST
 	faction = "Station"
-	total_positions = 5
-	spawn_positions = 5
+	total_positions = 0
+	spawn_positions = 0
 	allowed_races = RACES_ALL_KINDS
 	tutorial = "Somewhere in your lyfe, you fell to the wrong side of civilization. Hounded by the consequences of your actions, you spend your daes prowling the roads for easy marks and loose purses, scraping to get by."
 	outfit = null
@@ -42,15 +42,26 @@
 		/datum/advclass/wretch/outlaw,
 		/datum/advclass/wretch/poacher,
 		/datum/advclass/wretch/plaguebearer,
+		/datum/advclass/wretch/mistwalker,
 		/datum/advclass/wretch/pyromaniac,
 		/datum/advclass/wretch/vigilante,
 		/datum/advclass/wretch/munitioneer,
 		/datum/advclass/wretch/pariah,
 		/datum/advclass/wretch/heretic_spellblade,
 		/datum/advclass/wretch/ancient_spellblade,
+		/datum/advclass/wretch/slasher
 //		/datum/advclass/wretch/ancient_deathknight,
-		/datum/advclass/wretch/munitioneer
 	)
+
+/datum/job/roguetown/wretch/special_job_check(mob/dead/new_player/player)
+	if(is_storyteller_soft_antag_blocked())
+		return FALSE
+	return ..()
+
+/datum/job/roguetown/wretch/special_check_latejoin(client/C)
+	if(is_storyteller_soft_antag_blocked())
+		return FALSE
+	return ..()
 
 /datum/job/roguetown/wretch/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
 	..()
@@ -154,6 +165,16 @@
 		player_count = override_player_count
 
 	result["player_count"] = player_count
+	if(is_storyteller_soft_antag_blocked())
+		result["tier1_slots"] = 0
+		result["major_antag_active"] = FALSE
+		result["garrison"] = SSgamemode.garrison
+		result["holy_warrior"] = SSgamemode.holy_warrior
+		result["acolyte"] = SSgamemode.half_combatant
+		result["combat_total"] = SSgamemode.garrison + SSgamemode.holy_warrior + FLOOR(SSgamemode.half_combatant * 0.5, 1)
+		result["tier2_extra"] = 0
+		result["final_slots"] = 0
+		return result
 
 	// Tier 1: Population scaling, +1 per 10 players above 40, max 10
 	var/slots = 5
@@ -162,12 +183,12 @@
 	slots = min(slots, 10)
 	result["tier1_slots"] = slots
 
-	// Check for major round antagonists (lich, vampire lord) — hard cap at tier 1
+	// Check for major round antagonists (lich, vampire lord, any bandits) — hard cap at tier 1
 	var/major_antag_active = FALSE
 	for(var/datum/antagonist/antag as anything in GLOB.antagonists)
 		if(QDELETED(antag) || QDELETED(antag.owner))
 			continue
-		if(istype(antag, /datum/antagonist/lich) || istype(antag, /datum/antagonist/vampire/lord))
+		if(istype(antag, /datum/antagonist/lich) || istype(antag, /datum/antagonist/vampire/lord) || istype(antag, /datum/antagonist/bandit))
 			major_antag_active = TRUE
 			break
 	result["major_antag_active"] = major_antag_active
@@ -189,13 +210,15 @@
 		slots += tier2_max
 
 	result["tier2_extra"] = tier2_max
-	result["final_slots"] = slots
+	result["final_slots"] = max(0, slots)
 
 	return result
 
 /proc/update_wretch_slots()
 	var/datum/job/wretch_job = SSjob.GetJob("Wretch")
 	if(!wretch_job)
+		return
+	if(wretch_job.admin_slot_override)
 		return
 
 	var/override_player_count = null
@@ -206,4 +229,4 @@
 	var/slots = scaling["final_slots"]
 
 	wretch_job.total_positions = max(wretch_job.current_positions, slots)
-	wretch_job.spawn_positions = max(wretch_job.current_positions, slots)
+	wretch_job.spawn_positions = max(wretch_job.current_positions, slots)	

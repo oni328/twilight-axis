@@ -11,31 +11,11 @@
 	name = "ornate cross"
 	desc = "Golden scales dangle from rags and balance the scales. A monument to equality."
 
-/datum/crafting_recipe/roguetown/structure/zizo_cross_stone
-	always_availible = FALSE	//Has unique assign for certain roles.
-
-/datum/crafting_recipe/roguetown/structure/zizo_cross_gold
-	always_availible = FALSE	//Has unique assign for certain roles.
-
-/datum/crafting_recipe/roguetown/structure/graggar_cross_stone
-	always_availible = FALSE	//Has unique assign for certain roles.
-
-/datum/crafting_recipe/roguetown/structure/graggar_cross_meat
-	always_availible = FALSE	//Has unique assign for certain roles.
-
 /datum/crafting_recipe/roguetown/structure/matthios_cross_stone
 	name = "stone scales cross"
-	always_availible = FALSE	//Has unique assign for certain roles.
 
 /datum/crafting_recipe/roguetown/structure/matthios_cross_meat
 	name = "ornate scales cross"
-	always_availible = FALSE	//Has unique assign for certain roles.
-
-/datum/crafting_recipe/roguetown/structure/baotha_cross_stone
-	always_availible = FALSE	//Has unique assign for certain roles.
-
-/datum/crafting_recipe/roguetown/structure/baotha_cross_meat
-	always_availible = FALSE	//Has unique assign for certain roles.
 
 /datum/faith/inhumen
 	name = "Ascendents"
@@ -88,7 +68,6 @@
 		"Ткачиха", "Ткачихи", "Ткачихе", "Ткачиху", 
 		"Ткачихой", "Ткачихе"
 )
-	crafting_recipes = list(/datum/crafting_recipe/roguetown/structure/zizo_cross_stone, /datum/crafting_recipe/roguetown/structure/zizo_cross_gold)
 	domain = "Бессмертие, прогресс, кровь, тьма, запретные знания, амбиции."
 	desc = "Богиня нежизни, возмездия, метаморфозы и тьмы. Убийца Псайдона, Архивраг пантеона Десяти, презираемая всеми, кроме своих последователей, сама Зизо не видит в смертных объект своей ненависти. Это прекрасно демонстрируется ее главной заповедью, что часто звучит в молитвенных песнопениях её культистов: «Последний же враг истребится — смерть»."
 	associated_faith = /datum/faith/cult_of_salvation
@@ -126,7 +105,6 @@
 	domain = "Власть, сила, превосходство, завоевание."
 	desc = "Бог силы и власти, которая приходит с нею. Пока другие божества обрекают свою паству на жалкое существование в мире, где власть приходит через их благословение и по праву рождения, Граггар провозглашает, что править может каждый, кто достаточно силен, чтобы забрать желаемое. «Слабые унаследуют лишь грязь», предупреждает он, напоминая о судьбе тех, кто не стремится стать сильнее."
 	undead_hater = TRUE
-	crafting_recipes = list(/datum/crafting_recipe/roguetown/structure/graggar_cross_stone, /datum/crafting_recipe/roguetown/structure/graggar_cross_meat)
 	worshippers = "Племенные народы, безумцы, маньяки, жестокий люд."
 	confess_lines = list(
 		"ГРАГГАР - ЗВЕРЬ, КОТОРОМУ Я ПОКЛОНЯЮСЬ!",
@@ -160,11 +138,10 @@
 	domain = "Анархия, свобода, революция, равенство и братство."
 	desc = "Бог абсолютной свободы, анархии и восстания. «Через раздор к процветанию», обещает его главная заповедь, и его последователи пойдут на всё, чтобы претворить её в реальность, разрушив мировой порядок, каким мы его знаем."
 	undead_hater = TRUE
-	crafting_recipes = list(/datum/crafting_recipe/roguetown/structure/matthios_cross_stone, /datum/crafting_recipe/roguetown/structure/matthios_cross_meat)
 	worshippers = "Разбойники, наёмники, революционеры, свободолюбивый люд."
 	miracles = list(/obj/effect/proc_holder/spell/targeted/touch/orison									= CLERIC_ORI,
-					/obj/effect/proc_holder/spell/invoked/appraise										= CLERIC_ORI,
 					/obj/effect/proc_holder/spell/self/twilight_shacklebreaker							= CLERIC_T0,
+					/datum/action/cooldown/spell/freemans_tools											= CLERIC_T0,
 					/obj/effect/proc_holder/spell/invoked/twilight_weightofchains						= CLERIC_T0,
 					/obj/effect/proc_holder/spell/invoked/twilight_transact								= CLERIC_T1,
 					/obj/effect/proc_holder/spell/invoked/twilight_equalize								= CLERIC_T1,
@@ -173,7 +150,9 @@
 					/obj/effect/proc_holder/spell/invoked/twilight_churnwealthy							= CLERIC_T2,
 					/obj/effect/proc_holder/spell/self/twilight_amongus									= CLERIC_T2,
 					/obj/effect/proc_holder/spell/invoked/projectile/twilight_crownfortheking			= CLERIC_T2,
+					/obj/effect/proc_holder/spell/invoked/barter										= CLERIC_T2,
 					/obj/effect/proc_holder/spell/invoked/twilight_commieflag							= CLERIC_T3,
+					/obj/effect/proc_holder/spell/invoked/resurrect/matthios							= CLERIC_T3,
 					/obj/effect/proc_holder/spell/self/wildshape_twilight_wingsoffreedom				= CLERIC_T4,
 	)
 	confess_lines = list(
@@ -204,7 +183,6 @@
 	desc = "Баота — богиня гедонизма, мирских наслаждений и страстей. «Живи, люби, смейся!» — говорила она, глядя на суету вокруг себя и усилия окружающих, стремящихся двигать куда-то мир."
 	worshippers = "Избалованные богачи, маргиналы, эскаписты."
 	undead_hater = TRUE
-	crafting_recipes = list(/datum/crafting_recipe/roguetown/structure/baotha_cross_stone, /datum/crafting_recipe/roguetown/structure/baotha_cross_meat)
 	confess_lines = list(
 		"БАОТА ТРЕБУЕТ УДОВОЛЬСТВИЯ!",
 		"ЖИВИ, СМЕЙСЯ, ЛЮБИ!",

@@ -46,11 +46,9 @@
 	/// Subclass virtues.
 	var/list/subclass_virtues
 
-	/// Spellpoints. If More than 0, Gives Prestidigitation & the Learning Spell.
-	var/subclass_spellpoints = 0
-
-	/// Pool-based spell point system. If set, uses pool system instead of flat spellpoints, even if they somehow end up with spellpoints from other sources.
-	var/list/subclass_spell_point_pools
+	/// Mage aspect system config. If set, opens the Grimoire on learnspell.
+	/// Keys: "mastery" (bool), "major" (int), "minor" (int), "utilities" (int)
+	var/list/subclass_mage_aspects
 
 	/// List of items to put in an item stash
 	var/list/subclass_stashed_items = list()
@@ -63,6 +61,10 @@
 
 	/// set to TRUE to reset stats in equipme, clearing any racial bonuses or bonuses the character had before becoming this class
 	var/reset_stats = FALSE
+
+	var/list/virtue_limits = list()
+	var/list/vice_limits = list()
+	var/list/origin_limits = list() //TA EDIT
 
 	var/datum/class_age_mod/age_mod = null
 
@@ -121,11 +123,9 @@
 		for(var/skill in subclass_skills)
 			H.adjust_skillrank_up_to(skill, subclass_skills[skill], TRUE)
 
-	// Set up spell point pools / spellpoints before virtues so Arcyne Potential can detect and add to them
-	if(LAZYLEN(subclass_spell_point_pools))
-		H.mind?.set_spell_point_pools(subclass_spell_point_pools)
-	else if(subclass_spellpoints > 0)
-		H.mind?.adjust_spellpoints(subclass_spellpoints)
+	// Set up spell systems before virtues so Arcyne Potential can detect and add to them
+	if(LAZYLEN(subclass_mage_aspects))
+		H.mind?.setup_mage_aspects(subclass_mage_aspects.Copy())
 
 	if(length(subclass_virtues))
 		for(var/virtue in subclass_virtues)
@@ -150,6 +150,34 @@
 	addtimer(CALLBACK(H,TYPE_PROC_REF(/mob/living/carbon/human, add_credit), TRUE), 20)
 	if(cmode_music)
 		H.cmode_music = cmode_music
+
+	if(length(origin_limits) && H.client) //TA EDIT START
+		var/correlation = FALSE
+		for(var/origintype in origin_limits)
+			if(istype(H.client.prefs?.virtue_origin, origintype))
+				correlation = TRUE
+		if(!correlation)
+			var/datum/virtue/origin/first_origin = origin_limits[1]
+			to_chat(H, span_warning("I've spent so many daes in [first_origin.origin_name] that I've come to call it my home."))
+			change_origin(H, first_origin)
+
+/datum/advclass/proc/change_origin(mob/living/carbon/human/H, new_origin = /datum/virtue/none, wording)
+	var/client/player = H?.client
+	if(player?.prefs)
+		var/datum/virtue/origin/origin_memory = player.prefs.virtue_origin
+		player.prefs.virtue_origin = new new_origin
+		if(wording)
+			H.dna.species.skin_tone_wording = wording
+		player.prefs.virtue_origin.last_origin = origin_memory
+		player.prefs.virtue_origin.apply_to_human(H)
+		if(length(player.prefs.virtue_origin.added_languages))
+			for(var/L in player.prefs.virtue_origin.added_languages)
+				H.grant_language(L)
+		if(length(player.prefs.virtue_origin.last_origin.added_languages))
+			for(var/L in player.prefs.virtue_origin.last_origin.added_languages)
+				if(L != player.prefs.extra_language)
+					H.remove_language(L)
+		H.grant_language(player.prefs.extra_language)  //TA EDIT END
 
 /*
 	Whoa! we are checking requirements here!
@@ -179,6 +207,17 @@
 
 	if(length(allowed_patrons) && !(H.patron.type in allowed_patrons))
 		return FALSE
+
+	if(length(virtue_limits) && H.client)
+		for(var/virtuetype in virtue_limits)
+			if(istype(H.client.prefs?.virtue, virtuetype) || istype(H.client.prefs?.virtuetwo, virtuetype))
+				return FALSE
+
+	if(length(vice_limits) && H.client)
+		for(var/vicetype in vice_limits)
+			for(var/vice in H.charflaws)
+				if(istype(vice, vicetype))
+					return FALSE
 
 	if(maximum_possible_slots > -1)
 		if(total_slots_occupied >= maximum_possible_slots)

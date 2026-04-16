@@ -22,7 +22,6 @@ GLOBAL_PROTECT(admin_verbs_default)
 	/datum/admins/proc/admin_sleep,
 	/client/proc/jumptoarea,
 	/client/proc/jumptokey,
-	/client/proc/mass_direct,
 	/client/proc/local_lightsout,
 	/datum/admins/proc/checkpq,
 	/datum/admins/proc/adjustpq,
@@ -50,7 +49,7 @@ GLOBAL_LIST_INIT(admin_verbs_admin, world.AVerbsAdmin())
 GLOBAL_PROTECT(admin_verbs_admin)
 /world/proc/AVerbsAdmin()
 	return list(
-	/client/proc/adjusttriumph,
+//	/client/proc/adjusttriumph,
 	/client/proc/end_party,
 	/client/proc/cmd_admin_say,			/*admin-only ooc chat*/
 	/client/proc/toggle_lobby_ooc,
@@ -131,7 +130,10 @@ GLOBAL_LIST_INIT(admin_verbs_sounds, list(
 	/client/proc/play_local_sound,
 	/client/proc/play_local_sound_variable,
 	/client/proc/play_sound,
-	/client/proc/set_round_end_sound
+	/client/proc/set_round_end_sound,
+	/client/proc/play_music_global_url,
+	/client/proc/play_music_local_url,
+	/client/proc/play_music_direct_url
 	))
 GLOBAL_PROTECT(admin_verbs_sounds)
 GLOBAL_LIST_INIT(admin_verbs_fun, list(
@@ -150,6 +152,7 @@ GLOBAL_LIST_INIT(admin_verbs_fun, list(
 	/client/proc/reset_ooc,
 	/client/proc/forceEvent,
 	/client/proc/forceGamemode,
+	/client/proc/view_storyteller_vote_log,
 //	/client/proc/admin_change_sec_level,
 //	/client/proc/run_weather,
 	/client/proc/run_particle_weather,
@@ -224,7 +227,8 @@ GLOBAL_PROTECT(admin_verbs_debug)
 	/client/proc/set_tod_override,
 	/client/proc/stresstest_chat,
 	/client/proc/performance_stress_test, // Uncomment these if you tick the performance stress test .dm file
-	/client/proc/cleanup_stress_test_mobs
+	/client/proc/cleanup_stress_test_mobs,
+	/client/proc/link_ckey2discord
 	)
 GLOBAL_LIST_INIT(admin_verbs_possess, list(/proc/possess, GLOBAL_PROC_REF(release)))
 GLOBAL_PROTECT(admin_verbs_possess)
@@ -256,6 +260,9 @@ GLOBAL_LIST_INIT(admin_verbs_hideable, list(
 	/client/proc/play_local_sound_variable,
 	/client/proc/play_sound,
 	/client/proc/set_round_end_sound,
+	/client/proc/play_music_global_url,
+	/client/proc/play_music_local_url,
+	/client/proc/play_music_direct_url,
 	/client/proc/cmd_admin_dress,
 	/client/proc/cmd_admin_gib_self,
 	/client/proc/drop_bomb,
@@ -806,7 +813,7 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 
 	holder.deactivate()
 
-	to_chat(src, span_interface("I are now a normal player."))
+	to_chat(src, span_interface("I am now a normal player."))
 	hide_command_bar_button()
 	update_ooc_verb_visibility()
 	log_admin("[src] deadmined themself.")

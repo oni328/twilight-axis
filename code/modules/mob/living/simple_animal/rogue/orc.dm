@@ -50,7 +50,7 @@
 
 /mob/living/simple_animal/hostile/retaliate/rogue/orc/Initialize()
 	. = ..()
-	AddElement(/datum/element/ai_retaliate)
+	AddComponent(/datum/component/ai_aggro_system)
 
 /mob/living/simple_animal/hostile/retaliate/rogue/orc/orc2
 	icon_state = "savageorc2"
@@ -69,7 +69,7 @@
 	ai_controller = /datum/ai_controller/elite_orc
 	melee_damage_lower = 30
 	melee_damage_upper = 35
-	armor_penetration = 35
+	armor_penetration = PEN_NONE
 	maxHealth = ORC_HEALTH * 2 //TWICE THE ORC
 	health = ORC_HEALTH * 2
 	loot = list(/obj/effect/mob_spawn/human/orc/corpse/orcmarauder,
@@ -93,7 +93,7 @@
 	ai_controller = /datum/ai_controller/elite_orc
 	melee_damage_lower = 40
 	melee_damage_upper = 50
-	armor_penetration = 40
+	armor_penetration = PEN_NONE
 	maxHealth = ORC_HEALTH * 5
 	health = ORC_HEALTH * 5
 	loot = list(/obj/effect/mob_spawn/human/orc/corpse/orcravager,
@@ -108,7 +108,7 @@
 	base_intents = list(/datum/intent/spear/thrust/orcthrust)
 	melee_damage_lower = 30
 	melee_damage_upper = 30
-	armor_penetration = 35
+	armor_penetration = PEN_NONE
 	attack_verb_continuous = list("stabs", "slashes", "skewers")
 	attack_verb_simple = "stab"
 	attack_sound = 'sound/blank.ogg'

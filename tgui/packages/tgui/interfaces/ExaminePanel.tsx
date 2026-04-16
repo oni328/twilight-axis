@@ -7,12 +7,10 @@ import { Window } from '../layouts';
 import { ExaminePanelData } from './ExaminePanelData';
 import { FlavorTextPage } from './ExaminePanelPages';
 import { ImageGalleryPage } from './ExaminePanelPages';
-import { NSFWHeadshotPage } from './ExaminePanelPages';
 
 enum Page {
   FlavorText,
   ImageGallery,
-  NSFWHeadshot,
 }
 
 const isValidAssetValue = (value?: string | null) =>
@@ -22,14 +20,13 @@ export const ExaminePanel = (props) => {
   const { act, data } = useBackend<ExaminePanelData>();
   const {
     is_vet,
+    is_donator,
     character_name,
     is_playing,
     has_song,
     img_gallery,
     nsfw_img_gallery,
     examine_theme,
-    is_naked,
-    nsfw_headshot,
   } = data;
 
   const [currentPage, setCurrentPage] = useState(Page.FlavorText);
@@ -47,20 +44,13 @@ export const ExaminePanel = (props) => {
   const hasSfwGallery = safeSfwGallery.length > 0;
   const hasNsfwGallery = safeNsfwGallery.length > 0;
   const hasAnyGallery = Boolean(hasSfwGallery || hasNsfwGallery);
-  const hasNudeshot = isValidAssetValue(nsfw_headshot);
-  const showNudeshot = Boolean(is_naked) && hasNudeshot;
-  const shouldShowTabs = Boolean(hasAnyGallery || showNudeshot);
+  const shouldShowTabs = Boolean(hasAnyGallery);
 
   useEffect(() => {
     if (currentPage === Page.ImageGallery && !hasAnyGallery) {
       setCurrentPage(Page.FlavorText);
-      return;
     }
-
-    if (currentPage === Page.NSFWHeadshot && !showNudeshot) {
-      setCurrentPage(Page.FlavorText);
-    }
-  }, [currentPage, hasAnyGallery, showNudeshot]);
+  }, [currentPage, hasAnyGallery]);
 
   let pageContents;
 
@@ -70,9 +60,6 @@ export const ExaminePanel = (props) => {
       break;
     case Page.ImageGallery:
       pageContents = <ImageGalleryPage />;
-      break;
-    case Page.NSFWHeadshot:
-      pageContents = <NSFWHeadshotPage />;
       break;
     default:
       pageContents = <FlavorTextPage />;
@@ -87,6 +74,15 @@ export const ExaminePanel = (props) => {
       theme={examine_theme || undefined}
       buttons={
         <>
+          {!!is_donator && (
+            <Button
+              color="gold"
+              icon="heart"
+              tooltip="This player is a donator!"
+              tooltipPosition="bottom-start"
+              onClick={() => act('donator_chat')}
+            />
+          )}
           {!!is_vet && (
             <Button
               color="gold"
@@ -131,18 +127,6 @@ export const ExaminePanel = (props) => {
                       setPage={setCurrentPage}
                     >
                       Image Gallery
-                    </PageButton>
-                  </Stack.Item>
-                )}
-
-                {showNudeshot && (
-                  <Stack.Item grow>
-                    <PageButton
-                      currentPage={currentPage}
-                      page={Page.NSFWHeadshot}
-                      setPage={setCurrentPage}
-                    >
-                      Nudeshot
                     </PageButton>
                   </Stack.Item>
                 )}

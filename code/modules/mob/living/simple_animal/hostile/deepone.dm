@@ -43,6 +43,9 @@
 
 	ai_controller = /datum/ai_controller/deepone
 
+/mob/living/simple_animal/hostile/rogue/deepone/Initialize()
+	. = ..()
+	AddComponent(/datum/component/ai_aggro_system)
 
 /mob/living/simple_animal/hostile/rogue/deepone/arm
 	name = "Deep One"
@@ -107,7 +110,7 @@
 	animname = "cut"
 	hitsound = 'sound/combat/hits/bladed/smallslash (1).ogg'
 	clickcd = DEEPONE_ATTACK_SPEED
-	penfactor = 5
+	penfactor = PEN_NONE
 	chargetime = 2
 /datum/intent/simple/claw/deepone_boss
 	attack_verb = list("smashes", "slams")
@@ -115,5 +118,5 @@
 	animname = "cut"
 	hitsound = 'sound/combat/hits/blunt/metalblunt (1).ogg'
 	clickcd = DEEPONE_ATTACK_SPEED
-	penfactor = 5
+	penfactor = PEN_NONE
 	chargetime = 2
