@@ -42,7 +42,7 @@
 	invocation_type = "shout"
 	associated_skill = /datum/skill/magic/holy
 	antimagic_allowed = FALSE
-	recharge_time = 2 MINUTES
+	recharge_time = 1 MINUTES
 	chargetime = 2 SECONDS
 	miracle = TRUE
 	charging_slowdown = 3

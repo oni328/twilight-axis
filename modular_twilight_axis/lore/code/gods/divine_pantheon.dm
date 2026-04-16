@@ -290,6 +290,7 @@
 	worshippers = "Кузнецы, строители, архитекторы, каменщики, рабочие."
 	miracles = list(/obj/effect/proc_holder/spell/targeted/touch/orison			= CLERIC_ORI,
 					/obj/effect/proc_holder/spell/invoked/TArestoration           = CLERIC_T0,
+					/obj/effect/proc_holder/spell/self/TArepair                   = CLERIC_T0,
 					/obj/effect/proc_holder/spell/invoked/TArework                = CLERIC_T1,
 					/obj/effect/proc_holder/spell/invoked/lesser_heal 			= CLERIC_T1,
 					/obj/effect/proc_holder/spell/invoked/blood_heal			= CLERIC_T1,
@@ -297,7 +298,6 @@
 					/obj/effect/proc_holder/spell/invoked/TAvigorousexchange		= CLERIC_T1,
 					/obj/effect/proc_holder/spell/invoked/TAheatmetal				= CLERIC_T2,
 					/obj/effect/proc_holder/spell/invoked/TAhammerfall			= CLERIC_T3,
-					/obj/effect/proc_holder/spell/self/TArepair                   = CLERIC_T3,
 					/obj/effect/proc_holder/spell/invoked/TAcraftercovenant		= CLERIC_T4,
 					/obj/effect/proc_holder/spell/invoked/resurrect/malum		= CLERIC_T4,
 	)
