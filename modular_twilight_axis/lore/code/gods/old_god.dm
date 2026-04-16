@@ -61,11 +61,3 @@
 		"ДАЖЕ СЕЙЧАС ЕСТЬ ЕЩЕ НАДЕЖДА ДЛЯ ЧЕЛОВЕЧЕСТВА! СЛАВА ПСАЙДОНИИ!",
 		"УЗРИ МЕНЯ, ПСАЙДОН; ЖЕРТВА ПРИНЯЛА ОБЛИК!"
 	)
-
-/datum/patron/old_god/post_equip(mob/living/pious)
-	. = ..()
-	if(ishuman(pious))
-		var/mob/living/carbon/human/human = pious
-		if(human.mind)
-			if(HAS_TRAIT(human, TRAIT_PSYDONIC_MEDICINE))
-				human.adjust_skillrank(/datum/skill/misc/medicine, 2, TRUE)
