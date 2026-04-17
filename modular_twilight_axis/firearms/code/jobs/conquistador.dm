@@ -97,7 +97,7 @@
 			wrists = /obj/item/clothing/wrists/roguetown/bracers/leather
 			belt = /obj/item/storage/belt/rogue/leather/twilight_holsterbelt
 			neck = /obj/item/clothing/neck/roguetown/gorget
-			shirt = /obj/item/clothing/suit/roguetown/shirt/freifechter
+			shirt = /obj/item/clothing/suit/roguetown/shirt/padedetrshirt
 			armor = /obj/item/clothing/suit/roguetown/armor/plate/cuirass/fencer
 			backl = /obj/item/storage/backpack/rogue/satchel/black
 			backpack_contents = list(/obj/item/roguekey/mercenary = 1, /obj/item/twilight_powderflask = 1, /obj/item/rogueweapon/huntingknife/idagger/navaja = 1, /obj/item/storage/belt/rogue/pouch/coins/poor = 1, /obj/item/clothing/head/roguetown/duelhat/etrusca = 1, /obj/item/lockpickring/mundane = 1)
