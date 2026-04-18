@@ -17,7 +17,6 @@
 #define MARTIAL_MASTER_STANCE_PRECISE          2
 
 #define MARTIAL_MASTER_BUTTON_SWITCH_STANCE    101
-#define TEMPTRESS_BUTTON_EROTIC_EMBRACE        102
 
 #define MARTIAL_MASTER_REVERSE_WINDOW          (3 SECONDS)
 #define MARTIAL_MASTER_CHAIN_STEP_WINDOW       (2 SECONDS)
@@ -85,7 +84,6 @@
 	GrantSpells()
 	OnAttachApplyHiddenStats()
 
-	RegisterSignal(owner, COMSIG_COMBO_CORE_REGISTER_INPUT, PROC_REF(_sig_register_input), override = TRUE)
 	RegisterSignal(owner, COMSIG_ATTACK_TRY_CONSUME, PROC_REF(_sig_try_consume))
 	RegisterSignal(owner, COMSIG_MOB_PARRY_SUCCESS, PROC_REF(_sig_reverse_defense_success))
 
@@ -96,7 +94,6 @@
 	STOP_PROCESSING(SSprocessing, src)
 
 	if(owner)
-		UnregisterSignal(owner, COMSIG_COMBO_CORE_REGISTER_INPUT)
 		UnregisterSignal(owner, COMSIG_ATTACK_TRY_CONSUME)
 		UnregisterSignal(owner, COMSIG_MOB_PARRY_SUCCESS)
 
@@ -257,17 +254,6 @@
 	H.change_stat(STATKEY_PER, -2)
 	H.change_stat(STATKEY_WIL, -5)
 	H.change_stat(STATKEY_CON, -4)
-
-/datum/component/combo_core/martial_master/_sig_register_input(datum/source, skill_id, mob/living/target, zone)
-	if(!owner || !skill_id)
-		return 0
-
-	switch(skill_id)
-		if(MARTIAL_MASTER_BUTTON_SWITCH_STANCE)
-			ToggleStance()
-			return COMPONENT_COMBO_ACCEPTED
-
-	return 0
 
 /datum/component/combo_core/martial_master/proc/_sig_try_consume(datum/source, atom/target_atom, zone, obj/item/W, forced_skill_id)
 	SIGNAL_HANDLER
@@ -1309,7 +1295,7 @@
 	if(!user || !C)
 		return
 
-	SEND_SIGNAL(user, COMSIG_COMBO_CORE_REGISTER_INPUT, MARTIAL_MASTER_BUTTON_SWITCH_STANCE, null, null)
+	C.ToggleStance()
 
 #undef MARTIAL_MASTER_COMBO_WINDOW
 #undef MARTIAL_MASTER_MAX_HISTORY
@@ -1629,19 +1615,6 @@ GLOBAL_LIST_INIT(temptress_combat_skills, list(
 	last_embrace_gain = world.time
 	return 0
 
-/datum/component/combo_core/temptress/_sig_register_input(datum/source, skill_id, mob/living/target, zone)
-	if(!owner || !skill_id)
-		return 0
-
-	switch(skill_id)
-		if(TEMPTRESS_BUTTON_EROTIC_EMBRACE)
-			if(!temptress_awakened)
-				return COMPONENT_COMBO_ACCEPTED
-			ToggleEroticEmbrace()
-			return COMPONENT_COMBO_ACCEPTED
-
-	return ..()
-
 /datum/component/combo_core/temptress/proc/_balloon_embrace()
 	if(erotic_embrace_enabled)
 		_balloon("embrace: on")
@@ -1738,17 +1711,25 @@ GLOBAL_LIST_INIT(temptress_combat_skills, list(
 	overlay_state = "embrace"
 	recharge_time = 2 SECONDS
 
-/obj/effect/proc_holder/spell/self/temptress/erotic_embrace/Execute(mob/living/user, datum/component/combo_core/temptress/C)
-	if(!user || !C)
+/obj/effect/proc_holder/spell/self/temptress/erotic_embrace/cast(list/targets, mob/living/user)
+	. = ..()
+	if(!isliving(user))
+		return
+
+	var/mob/living/L = user
+	if(L.incapacitated())
+		return
+
+	var/datum/component/combo_core/temptress/C = temptress_get_component_safe(L)
+	if(!C)
 		return
 
 	if(!C.temptress_awakened)
 		return
 
-	SEND_SIGNAL(user, COMSIG_COMBO_CORE_REGISTER_INPUT, TEMPTRESS_BUTTON_EROTIC_EMBRACE, null, null)
+	C.ToggleEroticEmbrace()
 
 #undef TEMPTRESS_EMBRACE_TRAIT_SOURCE
 #undef TEMPTRESS_EMBRACE_PULSE_CD
 #undef TEMPTRESS_EMBRACE_GAIN_CD
 #undef TEMPTRESS_EMBRACE_RANGE
-#undef TEMPTRESS_BUTTON_EROTIC_EMBRACE
