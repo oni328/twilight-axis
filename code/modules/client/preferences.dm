@@ -11,8 +11,6 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/loaded_slot = 1
 
 	var/max_save_slots = 20
-
-	
 	var/list/job_characters = list() //TA EDIT
 	var/tmp/list/loaded_job_slots = list()  //TA EDIT
 
