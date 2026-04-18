@@ -802,7 +802,7 @@ GLOBAL_LIST(teleport_runes)
 /obj/effect/decal/cleanable/roguerune/arcyne/teleport
 	name = "leyline teleportation matrix"
 	desc = "A matrix that allows teleportation between leylines, ducking into the leyline and then rematerializing in another spot. The matrix can carry up to five people, though no more than two may lack arcyne knowledge. Despite magos trying their best, no one has been able to conceive a way to teleport more than a mile at once in all of Psydonia. Repeated usages or chaining teleport out of a two mile radius appears to exhaust or degrade the body rapidly."
-	icon = 'icons/effects/160x160.dmi'
+	icon = 'icons/effects/96x96.dmi'
 	icon_state = "portal"
 	tier = 2
 	req_keyword = TRUE
