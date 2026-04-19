@@ -228,6 +228,7 @@
 #define TRAIT_HARDDISMEMBER	"Hard Dismemberment"
 #define TRAIT_EASYDECAPITATION "Easy Decapitation"
 #define TRAIT_NOPAIN	"Painless"
+#define TRAIT_NOBURN_RESIST	"No Burn Resistance" // Negates NOPAIN's +50% burn threshold bonus
 #define TRAIT_NOPAINSTUN	"Enduring"
 #define TRAIT_NOBREATH	"Breathless"
 #define TRAIT_DEATHLESS "Deathless"

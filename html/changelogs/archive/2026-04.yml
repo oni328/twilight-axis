@@ -667,3 +667,21 @@
   - image: resprited the Mage Chalk and the Arcyne Silver Dagger
   - image: resprited (some of) the main Mage Runes to be made out of chalk instead
       of Neon Cyan
+2026-04-19:
+  BurpleBineapple:
+  - bugfix: Flamberges are held like greatswords properly now.
+  Kelshark:
+  - bugfix: Offering candelabrums to Matthios statue won't also make you hit the statue.
+  Ketrai:
+  - bugfix: Abyssor dream isn't shy when it isn't supposed to be now.
+  NalimaTheWitch:
+  - bugfix: Prowler gives +3 lockpicking again as intended.
+  WeNeedMorePhoron:
+  - rscadd: Added ability to set mob factions and make them dust on death, dust but
+      drop head, and dust and delete gears to the Create Mob Panel.
+  - rscadd: All spells invocation are spoken in Imperial (Common) and will no longer
+      follow your character's default language, even if you do not know Imperial.
+  - rscadd: Refactored Psydon PRAYER - report any oddities. It can loop up to a maximum
+      of 10 times now.
+  zydras:
+  - bugfix: ACTUALLY gives the teleportation rune the right filepath
