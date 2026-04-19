@@ -765,7 +765,6 @@
 
 #define FIRE_HARDCRIT_DIVISOR 106 // 106 = 94.5% burn damage = hardcrit
 #define FIRE_HARDCRIT_DIVISOR_MINDLESS 200 // 200 = 50% burn damage = hardcrit for mindless mobs
-#define FIRE_HARDCRIT_NOPAIN_MULT 1.5 // NOPAIN grants +50% burn threshold unless negated by TRAIT_NOBURN_RESIST
 
 //Updates the mob's health from bodyparts and mob damage variables
 /mob/living/carbon/updatehealth()
@@ -817,7 +816,6 @@
 
 #undef FIRE_HARDCRIT_DIVISOR
 #undef FIRE_HARDCRIT_DIVISOR_MINDLESS
-#undef FIRE_HARDCRIT_NOPAIN_MULT
 
 /mob/living/carbon
 	var/lightning_flashing = FALSE
