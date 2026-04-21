@@ -8,8 +8,8 @@
 	mob_overlay_icon = 'modular_twilight_axis/icons/roguetown/clothing/special/onmob/noble.dmi'
 
 /obj/item/clothing/suit/roguetown/armor/regenerating/baotha
-	name = "маскарад"
-	desc = "извивающееся тряпьё, сотканное из изуродованных человеческих лиц, пребывающих в постоянной агонии, переплетённой с наркотическим экстазом. Говорят, прошлый владелец этого пердмета пропал, но вот куда?.. Да и кто это говорит.."
+	name = "masquerade"
+	desc = "writhing rags, woven from mutilated human faces, in constant agony intertwined with narcotic ecstasy. They say the previous owner of this item has gone missing, but where?.. And whos saying that?.."
 	slot_flags = ITEM_SLOT_SHIRT|ITEM_SLOT_ARMOR
 	icon = 'modular_twilight_axis/icons/roguetown/clothing/shirts.dmi'
 	mob_overlay_icon = 'modular_twilight_axis/icons/roguetown/clothing/onmob/shirts.dmi'
@@ -37,6 +37,7 @@
 	realstate = icon_state
 	realicon = icon
 	realmob = mob_overlay_icon
+	AddComponent(/datum/component/cursed_item, TRAIT_CRACKHEAD, "CLOTCH")
 
 /obj/item/clothing/suit/roguetown/armor/regenerating/baotha/examine(var/mob/living/carbon/human/user, var/obj/item/clothing/neck/roguetown/psicross/blood/i)
 	. = ..()
@@ -45,83 +46,88 @@
 
 /obj/item/clothing/suit/roguetown/armor/regenerating/baotha/attack_right(var/mob/living/carbon/human/user)
 	if(user.patron.type == /datum/patron/inhumen/baotha)
-		var/mimicry = list("Рубаха", "Церемониальные шелка", "Тряпье", "Туника", "Платье", "Платье-сорочка", "Бархатное платье", "Дворянское платье", "Откровенное платье", "Рубаха-паутинка", "Элегантный наряд", "Топик", "Элегантная туника", "Отмена")
-		var/mimicry_choise = input("Варианты:", "Маскировка") as anything in mimicry
+		var/datum/component/cursed_item/cursed = GetComponent(/datum/component/cursed_item)
+		var/mimicry = list("shirt", "formal silks", "rags", "tunic", "dress", "silky dress", "undervestments", "royal gown", "white foreign shirt", "silk shirt", "fancy coat", "low cut tunic", "pristine dress", "gilded dress shirt", "Отмена")
+		var/mimicry_choise = input("Variants:", "camouflage") as anything in mimicry
 		switch(mimicry_choise)
-			if("Рубаха")
-				name = "рубаха"
-				desc = ""
+			if("shirt")
+				name = "shirt"
+				desc = "Modest and humble. It lets you walk around in public with your dignity intact."
 				icon_state = "undershirt"
 				mimic()
-			if("Церемониальные шелка")
-				name = "церемониальные шелка"
-				desc = ""
+			if("formal silks")
+				name = "formal silks"
+				desc = "Modest and humble. It lets you walk around in public with your dignity intact."
 				icon_state = "puritan_shirt"
 				mimic()
-			if("Тряпье")
-				name = "тряпье"
-				desc = "Лучше, чем совсем в наготе? Вам судить."
+			if("rags")
+				name = "rags"
+				desc = "From rags to... nope, still rags."
 				icon_state = "rags"
 				mimic()
-			if("Туника")
-				name = "туника"
-				desc = "Длинная рубаха для мужчин и женщин."
+			if("tunic")
+				name = "tunic"
+				desc = "Modest and fashionable, with the right colors."
 				icon_state = "tunic"
 				mimic()
-			if("Платье")
-				name = "платье"
-				desc = "Простое платье, которое встречается и у сельских девушек, и у городских дам."
+			if("dress")
+				name = "dress"
+				desc = "A simple dress worn by women and the bold."
 				icon_state = "dress"
 				mimic()
-			if("Платье-сорочка")
-				name = "платье-сорочка"
-				desc = "Удобное и элегантное платье, предоставляющее стиль и комфорт для повседневного ношения."
-				icon_state = "silkdress"
+			if("silky dress")
+				name = "silky dress"
+				desc = "Despite not actually being made of silk, the legendary expertise needed to sew this puts the quality on par."
+				icon_state = "silkydress"
 				mimic()
-			if("Бархатное платье")
-				name = "бархатное платье"
-				desc = "Платье, сшитое из тончайшего бархата, достойное особы высокого положения."
-				icon_state = "velvetdress"
+			if("undervestments")
+				name = "undervestments"
+				desc = "A soft garment designed to prevent chafing from wearing heavy robes all dae and night."
+				icon_state = "priestunder"
 				mimic()
-			if("Дворянское платье")
-				name = "дворянское платье"
-				desc = "Отличное платье, подходящее для человека высокого положения"
-				icon_state = "nobledress"
+			if("royal gown")
+				name = "royal gown"
+				desc = "An elaborate ball gown, a favoured fashion of queens and elevated nobility in Enigma."
+				icon_state = "royaldress"
 				mimic()
-			if("Откровенное платье")
-				name = "откровенное платье"
-				desc = "Очень откровенное платье из мягкой и дышащей ткани. Искусная и очень кропотливая работа опытной швеи. Стоп, а оно вообще хоть что-нибудь прикрывает?"
-				icon_state = "sexydress"
+			if("white foreign shirt")
+				name = "white foreign shirt"
+				desc = "A shirt typically used by foreign gangs."
+				icon_state = "eastshirt1"
 				mimic()
-			if("Рубаха-паутинка")
-				name = "рубаха-паутинка"
-				desc = "Экзотический шелк, тонко вплетенный в... это? С таким же успехом можно носить паутину. Должно быть, она очень легкая и удобная?"
+			if("silk shirt")
+				name = "silk shirt"
+				desc = "A sleeveless shirt woven from glossy material."
 				icon_state = "webs"
 				mimic()
-			if("Элегантный наряд")
-				name = "элегантный наряд"
-				desc = "Модное сочетание туники и пальто. Как элегантно."
+			if("fancy coat")
+				name = "fancy coat"
+				desc = "A fancy tunic and coat combo. How elegant."
 				icon_state = "noblecoat"
 				mimic()
-			if("Топик")
-				name = "топик"
-				desc = "Туника, обнажающая шею и большую часть плеч. Плечи?! Какой скандал..."
+			if("low cut tunic")
+				name = "low cut tunic"
+				desc = "A tunic exposing much of the neck and... shoulders?! How scandalous..."
 				icon_state = "lowcut"
 				mimic()
-			if("Элегантная туника")
-				name = "элегантная туника"
-				desc = "Рубашка на пуговицах из тонкого шелка, декорированная жабо и манжетами."
-				icon_state = "fancyshirt"
-			if("Экзотичный шелковый топик")
-				name = "экзотичный шелковый топик"
-				desc = "Причудливые шелка с золотым шитьем едва способны скрыть то немногое, что они прикрывают."
-				icon_state = "exoticsilkbra"
-			if("Отмена")
+			if("pristine dress")
+				name = "pristine dress"
+				desc = "A flowy, intricate dress made by the finest tailors in the land for the monarch's children."
+				icon_state = "princess"
+			if("gilded dress shirt")
+				name = "gilded dress shirt"
+				desc = "A gold-embroidered dress shirt specially tailored for the monarch's children."
+				icon_state = "prince"
+			if("Undo")
 				name = realname
 				desc = realdesc
 				icon = realicon
 				icon_state = realstate
 				mob_overlay_icon = realmob
+				if(!cursed)
+					AddComponent(/datum/component/cursed_item, TRAIT_CRACKHEAD, "CLOTCH")
+		if(mimicry_choise != "Undo")
+			qdel(GetComponent(/datum/component/cursed_item))
 		playsound(user, pick('sound/magic/magic_nulled.ogg'), 20, TRUE)
 
 /obj/item/clothing/suit/roguetown/armor/regenerating/baotha/proc/mimic()

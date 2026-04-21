@@ -129,8 +129,9 @@
 	wdefense = 4
 
 /obj/item/rogueweapon/huntingknife/idagger/steel/baotha/Initialize()
-	.=..()
+	. = ..()
 	icon_state = "baotha_knife1"
+	AddComponent(/datum/component/cursed_item, TRAIT_CRACKHEAD, "KNIFE")
 
 /obj/item/rogueweapon/huntingknife/idagger/steel/baotha/attack_self(var/mob/living/carbon/human/user)
 	if(user.patron.type == /datum/patron/inhumen/baotha)
@@ -142,4 +143,15 @@
 			qdel(src)
 			playsound(user, pick('sound/magic/magic_nulled.ogg'), 20, TRUE)
 		else
-			to_chat(user, "<span class='notice'>Я теряю концентрацию!</span>")
+			to_chat(user, "<span class='notice'>I losing concentration!</span>")
+
+/obj/item/rogueweapon/huntingknife/idagger/steel/baotha/pre_attack(mob/living/carbon/human/target, mob/living/user = usr, params)
+	if(!istype(target))
+		return FALSE
+	var/list/drugs = list(/datum/reagent/ozium,
+						/datum/reagent/moondust,
+						/datum/reagent/corps_dust,
+						/datum/reagent/smartium)
+	var/random_drug = pick(drugs)
+	target.reagents.add_reagent(random_drug, 2)
+	return FALSE

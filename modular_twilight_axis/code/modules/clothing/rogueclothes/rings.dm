@@ -1,6 +1,6 @@
 /obj/item/clothing/ring/baotha
-	name = "змеиное кольцо"
-	desc = "Кольцо выполненное из стали с применением позолоты, в виде искуссно воссозданной змеи. Качество работы настолько велико, что вам кажется будто глаза-самоцветы ползучей следят за вами."
+	name = "snake ring"
+	desc = "The ring is made of steel with gilding, and it is artfully recreated as a snake. The quality of the work is so high that it feels as if the snake's gem-filled eyes are watching you."
 	icon_state = "baotha_knife"
 	icon = 'modular_twilight_axis/icons/roguetown/weapons/32.dmi'
 	max_integrity = 300
@@ -26,25 +26,28 @@
 
 /obj/item/clothing/ring/baotha/attack_right(var/mob/living/carbon/human/user)
 	if(user.patron.type == /datum/patron/inhumen/baotha)
-		var/mimicry = list("Золото", "Серебро", "Медь", "Отмена")
+		var/mimicry = list("gold ring", "silver ring", "bronze ring", "Отмена")
 		var/mimicry_choise = input("Варианты:", "Маскировка") as anything in mimicry
 		switch(mimicry_choise)
-			if("Золото")
-				name = "золотое кольцо"
+			if("gold ring")
+				name = "gold ring"
+				desc = "A ring of golden beauty."
 				icon_state = "ring_g"
-			if("Серебро")
-				name = "серебряное кольцо"
+			if("silver ring")
+				name = "silver ring"
+				desc = "A ring of silvered glimmerance."
 				icon_state = "ring_s"
-			if("Медь")
-				name = "медное кольцо"
-				icon_state = "ring_c"
-			if("Отмена")
+			if("bronze ring")
+				name = "bronze ring"
+				desc = "A ring of bronzen resiliance."
+				icon_state = "ring_b"
+			if("Undo")
 				name = realname
 				desc = realdesc
 				icon = realicon
 				icon_state = realstate
 
-		if(mimicry_choise != "Отмена")
+		if(mimicry_choise != "Undo")
 			desc = ""
 			icon = 'icons/roguetown/clothing/rings.dmi'
 			mob_overlay_icon = 'icons/roguetown/clothing/onmob/rings.dmi'
@@ -61,4 +64,4 @@
 			qdel(src)
 			playsound(user, pick('sound/magic/magic_nulled.ogg'), 20, TRUE)
 		else
-			to_chat(user, "<span class='notice'>Я теряю концентрацию!</span>")
+			to_chat(user, "<span class='notice'>I losing concentration!</span>")
