@@ -119,8 +119,8 @@
 	)
 
 /obj/item/rogueweapon/huntingknife/idagger/steel/baotha
-	name = "змеиное жало"
-	desc = "Искуссно выполненный клинок, кажется предназначенный для скрытых убийств. На его лезвии заметны подтёки какой-то пузырящейся субстанции."
+	name = "snakes sting"
+	desc = "The blade is skillfully crafted and appears to be designed for stealthy assassinations. There are visible streaks of a bubbling substance on its blade."
 	icon = 'modular_twilight_axis/icons/roguetown/weapons/32.dmi'
 	icon_state = "baotha_knife1"
 	max_blade_int = 300

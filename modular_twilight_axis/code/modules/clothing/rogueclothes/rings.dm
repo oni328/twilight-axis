@@ -19,10 +19,12 @@
 	realstate = icon_state
 	realicon = icon
 
-/obj/item/clothing/ring/baotha/examine(var/mob/living/carbon/human/user, var/obj/item/clothing/neck/roguetown/psicross/blood/i)
+/obj/item/clothing/ring/baotha/examine(var/mob/living/carbon/human/user)
 	. = ..()
-	if(user.patron.type == /datum/patron/inhumen/baotha)
-		desc = realdesc + span_love(" Это существо является малым даром моего патрона. При желании я могу распрямить его в небольшой смертоносный кинжал.")
+	if(iscarbon(user))
+		var/mob/living/carbon/c = user
+		if(user.patron.type == /datum/patron/inhumen/baotha)
+			. += ("This creature is a small gift from my patron, and I can make it take any form I desire.")
 
 /obj/item/clothing/ring/baotha/attack_right(var/mob/living/carbon/human/user)
 	if(user.patron.type == /datum/patron/inhumen/baotha)

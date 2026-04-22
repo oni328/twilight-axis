@@ -37,12 +37,14 @@
 	realstate = icon_state
 	realicon = icon
 	realmob = mob_overlay_icon
-	AddComponent(/datum/component/cursed_item, TRAIT_CRACKHEAD, "CLOTCH")
+	AddComponent(/datum/component/cursed_item, TRAIT_CRACKHEAD, "CLOTH")
 
-/obj/item/clothing/suit/roguetown/armor/regenerating/baotha/examine(var/mob/living/carbon/human/user, var/obj/item/clothing/neck/roguetown/psicross/blood/i)
+/obj/item/clothing/suit/roguetown/armor/regenerating/baotha/examine(var/mob/living/carbon/human/user)
 	. = ..()
-	if(user.patron.type == /datum/patron/inhumen/baotha)
-		desc = realdesc + span_love("Это существо является малым даром моего патрона. При желании я могу заставить его принять любой необходимый мне вид.")
+	if(iscarbon(user))
+		var/mob/living/carbon/c = user
+		if(user.patron.type == /datum/patron/inhumen/baotha)
+			. += ("This creature is a small gift from my patron, and I can make it take any form I desire.")
 
 /obj/item/clothing/suit/roguetown/armor/regenerating/baotha/attack_right(var/mob/living/carbon/human/user)
 	if(user.patron.type == /datum/patron/inhumen/baotha)
@@ -125,7 +127,7 @@
 				mob_overlay_icon = realmob
 				if(icon_state != realstate)
 					armor = ARMOR_BRIGANDINE
-					AddComponent(/datum/component/cursed_item, TRAIT_CRACKHEAD, "CLOTCH")
+					AddComponent(/datum/component/cursed_item, TRAIT_CRACKHEAD, "CLOTH")
 		if(icon_state != realstate)
 			armor = ARMOR_PADDED
 			qdel(GetComponent(/datum/component/cursed_item))

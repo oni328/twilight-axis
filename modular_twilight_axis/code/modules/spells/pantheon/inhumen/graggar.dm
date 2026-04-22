@@ -1,9 +1,9 @@
 /obj/effect/proc_holder/spell/self/heavy_stomp
 	name = "Heavy Stomp"
-	desc = ""
-	action_icon = 'icons/mob/actions/graggarmiracles.dmi'
-	overlay_icon = 'icons/mob/actions/graggarmiracles.dmi'
-	overlay_state = "bloodrage"
+	desc = "Channel your patrons fury into a powerful ground-stomp that will knock back anyone in your path and apply various debuffs based on your Miracle skill, as well as deal damage."
+	action_icon = 'modular_twilight_axis/icons/mob/actions/graggarmiracles.dmi'
+	overlay_icon = 'modular_twilight_axis/icons/mob/actions/graggarmiracles.dmi'
+	overlay_state = "stomp"
 	xp_gain = TRUE
 	releasedrain = 30
 	range = 0
@@ -95,10 +95,10 @@
 
 /obj/effect/proc_holder/spell/invoked/blood_call
 	name = "Blood Call"
-	desc = "Tie up the tongue of your foe, making them unable to speak or cast spells/miracles."
-	action_icon = 'icons/mob/actions/graggarmiracles.dmi'
-	overlay_icon = 'icons/mob/actions/graggarmiracles.dmi'
-	overlay_state = "unholy_silence"
+	desc = "Let out a powerful howl to pass a STR contest with your opponent. Depending on the results, apply various negative effects and confuse them. In any case, it disrupts your balance and prevents you from parrying. The duration of the negative effects depends on your Miracle skill."
+	action_icon = 'modular_twilight_axis/icons/mob/actions/graggarmiracles.dmi'
+	overlay_icon = 'modular_twilight_axis/icons/mob/actions/graggarmiracles.dmi'
+	overlay_state = "call"
 	miracle = TRUE
 	devotion_cost = 40
 	releasedrain = 30
@@ -127,6 +127,7 @@
 		if(spell_guard_check(target, TRUE))
 			target.visible_message(span_warning("[target] resists the my magic!"))
 			return TRUE
+		user.emote("warcry")
 		var/perc = (user.STASTR - target.STASTR)
 		var/effect_to_apply = (user.mind ? /datum/status_effect/debuff/vulnerable : /datum/status_effect/debuff/exposed)
 		user.apply_status_effect(effect_to_apply, 3 SECONDS)
@@ -162,8 +163,9 @@
 /obj/effect/proc_holder/spell/self/graggar_regenerate
 	name = "Berserk Body"
 	desc = "Grants you a temporary health regeneration... for a price of your STR and WIL."
-	overlay_state = "createlight"
-	base_icon_state = "regalyscroll"
+	action_icon = 'modular_twilight_axis/icons/mob/actions/graggarmiracles.dmi'
+	overlay_icon = 'modular_twilight_axis/icons/mob/actions/graggarmiracles.dmi'
+	overlay_state = "regenerate"
 	releasedrain = 10
 	chargedrain = 0
 	chargetime = 0
@@ -171,7 +173,7 @@
 	sound = 'sound/magic/astrata_choir.ogg'
 	associated_skill = /datum/skill/magic/holy
 	antimagic_allowed = FALSE
-	invocations = list("Accincti flammis.")
+	invocations = list("")
 	invocation_type = "whisper"
 	recharge_time = 0
 	devotion_cost = 0
@@ -184,6 +186,7 @@
 		user.remove_status_effect(/datum/status_effect/buff/graggar_regenerate)
 		return TRUE
 	else
+		user.emote("warcry")
 		user.visible_message("[user] mutters an incantation and their skin begin regenerate.")
 		user.apply_status_effect(/datum/status_effect/buff/graggar_regenerate)
 	return TRUE
@@ -195,16 +198,16 @@
 
 /datum/status_effect/buff/graggar_regenerate
 	id = "graggar_regenerate"
-	examine_text = "<font color='red'>SUBJECTPRONOUN flash regrows!</font>"
+	examine_text = "<font color='red'>SUBJECTPRONOUN flesh regrows!</font>"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/graggar_regenerate
 	effectedstats = list(STATKEY_WIL = -3, STATKEY_STR = -3) //Target body loosing CON, but getting fireresist.
-	duration = 11 SECONDS
+	duration = 6 SECONDS
 
 /datum/status_effect/buff/graggar_regenerate/on_apply()
 	. = ..()
-	addtimer(CALLBACK(src, PROC_REF(continue_proc)), wait = (5 SECONDS))
+	addtimer(CALLBACK(src, PROC_REF(continue_p)), wait = (5 SECONDS))
 
-/datum/status_effect/buff/graggar_regenerate/proc/continue_proc()
+/datum/status_effect/buff/graggar_regenerate/proc/continue_p()
 	if(QDELETED(src) || QDELING(src) || !owner || QDELETED(owner))
 		return
 	var/mob/living/carbon/human/user = owner
@@ -228,13 +231,14 @@
 		if(cost != 0)
 			user.devotion?.update_devotion(-cost)
 			to_chat(user, "<font color='purple'>I lose [cost] devotion!</font>")
-			user.adjustBruteLoss(-7*skill)
-			user.adjustFireLoss(-7*skill)
-			user.heal_wounds(-skill)
+			user.adjustBruteLoss(-10*skill)
+			user.adjustFireLoss(-10*skill)
+			user.heal_wounds(-5*skill)
 			for(var/i in 1 to 3)
 				var/obj/effect/temp_visual/heal/H = new /obj/effect/temp_visual/heal_blood(get_turf(owner))
 				H.color = "#bc0909"
+		user.apply_status_effect(/datum/status_effect/buff/graggar_regenerate)
 		user.apply_status_effect(user.devotion?.update_devotion(-cost))
-		addtimer(CALLBACK(src, PROC_REF(continue_proc)), wait = (5 SECONDS))
+		addtimer(CALLBACK(src, PROC_REF(continue_p)), wait = (5 SECONDS))
 	else
 		return

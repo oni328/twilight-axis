@@ -237,3 +237,75 @@
 	if(owner)
 		to_chat(owner, span_notice("Ugh... Whats happen?.."))
 	. = ..()
+
+/datum/status_effect/buff/druqks/baotha
+	id = "baotha_blessing"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/baothablessing
+
+/atom/movable/screen/alert/status_effect/buff/baothablessing
+	name = "Baothan Blessing"
+	desc = "Baotha has blessed you with immunity to overdose. Rejoice!"
+	icon_state = "acid"
+
+/datum/status_effect/buff/druqks/baotha/on_apply()
+	. = ..()
+	ADD_TRAIT(owner, TRAIT_CRACKHEAD, TRAIT_MIRACLE)
+
+/datum/status_effect/buff/druqks/baotha/on_remove()
+	. = ..()
+	REMOVE_TRAIT(owner, TRAIT_CRACKHEAD, TRAIT_MIRACLE)
+	owner.visible_message("[owner]'s eyes appear to return to normal.")
+
+/datum/status_effect/buff/druqks/on_apply()
+	. = ..()
+	if(owner?.client)
+		if(owner.client.screen && owner.client.screen.len)
+			var/atom/movable/screen/plane_master/game_world/PM = locate(/atom/movable/screen/plane_master/game_world) in owner.client.screen
+			PM.backdrop(owner)
+			PM = locate(/atom/movable/screen/plane_master/game_world_fov_hidden) in owner.client.screen
+			PM.backdrop(owner)
+			PM = locate(/atom/movable/screen/plane_master/game_world_above) in owner.client.screen
+			PM.backdrop(owner)
+			owner.add_stress(/datum/stressevent/high)
+
+/datum/status_effect/buff/druqks/on_remove()
+	if(owner?.client)
+		if(owner.client.screen && owner.client.screen.len)
+			var/atom/movable/screen/plane_master/game_world/PM = locate(/atom/movable/screen/plane_master/game_world) in owner.client.screen
+			PM.backdrop(owner)
+			PM = locate(/atom/movable/screen/plane_master/game_world_fov_hidden) in owner.client.screen
+			PM.backdrop(owner)
+			PM = locate(/atom/movable/screen/plane_master/game_world_above) in owner.client.screen
+			PM.backdrop(owner)
+			owner.remove_stress(/datum/stressevent/high)
+
+	. = ..()
+
+//Re-add drug stuff who Lagomorphica remove... Fckret.//
+/datum/status_effect/buff/moondust/nextmove_modifier()
+	return 0.8
+
+/datum/status_effect/buff/moondust_purest/nextmove_modifier()
+	return 0.8
+
+/datum/status_effect/buff/herozium/nextmove_modifier()
+	return 1.2
+
+/datum/status_effect/buff/herozium/on_apply()
+	. = ..()
+	owner.add_stress(/datum/stressevent/ozium)
+	ADD_TRAIT(owner, TRAIT_NOPAIN, id)
+	ADD_TRAIT(owner, TRAIT_CRITICAL_RESISTANCE, id)
+	originalcmode = owner.cmode_music
+	owner.cmode_music = 'sound/music/combat_ozium.ogg'
+
+/datum/status_effect/buff/herozium/on_remove()
+	owner.remove_stress(/datum/stressevent/ozium)
+	REMOVE_TRAIT(owner, TRAIT_NOPAIN, id)
+	REMOVE_TRAIT(owner, TRAIT_CRITICAL_RESISTANCE, id)
+	owner.cmode_music = originalcmode
+	. = ..()
+
+/datum/status_effect/buff/starsugar/nextmove_modifier()
+	return 0.7
+//***************************************************//
