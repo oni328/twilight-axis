@@ -662,8 +662,11 @@
 
 /obj/item/enchantingkit/weapon/euthanasia
 	name = "'Ritual Dagger Mould'"
+	desc = "A small container of special morphing dust, perfect to make a specifc item. Required: Dagger or Seax"
 	target_items = list(
-		/obj/item/rogueweapon/huntingknife/combat
+		/obj/item/rogueweapon/huntingknife/combat,
+		/obj/item/rogueweapon/huntingknife/idagger,
+		/obj/item/rogueweapon/huntingknife/idagger/steel,
 	)
 	result_item = /obj/item/rogueweapon/example/euthanasia
 
