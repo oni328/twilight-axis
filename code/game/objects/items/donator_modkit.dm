@@ -646,6 +646,7 @@
 
 /obj/item/enchantingkit/weapon/darling
 	name = "'Darling' morphing elixir"
+	desc = "A small container of special morphing dust, perfect to make a specifc item. Required: Longsword"
 	target_items = list(
 		/obj/item/rogueweapon/sword/long
 	)
@@ -653,6 +654,7 @@
 
 /obj/item/enchantingkit/weapon/sumquoderis
 	name = "'Vial of Crimson Ichor'"
+	desc = "A small container of special morphing dust, perfect to make a specifc item. Required: Executioners sword"
 	target_items = list(
 		/obj/item/rogueweapon/sword/long/exe
 	)
