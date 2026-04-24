@@ -660,6 +660,14 @@
 	)
 	result_item = /obj/item/rogueweapon/example/sumquoderis
 
+/obj/item/enchantingkit/weapon/euthanasia
+	name = "'Ritual Dagger Mould'"
+	target_items = list(
+		/obj/item/rogueweapon/huntingknife/combat
+	)
+	result_item = /obj/item/rogueweapon/example/euthanasia
+
+
 /////////////////////////////
 // ! Triumph-Exc. Kits !   //
 /////////////////////////////
