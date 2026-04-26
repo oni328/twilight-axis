@@ -16,7 +16,7 @@
 #define RONIN_TANUKI_PER_BONUS       4
 #define RONIN_TANUKI_PER_HITS        4
 
-#define RONIN_COUNTER_COOLDOWN       (8 SECONDS)
+#define RONIN_COUNTER_COOLDOWN       (3 SECONDS)
 
 /proc/ronin_on_parry_success(mob/living/defender, mob/living/attacker)
 	if(!isliving(defender))
