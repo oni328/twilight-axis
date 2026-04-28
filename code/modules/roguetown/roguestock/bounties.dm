@@ -1,8 +1,8 @@
 /datum/roguestock/bounty/treasure
 	name = "Collectable Treasures"
-	desc = "Treasures are minted for 80% of their value, which is deposited into the treasury. </br>Lesser weapons, clothes, and ores are excluded. </br> Insertions worth at least 30 mammons will always be depositable. </br> Statues, gemstones, utensils and rings will always deposit, regardless of value."
+	desc = "Treasures are minted for 80% of their value and deposited into the depositor's account. </br>Lesser weapons, clothes, and ores are excluded. </br> Insertions worth at least 30 mammons will always be depositable. </br> Statues, gemstones, utensils and rings will always deposit, regardless of value."
 	item_type = /obj
-	payout_price = 70
+	payout_price = 60
 	mint_item = TRUE
 	percent_bounty = TRUE
 
@@ -118,5 +118,4 @@
 			return TRUE
 		if(istype(I, /obj/item/recipe_book/survival)) //Encourages less littering, and diagetically teaches new players how the Stockpile works. Gives five mammons or less.
 			return TRUE
-	if(I.get_real_price() >= 30) //The numerical value here determines how much mammons an item needs to be worth, at the minimum, to be automatically accepted into the Stockpile.
-		return TRUE
+	return FALSE

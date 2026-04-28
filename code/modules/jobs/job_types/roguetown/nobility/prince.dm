@@ -110,7 +110,7 @@
 	neck = /obj/item/storage/belt/rogue/pouch/coins/rich
 	backr = /obj/item/storage/backpack/rogue/satchel
 	if(H.mind)
-		SStreasury.give_money_account(ECONOMIC_RICH, H, "Savings.")
+		SStreasury.grant_savings(ECONOMIC_RICH, H)
 
 /datum/outfit/job/roguetown/heir/daring/choose_loadout(mob/living/carbon/human/H)
 	. = ..()
@@ -168,7 +168,7 @@
 	mask = /obj/item/clothing/mask/rogue/spectacles
 	neck = /obj/item/storage/belt/rogue/pouch/coins/rich
 	if(H.mind)
-		SStreasury.give_money_account(ECONOMIC_RICH, H, "Savings.")
+		SStreasury.grant_savings(ECONOMIC_RICH, H)
 		H.mind.AddSpell(new /obj/effect/proc_holder/spell/self/heir_spell_bundle)
 	backpack_contents = list(
 		/obj/item/handmirror = 1,
@@ -231,7 +231,7 @@
 		/obj/item/storage/belt/rogue/pouch/coins/rich = 1
 	)
 	if(H.mind)
-		SStreasury.give_money_account(ECONOMIC_RICH, H, "Savings.")
+		SStreasury.grant_savings(ECONOMIC_RICH, H)
 
 /datum/advclass/heir/inbred
 	name = "Inbred wastrel"
@@ -275,7 +275,7 @@
 		shoes = /obj/item/clothing/shoes/roguetown/shortboots
 	saiga_shoes = /obj/item/clothing/shoes/roguetown/horseshoes/gold
 	if(H.mind)
-		SStreasury.give_money_account(ECONOMIC_RICH, H, "Savings.")
+		SStreasury.grant_savings(ECONOMIC_RICH, H)
 
 /datum/advclass/heir/scamp
 	name = "Nettlesome Scamp"
@@ -328,7 +328,7 @@
 		/obj/item/lockpickring/mundane = 1,
 	)
 	if(H.mind)
-		SStreasury.give_money_account(ECONOMIC_RICH, H, "Savings.")
+		SStreasury.grant_savings(ECONOMIC_RICH, H)
 
 
 

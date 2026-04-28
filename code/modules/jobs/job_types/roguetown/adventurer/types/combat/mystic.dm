@@ -6,6 +6,8 @@
 	outfit = /datum/outfit/job/roguetown/adventurer/mystic
 	class_select_category = CLASS_CAT_MYSTIC
 	category_tags = list(CTAG_ADVENTURER, CTAG_COURTAGENT)
+	townie_contract_gate_exempt = TRUE
+	townie_contract_gate_hide_in_list = TRUE
 	traits_applied = list(TRAIT_SEEDKNOW, TRAIT_ARCYNE, TRAIT_ALCHEMY_EXPERT) //so they can produce red+ and blue+
 	subclass_stats = list( //only class with a 7 point spread to compensate their lack offensive cantrip
 			STATKEY_INT = 3,

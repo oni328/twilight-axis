@@ -1,3 +1,6 @@
+/datum/advclass/thug
+	townie_contract_gate_exempt = TRUE
+
 /datum/advclass/thug/goon
 	name = "Goon"
 	tutorial = "You are a goon, a low-lyfe thug in a painful world - not good enough for war, not smart enough for peace. What you lack in station you make up for in daring."
@@ -75,7 +78,7 @@
 			H.adjust_skillrank_up_to(/datum/skill/combat/whipsflails, SKILL_LEVEL_APPRENTICE, TRUE)
 			r_hand = /obj/effect/spawner/lootdrop/roguetown/dungeon/weapons
 	if(H.mind)
-		SStreasury.give_money_account(ECONOMIC_LOWER_CLASS, H, "Savings.")
+		SStreasury.grant_savings(ECONOMIC_LOWER_CLASS, H)
 
 /datum/advclass/thug/wiseguy
 	name = "Wise Guy"
@@ -147,7 +150,7 @@
 			ADD_TRAIT(H, TRAIT_LIGHT_STEP, TRAIT_GENERIC)
 			r_hand = /obj/item/lockpickring/mundane
 	if(H.mind)
-		SStreasury.give_money_account(ECONOMIC_LOWER_CLASS, H, "Savings.")
+		SStreasury.grant_savings(ECONOMIC_LOWER_CLASS, H)
 
 /datum/advclass/thug/bigman
 	name = "Big Fella"
