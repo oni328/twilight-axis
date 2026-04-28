@@ -33,6 +33,8 @@
 	
 	var/flour_efficiency = 0
 	var/datum/reagents/pill_buffer
+	var/lux_charges = 0
+	var/max_lux_charges = 1000 
 
 /obj/machinery/alch_workbench/Initialize(mapload)
 	. = ..()
@@ -174,6 +176,12 @@
 	var/list/data = list()
 	data["upgrade_lvl"] = upgrade_level
 	var/list/reagent_data = list()
+
+	data["lux_tank"] = list(
+		"charges" = lux_charges, 
+		"max" = max_lux_charges
+		)
+		
 	if(reagents && reagents.reagent_list.len)
 		for(var/datum/reagent/R in reagents.reagent_list)
 			reagent_data += list(list(
@@ -366,23 +374,10 @@
 		))
 
 	data["knowledge"] = knowledge
-	
-	var/obj/item/philosophers_stone/PS = locate(/obj/item/philosophers_stone) in src.contents
-	if(PS)
-		data["p_stone"] = list(
-			"charges" = round(PS.charges), 
-			"max" = PS.max_charges, 
-			"owner" = PS.bound_soul ? PS.bound_soul.name : "Никто"
-		)
-	else
-		data["p_stone"] = null
 
-	if(transmute_slot && (transmute_slot in src.contents))
+	if(transmute_slot && (transmute_slot in STR.real_location()))
 		var/icon/T_IMG = icon(transmute_slot.icon, transmute_slot.icon_state, frame = 1)
-		data["transmute_item"] = list(
-			"name" = transmute_slot.name, 
-			"image" = "data:image/png;base64,[icon2base64(T_IMG)]"
-		)
+		data["transmute_item"] = list("name" = transmute_slot.name, "image" = "data:image/png;base64,[icon2base64(T_IMG)]")
 	else
 		transmute_slot = null
 		data["transmute_item"] = null
@@ -561,33 +556,56 @@
 			update_icon()
 			return TRUE
 
+		if("consume_lux")
+			var/obj/item/reagent_containers/lux/L = locate(/obj/item/reagent_containers/lux) in STR.real_location()
+			var/obj/item/reagent_containers/lux_impure/LI = locate(/obj/item/reagent_containers/lux_impure) in STR.real_location()
+			
+			var/obj/item/consumed = null
+			var/charge_gain = 0
+			
+			if(L)
+				consumed = L
+				charge_gain = 50
+			else if(LI)
+				consumed = LI
+				charge_gain = 30
+				
+			if(consumed)
+				if(lux_charges + charge_gain > max_lux_charges)
+					to_chat(usr, span_warning("Бак энергии лаборатории полон!"))
+					return TRUE
+					
+				STR.remove_from_storage(consumed, null)
+				qdel(consumed)
+				lux_charges += charge_gain
+				to_chat(usr, span_notice("Лаборатория успешно расщепила [consumed.name] на чистую энергию."))
+			else
+				to_chat(usr, span_warning("На складе стола нет Люкса для поглощения!"))
+			return TRUE
+
+
 		if("do_transmute")
 			var/recipe_ref = params["recipe_ref"]
 			var/list/R_DATA = GLOB.alchemy_recipe_lookup[recipe_ref]
-			
-			if(!R_DATA)
-				return TRUE
-
-			var/obj/item/philosophers_stone/PS = locate(/obj/item/philosophers_stone) in STR.real_location()
-			if(!PS || !PS.bound_soul)
-				to_chat(usr, span_warning("Камень не активен!"))
-				return TRUE
+			if(!R_DATA) return TRUE
 
 			var/cost = R_DATA["cost"]
 			var/atom/out_type = R_DATA["result_type"]
 
+			if(lux_charges < cost)
+				to_chat(usr, span_warning("Недостаточно энергии Люкса для этой формы!"))
+				return TRUE
+
 			if(transmute_slot && out_type)
-				if(STR)
-					STR.remove_from_storage(transmute_slot, null)
-				PS.charges -= cost
-				qdel(transmute_slot)   
+				lux_charges -= cost
+				if(STR) STR.remove_from_storage(transmute_slot, null)
+				
+				qdel(transmute_slot)
 				transmute_slot = null
 				new out_type(get_turf(src))
-				
-				if(PS.charges <= 0)
-					PS.consume_soul()
 				update_icon()
 			return TRUE
+
 	var/obj/item/reagent_containers/target_beaker = (params["slot"] == "1") ? beaker_1 : beaker_2
 
 	switch(action)
