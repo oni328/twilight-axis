@@ -670,6 +670,11 @@
 	)
 	result_item = /obj/item/rogueweapon/example/euthanasia
 
+/obj/item/enchantingkit/weapon/nicksonessang
+	name = "'Dark Delight' morphing elixir"
+	target_items = list(/obj/item/rogueweapon/sword/long/kriegmesser/ssangsudo)
+	result_item = /obj/item/rogueweapon/example/ssangsudo_long
+
 
 /////////////////////////////
 // ! Triumph-Exc. Kits !   //
