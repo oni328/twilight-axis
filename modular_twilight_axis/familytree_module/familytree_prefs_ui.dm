@@ -33,6 +33,7 @@
 	var/tmp/familytree_setspouse_retries = 0
 	var/tmp/familytree_xylix_roulette_checked = FALSE
 	var/tmp/familytree_xylix_roulette_flag = FALSE
+	var/tmp/familytree_xylix_roulette_notified = FALSE
 	var/allow_relatives_in_family = TRUE
 
 /proc/familytree_pref_mask(pref)

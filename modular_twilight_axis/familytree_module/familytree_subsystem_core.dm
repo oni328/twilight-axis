@@ -184,6 +184,8 @@ SUBSYSTEM_DEF(familytree)
 
 	H.familytree_xylix_roulette_checked = TRUE
 	H.familytree_xylix_roulette_flag = !!xylix_roulette_flagged_ckeys[ckey_key]
+	if(H.familytree_xylix_roulette_flag)
+		notify_xylix_participant(H)
 	return H.familytree_xylix_roulette_flag
 
 /datum/controller/subsystem/familytree/proc/xylix_roulette_pair_applies(mob/living/carbon/human/A, mob/living/carbon/human/B)
@@ -205,28 +207,37 @@ SUBSYSTEM_DEF(familytree)
 		H.familytree_assignment_scheduled = TRUE
 		addtimer(CALLBACK(src, PROC_REF(run_local_assignment), H, H.familytree_pref), rand(1, 5) SECONDS)
 
-/datum/controller/subsystem/familytree/proc/notify_xylix_participants()
+/datum/controller/subsystem/familytree/proc/notify_xylix_participant(mob/living/carbon/human/H)
+	if(!H?.client || H.familytree_xylix_roulette_notified)
+		return FALSE
+	if(H.family_datum || H.familytree_opted_out || !familytree_pref_enabled(H.familytree_pref))
+		return FALSE
 	var/xylix_msg = span_danger("<font size='2'>Карты вашей судьбы могут быть подтасованы. Ксайликс наблюдает за семейной рулеткой.</font>")
+	to_chat(H, xylix_msg)
+	H.familytree_xylix_roulette_notified = TRUE
+	return TRUE
+
+/datum/controller/subsystem/familytree/proc/notify_xylix_participants()
 	for(var/mob/M as anything in GLOB.player_list)
 		if(!M.client || !ishuman(M))
 			continue
 		var/mob/living/carbon/human/H = M
 		var/datum/preferences/P = H.client?.prefs
 		if(P)
-			P.familytree_module_load_character()
-		var/family_pref = P ? P.family : H.familytree_pref
-		if(!H.family_datum && !H.familytree_opted_out && familytree_pref_enabled(family_pref) && xylix_roulette_applies(H))
-			to_chat(H, xylix_msg)
+			load_familytree_runtime_preferences(H, P)
+		if(xylix_roulette_applies(H))
+			notify_xylix_participant(H)
 
 /datum/controller/subsystem/familytree/proc/apply_xylix_roulette_preferences(mob/living/carbon/human/H)
 	if(!H || !xylix_roulette_applies(H))
 		return FALSE
 	if(H.familytree_opted_out || !familytree_pref_enabled(H.familytree_pref))
 		return FALSE
+	var/original_relative_role = H.desired_relative_role || RELATIVE_ANY
 	H.familytree_pref = FAMILYTREE_MODE_ALL
 	H.gender_choice_pref = ANY_GENDER
 	H.polygamy_mode = POLYGAMY_ALLOW_BOTH
-	H.desired_relative_role = RELATIVE_ANY
+	H.desired_relative_role = original_relative_role
 	H.allow_low_status_marriage = TRUE
 	H.allow_relatives_in_family = TRUE
 	return TRUE

@@ -721,7 +721,7 @@
 	if(anchor.get_parent_members().len < 2 && CanBeParentOf(person, anchor.person))
 		if(familytree_parent_link_mode(person, anchor.person, house, adopted))
 			possible_roles += "parent"
-	if(anchor.get_parent_members().len < 2 && familytree_can_be_uncle_aunt_of(person, anchor.person))
+	if(forced_role == "uncle_aunt" && anchor.get_parent_members().len < 2 && familytree_can_be_uncle_aunt_of(person, anchor.person))
 		possible_roles += "uncle_aunt"
 
 	if(!forced_role)
