@@ -1,4 +1,0 @@
-author: "WeNeedMorePhoron"
-delete-after: True
-changes:
-  - rscadd: "NPC bottlebombs no longer create shard to reduce clutter"
