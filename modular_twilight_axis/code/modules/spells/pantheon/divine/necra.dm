@@ -1,16 +1,17 @@
 #define TRANQUILITY_SHROUD_DURATION 12 MINUTES
 #define TRANQUILITY_SHROUD_APPLY_TIME 2 SECONDS
 #define TRANQUILITY_SHROUD_FORGET_RANGE 12
+#define TRANQUILITY_SHROUD_AI_TARGET_SIGNAL "mob_ai_target_check"
 #define TRANQUILITY_SHROUD_REMOVAL_AGGRESSION "aggression"
 #define TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK "undead_attack"
 
 /obj/effect/proc_holder/spell/targeted/touch/shroud_of_tranquility
 	name = "Shroud of Tranquility"
 	desc = "Draw a graveward hush over a living soul, causing lesser undead to forget them until violence or time tears the blessing away."
-	overlay_icon = 'icons/mob/actions/necramiracles.dmi'
-	overlay_state = "necra"
-	action_icon = 'icons/mob/actions/necramiracles.dmi'
-	action_icon_state = "necra"
+	overlay_icon = 'modular_twilight_axis/icons/mob/actions/necra_shroud.dmi'
+	overlay_state = "shroud_tranquility"
+	action_icon = 'modular_twilight_axis/icons/mob/actions/necra_shroud.dmi'
+	action_icon_state = "shroud_tranquility"
 	req_items = list(/obj/item/clothing/neck/roguetown/psicross)
 	sound = 'sound/magic/whiteflame.ogg'
 	associated_skill = /datum/skill/magic/holy
@@ -25,8 +26,8 @@
 /obj/item/melee/touch_attack/tranquility_shroud
 	name = "tranquil shroud"
 	desc = "A quiet holy stillness gathered around the hand."
-	icon = 'icons/roguetown/misc/miraclestuff.dmi'
-	icon_state = "justicei"
+	icon = 'modular_twilight_axis/icons/mob/actions/necra_shroud.dmi'
+	icon_state = "shroud_tranquility"
 	item_state = "justicei"
 	possible_item_intents = list(/datum/intent/use)
 	on_use_sound = 'sound/magic/whiteflame.ogg'
@@ -103,32 +104,12 @@
 /datum/status_effect/tranquility_shroud/on_apply()
 	if(!owner || QDELETED(owner) || owner.stat != CONSCIOUS || (owner.mob_biotypes & MOB_UNDEAD) || owner.mind?.has_antag_datum(/datum/antagonist/zombie))
 		return FALSE
-	RegisterSignal(owner, COMSIG_MOB_AI_TARGET_CHECK, PROC_REF(on_ai_target_check))
-	RegisterSignal(owner, COMSIG_MOB_ITEM_ATTACK, PROC_REF(on_owner_item_attack))
-	RegisterSignal(owner, COMSIG_HUMAN_EARLY_UNARMED_ATTACK, PROC_REF(on_owner_unarmed_attack))
-	RegisterSignal(owner, COMSIG_MOB_ATTACK_RANGED, PROC_REF(on_owner_ranged_attack))
-	RegisterSignal(owner, COMSIG_ATOM_ATTACKBY, PROC_REF(on_owner_attackby))
-	RegisterSignals(owner, list(COMSIG_ATOM_ATTACK_HAND, COMSIG_ATOM_ATTACK_PAW), PROC_REF(on_owner_attack_generic))
-	RegisterSignal(owner, COMSIG_ATOM_ATTACK_ANIMAL, PROC_REF(on_owner_attack_npc))
-	RegisterSignal(owner, COMSIG_ATOM_BULLET_ACT, PROC_REF(on_owner_bullet_act))
-	RegisterSignal(owner, COMSIG_ATOM_HITBY, PROC_REF(on_owner_hitby))
-	hide_from_nearby_undead()
+	owner.AddElement(/datum/element/tranquility_shroud)
 	return TRUE
 
 /datum/status_effect/tranquility_shroud/on_remove()
-	UnregisterSignal(owner, list(
-		COMSIG_MOB_AI_TARGET_CHECK,
-		COMSIG_MOB_ITEM_ATTACK,
-		COMSIG_HUMAN_EARLY_UNARMED_ATTACK,
-		COMSIG_MOB_ATTACK_RANGED,
-		COMSIG_ATOM_ATTACKBY,
-		COMSIG_ATOM_ATTACK_HAND,
-		COMSIG_ATOM_ATTACK_PAW,
-		COMSIG_ATOM_ATTACK_ANIMAL,
-		COMSIG_ATOM_BULLET_ACT,
-		COMSIG_ATOM_HITBY,
-	))
 	if(owner && !QDELETED(owner))
+		owner.RemoveElement(/datum/element/tranquility_shroud)
 		if(removal_reason == TRANQUILITY_SHROUD_REMOVAL_AGGRESSION || removal_reason == TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK)
 			to_chat(owner, span_warning("The tranquil shroud tears away. The dead remember me."))
 		else
@@ -143,88 +124,118 @@
 		on_shroud_broken_by_undead(undead_source)
 	qdel(src)
 
-/datum/status_effect/tranquility_shroud/proc/hide_from_nearby_undead()
-	if(!owner)
-		return
-	for(var/mob/living/undead in viewers(TRANQUILITY_SHROUD_FORGET_RANGE, owner))
-		if(!undead.can_undead_see_target(owner))
-			undead.forget_tranquility_shrouded_target(owner)
+/datum/status_effect/tranquility_shroud/proc/on_shroud_broken_by_undead(mob/living/undead_source)
+	// TODO: Apprentice+ scaling hook for a mild holy debuff once boss/resistance rules are settled.
+	return
 
-/datum/status_effect/tranquility_shroud/proc/on_ai_target_check(mob/living/source, mob/living/attacker)
+/datum/element/tranquility_shroud
+
+/datum/element/tranquility_shroud/Attach(datum/target)
+	. = ..()
+	if(!isliving(target))
+		return ELEMENT_INCOMPATIBLE
+
+	var/mob/living/owner = target
+	RegisterSignal(owner, TRANQUILITY_SHROUD_AI_TARGET_SIGNAL, PROC_REF(on_ai_target_check))
+	RegisterSignal(owner, COMSIG_MOB_ITEM_ATTACK, PROC_REF(on_owner_item_attack))
+	RegisterSignal(owner, COMSIG_HUMAN_EARLY_UNARMED_ATTACK, PROC_REF(on_owner_unarmed_attack))
+	RegisterSignal(owner, COMSIG_MOB_ATTACK_RANGED, PROC_REF(on_owner_ranged_attack))
+	RegisterSignal(owner, COMSIG_ATOM_ATTACKBY, PROC_REF(on_owner_attackby))
+	RegisterSignals(owner, list(COMSIG_ATOM_ATTACK_HAND, COMSIG_ATOM_ATTACK_PAW), PROC_REF(on_owner_attack_generic))
+	RegisterSignal(owner, COMSIG_ATOM_ATTACK_ANIMAL, PROC_REF(on_owner_attack_npc))
+	RegisterSignal(owner, COMSIG_ATOM_BULLET_ACT, PROC_REF(on_owner_bullet_act))
+	RegisterSignal(owner, COMSIG_ATOM_HITBY, PROC_REF(on_owner_hitby))
+	owner.tranquility_shroud_hide_from_nearby_undead()
+
+/datum/element/tranquility_shroud/Detach(datum/source, ...)
+	UnregisterSignal(source, list(
+		TRANQUILITY_SHROUD_AI_TARGET_SIGNAL,
+		COMSIG_MOB_ITEM_ATTACK,
+		COMSIG_HUMAN_EARLY_UNARMED_ATTACK,
+		COMSIG_MOB_ATTACK_RANGED,
+		COMSIG_ATOM_ATTACKBY,
+		COMSIG_ATOM_ATTACK_HAND,
+		COMSIG_ATOM_ATTACK_PAW,
+		COMSIG_ATOM_ATTACK_ANIMAL,
+		COMSIG_ATOM_BULLET_ACT,
+		COMSIG_ATOM_HITBY,
+	))
+	return ..()
+
+/datum/element/tranquility_shroud/proc/on_ai_target_check(mob/living/source, mob/living/attacker)
 	SIGNAL_HANDLER
-	if(source != owner)
-		return
 	if(attacker?.is_lesser_npc_undead())
-		return COMPONENT_AI_TARGET_DENY
+		return TRUE
 
-/datum/status_effect/tranquility_shroud/proc/on_owner_item_attack(mob/living/source, mob/living/target, mob/living/user, obj/item/weapon)
+/datum/element/tranquility_shroud/proc/on_owner_item_attack(mob/living/source, mob/living/target, mob/living/user, obj/item/weapon)
 	SIGNAL_HANDLER
-	if(source != owner || !isliving(target))
+	if(!isliving(target))
 		return
 	var/mob/living/living_target = target
 	if(living_target.is_lesser_npc_undead())
-		owner.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_AGGRESSION)
+		source.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_AGGRESSION)
 
-/datum/status_effect/tranquility_shroud/proc/on_owner_unarmed_attack(mob/living/source, atom/target, proximity)
+/datum/element/tranquility_shroud/proc/on_owner_unarmed_attack(mob/living/source, atom/target, proximity)
 	SIGNAL_HANDLER
-	if(source != owner || !proximity || !isliving(target))
+	if(!proximity || !isliving(target))
 		return
 	var/mob/living/living_target = target
 	if(living_target.is_lesser_npc_undead())
-		owner.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_AGGRESSION)
+		source.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_AGGRESSION)
 
-/datum/status_effect/tranquility_shroud/proc/on_owner_ranged_attack(mob/living/source, atom/target, params)
+/datum/element/tranquility_shroud/proc/on_owner_ranged_attack(mob/living/source, atom/target, params)
 	SIGNAL_HANDLER
-	if(source != owner || !isliving(target))
+	if(!isliving(target))
 		return
 	var/mob/living/living_target = target
 	if(living_target.is_lesser_npc_undead())
-		owner.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_AGGRESSION)
+		source.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_AGGRESSION)
 
-/datum/status_effect/tranquility_shroud/proc/on_owner_attackby(atom/target, obj/item/weapon, mob/attacker, list/modifiers)
+/datum/element/tranquility_shroud/proc/on_owner_attackby(atom/target, obj/item/weapon, mob/attacker, list/modifiers)
 	SIGNAL_HANDLER
-	if(target != owner || !weapon?.force || !isliving(attacker))
+	if(!isliving(target) || !weapon?.force || !isliving(attacker))
 		return
 	var/mob/living/living_attacker = attacker
 	if(living_attacker.is_lesser_npc_undead())
-		owner.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, living_attacker)
+		var/mob/living/living_target = target
+		living_target.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, living_attacker)
 
-/datum/status_effect/tranquility_shroud/proc/on_owner_attack_generic(atom/target, mob/living/attacker, list/modifiers)
+/datum/element/tranquility_shroud/proc/on_owner_attack_generic(atom/target, mob/living/attacker, list/modifiers)
 	SIGNAL_HANDLER
-	if(target != owner || !attacker?.cmode)
+	if(!isliving(target) || !attacker?.cmode)
 		return
 	if(attacker.is_lesser_npc_undead())
-		owner.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, attacker)
+		var/mob/living/living_target = target
+		living_target.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, attacker)
 
-/datum/status_effect/tranquility_shroud/proc/on_owner_attack_npc(atom/target, mob/living/attacker)
+/datum/element/tranquility_shroud/proc/on_owner_attack_npc(atom/target, mob/living/attacker)
 	SIGNAL_HANDLER
-	if(target != owner)
+	if(!isliving(target))
 		return
 	if(attacker?.is_lesser_npc_undead())
-		owner.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, attacker)
+		var/mob/living/living_target = target
+		living_target.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, attacker)
 
-/datum/status_effect/tranquility_shroud/proc/on_owner_bullet_act(atom/target, obj/projectile/hit_projectile)
+/datum/element/tranquility_shroud/proc/on_owner_bullet_act(atom/target, obj/projectile/hit_projectile)
 	SIGNAL_HANDLER
-	if(target != owner || !hit_projectile || hit_projectile.nodamage || !isliving(hit_projectile.firer))
+	if(!isliving(target) || !hit_projectile || hit_projectile.nodamage || !isliving(hit_projectile.firer))
 		return
 	var/mob/living/living_attacker = hit_projectile.firer
 	if(living_attacker.is_lesser_npc_undead())
-		owner.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, living_attacker)
+		var/mob/living/living_target = target
+		living_target.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, living_attacker)
 
-/datum/status_effect/tranquility_shroud/proc/on_owner_hitby(atom/target, atom/movable/hit_atom, skipcatch = FALSE, hitpush = TRUE, blocked = FALSE, datum/thrownthing/throwingdatum)
+/datum/element/tranquility_shroud/proc/on_owner_hitby(atom/target, atom/movable/hit_atom, skipcatch = FALSE, hitpush = TRUE, blocked = FALSE, datum/thrownthing/throwingdatum)
 	SIGNAL_HANDLER
-	if(target != owner || !isitem(hit_atom))
+	if(!isliving(target) || !isitem(hit_atom))
 		return
 	var/obj/item/hit_item = hit_atom
 	if(!hit_item.throwforce || !isliving(hit_item.thrownby))
 		return
 	var/mob/living/living_attacker = hit_item.thrownby
 	if(living_attacker.is_lesser_npc_undead())
-		owner.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, living_attacker)
-
-/datum/status_effect/tranquility_shroud/proc/on_shroud_broken_by_undead(mob/living/undead_source)
-	// TODO: Apprentice+ scaling hook for a mild holy debuff once boss/resistance rules are settled.
-	return
+		var/mob/living/living_target = target
+		living_target.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, living_attacker)
 
 /mob/living/proc/has_tranquility_shroud()
 	return !!has_status_effect(/datum/status_effect/tranquility_shroud)
@@ -260,6 +271,11 @@
 		return TRUE
 	return !is_lesser_npc_undead()
 
+/mob/living/proc/tranquility_shroud_hide_from_nearby_undead()
+	for(var/mob/living/undead in viewers(TRANQUILITY_SHROUD_FORGET_RANGE, src))
+		if(!undead.can_undead_see_target(src))
+			undead.forget_tranquility_shrouded_target(src)
+
 /mob/living/proc/forget_tranquility_shrouded_target(mob/living/target)
 	if(!target || can_undead_see_target(target))
 		return
@@ -280,5 +296,6 @@
 #undef TRANQUILITY_SHROUD_DURATION
 #undef TRANQUILITY_SHROUD_APPLY_TIME
 #undef TRANQUILITY_SHROUD_FORGET_RANGE
+#undef TRANQUILITY_SHROUD_AI_TARGET_SIGNAL
 #undef TRANQUILITY_SHROUD_REMOVAL_AGGRESSION
 #undef TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK

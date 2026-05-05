@@ -108,10 +108,12 @@
 		return
 	if(attacker == victim)
 		return
+	// TA EDIT
 	if(isliving(attacker))
 		var/mob/living/living_attacker = attacker
-		if(SEND_SIGNAL(living_attacker, COMSIG_MOB_AI_TARGET_CHECK, victim) & COMPONENT_AI_TARGET_DENY)
+		if(SEND_SIGNAL(living_attacker, "mob_ai_target_check", victim))
 			return
+	// TA EDIT END
 
 	var/list/aggro_table = victim.ai_controller.blackboard[BB_MOB_AGGRO_TABLE]
 	if(!aggro_table)
@@ -190,10 +192,12 @@
 
 	// Find the mob with the highest threat
 	for(var/mob/threat_mob as anything in aggro_table)
+		// TA EDIT
 		if(isliving(threat_mob))
 			var/mob/living/living_threat = threat_mob
-			if(SEND_SIGNAL(living_threat, COMSIG_MOB_AI_TARGET_CHECK, source) & COMPONENT_AI_TARGET_DENY)
+			if(SEND_SIGNAL(living_threat, "mob_ai_target_check", source))
 				continue
+		// TA EDIT END
 		if(aggro_table[threat_mob] > highest_threat)
 			highest_threat = aggro_table[threat_mob]
 			highest_threat_mob = threat_mob

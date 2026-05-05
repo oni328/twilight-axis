@@ -244,8 +244,9 @@
 #define COMSIG_MOB_MODIFY_DEATH_LINES "comsig_mob_modify_death_lines"
 
 #define COMSIG_COMBAT_TARGET_SET "comsig_combat_target_set"
-#define COMSIG_MOB_AI_TARGET_CHECK "mob_ai_target_check"		//from AI target selection checks on potential target: (mob/living/attacker)
-	#define COMPONENT_AI_TARGET_DENY 1
+// TA EDIT
+// Twilight Axis shroud target masking uses a private modular signal string instead of a global component define.
+// TA EDIT END
 
 #define COMSIG_MOB_CLICKON "mob_clickon"						//from base of mob/clickon(): (atom/A, params)
 #define COMSIG_MOB_MIDDLECLICKON "mob_middleclickon"			//from base of mob/MiddleClickOn(): (atom/A)

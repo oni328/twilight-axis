@@ -267,8 +267,10 @@
 	if(search_objects < 2)
 		if(isliving(the_target))
 			var/mob/living/L = the_target
-			if(SEND_SIGNAL(L, COMSIG_MOB_AI_TARGET_CHECK, src) & COMPONENT_AI_TARGET_DENY)
+			// TA EDIT
+			if(SEND_SIGNAL(L, "mob_ai_target_check", src))
 				return FALSE
+			// TA EDIT END
 			var/faction_check = faction_check_mob(L)
 			if(robust_searching)
 				if(faction_check && !attack_same)

@@ -39,8 +39,10 @@
 
 	if(isliving(the_target)) //Targetting vs living mobs
 		var/mob/living/L = the_target
-		if(SEND_SIGNAL(L, COMSIG_MOB_AI_TARGET_CHECK, living_mob) & COMPONENT_AI_TARGET_DENY)
+		// TA EDIT
+		if(SEND_SIGNAL(L, "mob_ai_target_check", living_mob))
 			return FALSE
+		// TA EDIT END
 		if(living_mob.summoner && living_mob.summoner == the_target.name) // won't attack whomever summoned it
 			return FALSE
 		if(faction_check(living_mob, L) || L.stat)
