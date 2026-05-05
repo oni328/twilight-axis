@@ -603,7 +603,7 @@ GLOBAL_VAR_INIT(mobids, 1)
 		if (world.time < memory_throttle_time)
 			return
 		memory_throttle_time = world.time + 5 SECONDS
-		msg = copytext(msg, 1, MAX_MESSAGE_LEN)
+		msg = copytext_char(msg, 1, MAX_MESSAGE_LEN)
 		msg = sanitize(msg)
 
 		mind.store_memory(msg)
@@ -768,6 +768,8 @@ GLOBAL_VAR_INIT(mobids, 1)
 		return
 
 	var/datum/controller/subsystem/statpanel/SS = SSstatpanel
+	if(!client.statpanel)
+		client.statpanel = "RoundInfo"
 
 	if(statpanel("RoundInfo"))
 		for(var/line in SS.base_roundinfo_text)
@@ -819,27 +821,6 @@ GLOBAL_VAR_INIT(mobids, 1)
 				for(var/i in GLOB.sdql2_queries)
 					var/datum/SDQL2_query/Q = i
 					Q.generate_stat()
-
-	if(listed_turf && client)
-		if(!TurfAdjacent(listed_turf))
-			listed_turf = null
-		else
-			statpanel(listed_turf.name, null, listed_turf)
-
-			var/list/overrides = list()
-			for(var/image/I in client.images)
-				if(I.loc && I.loc.loc == listed_turf && I.override)
-					overrides += I.loc
-
-			for(var/atom/A in listed_turf)
-				if(!A.mouse_opacity)
-					continue
-				if(A.invisibility > see_invisible)
-					continue
-				if(overrides.len && (A in overrides))
-					continue
-
-				statpanel(listed_turf.name, null, A)
 
 //	if(mind)
 //		add_spells_to_statpanel(mind.spell_list)
@@ -1317,16 +1298,20 @@ GLOBAL_VAR_INIT(mobids, 1)
 	if(stat != CONSCIOUS)
 		to_chat(src, span_warning("I can't set my pose right now."))
 		return
-	var/new_pose = tgui_input_text(src, "Set your character's pose (MARKDOWN AVAILABLE):", "SET POSE", pose_text, multiline = FALSE,  encode = FALSE, bigmodal = TRUE, max_length = 256)
+
+	var/old_pose = pose_text
+	var/new_pose = tgui_input_text(src, "Set your character's pose (MARKDOWN AVAILABLE):", "SET POSE", pose_text, multiline = FALSE, encode = FALSE, bigmodal = TRUE, max_length = 256)
 	if(isnull(new_pose))
 		return
 
 	if(!length(new_pose))
 		pose_text = ""
+		log_admin("[src.ckey] ([src.real_name]) cleared pose. Old pose: [old_pose]")
 		to_chat(src, span_notice("I clear my pose."))
 		return
 
 	pose_text = parsemarkdown_basic(new_pose)
+	log_admin("[src.ckey] ([src.real_name]) set pose. New pose: [new_pose]")
 	to_chat(src, span_notice("I set my pose."))
 
 ///Adjust the nutrition of a mob

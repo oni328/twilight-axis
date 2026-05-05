@@ -794,7 +794,6 @@
 		var/datum/job/mob_job = SSjob.GetJob(M.mind.assigned_role)
 		var/target_job = SSrole_class_handler.get_advclass_by_name(M.advjob)
 		if(M.mind)
-			mob_job = SSjob.GetJob(M.mind.assigned_role)
 			if(mob_job)
 				mob_job.current_positions = max(0, mob_job.current_positions - 1)
 			if(target_job)
@@ -958,6 +957,8 @@
 				job.spawn_positions = job.total_positions
 				if(job.uses_storyteller_slot_caps())
 					job.admin_slot_override = TRUE
+				log_admin("[key_name(usr)] added slot to [job.title].")
+				message_admins("[key_name(usr)] added slot to [job.title].")
 				break
 
 		src.manage_free_slots()
@@ -984,7 +985,8 @@
 				job.spawn_positions = newtime
 				if(job.uses_storyteller_slot_caps())
 					job.admin_slot_override = TRUE
-
+				log_admin("[key_name(usr)] made custom [newtime] slots to [job.title].")
+				message_admins("[key_name(usr)] made custom [newtime] slots to [job.title].")
 		src.manage_free_slots()
 
 	else if(href_list["removejobslot"])
@@ -999,6 +1001,8 @@
 				job.spawn_positions = job.total_positions
 				if(job.uses_storyteller_slot_caps())
 					job.admin_slot_override = TRUE
+				log_admin("[key_name(usr)] removed job slot from [job.title].")
+				message_admins("[key_name(usr)] removed job slot from [job.title].")
 				break
 
 		src.manage_free_slots()
@@ -1015,6 +1019,8 @@
 				job.spawn_positions = -1
 				if(job.uses_storyteller_slot_caps())
 					job.admin_slot_override = TRUE
+				log_admin("[key_name(usr)] removed the limit from [job.title] slots.")
+				message_admins("[key_name(usr)] removed the limit from [job.title] slots.")
 				break
 
 		src.manage_free_slots()
@@ -1031,6 +1037,8 @@
 				job.spawn_positions = job.total_positions
 				if(job.uses_storyteller_slot_caps())
 					job.admin_slot_override = TRUE
+				log_admin("[key_name(usr)] added the limit to [job.title] slots.")
+				message_admins("[key_name(usr)] added the limit to [job.title] slots.")
 				break
 
 		src.manage_free_slots()
@@ -1622,6 +1630,9 @@
 		var/raisin = stripped_input("State a short reason for this change", "Game Master", "", null)
 		if((!isnull(amt2change) && amt2change != 0) && !raisin)
 			return
+		if(mob_client.ckey == usr.ckey)
+			to_chat(src, span_boldwarning("Самому себе PQ менять нельзя."))
+			return
 		adjust_playerquality(amt2change, mob_client.ckey, usr.ckey, raisin)
 		for(var/client/C in GLOB.clients) // I hate this, but I'm not refactoring the cancer above this point.
 			if(lowertext(C.key) == lowertext(mob_client.ckey))
@@ -1647,7 +1658,11 @@
 		var/raisin = stripped_input(usr, "State a short reason for this change", "Game Master", null, null)
 		if(!amt2change || !raisin)
 			return
+		if(M.ckey == usr.ckey)
+			to_chat(src, span_boldwarning("Самому себе триумфы выдавать нельзя."))
+			return
 		M.adjust_triumphs(amt2change, FALSE, raisin)
+		world.TgsAnnounceTriumphChanges(amt2change, M.ckey, usr.ckey, raisin)
 		message_admins("[usr.key] adjusted [M.key]'s triumphs by [amt2change] with [!raisin ? "no reason given" : "reason: [raisin]"].")
 		log_admin("[usr.key] adjusted [M.key]'s triumphs by [amt2change] with [!raisin ? "no reason given" : "reason: [raisin]"].")
 

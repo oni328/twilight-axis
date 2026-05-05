@@ -1,4 +1,4 @@
-//ACCESSORIES
+/*//ACCESSORIES
 /datum/loadout_item/wrappings
 	name = "Handwraps"
 	path = /obj/item/clothing/wrists/roguetown/wrappings
@@ -342,3 +342,4 @@
 	name = "Weathered Xylixian Mask"
 	path = /obj/item/clothing/mask/rogue/xylixmask/weathered
 	sort_category = "Accessories"
+*/
