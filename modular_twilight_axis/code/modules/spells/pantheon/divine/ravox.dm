@@ -555,7 +555,7 @@ GLOBAL_LIST_EMPTY(TAarenafolks) // we're just going to use a list and add to it.
 #define RAVOX_SIMPLE "SIMPLE"
 #define RAVOX_CARBON "CARBON"
 
-/datum/action/cooldown/spell/TAraise_warrior_spirits
+/datum/action/cooldown/spell/ravox/TAraise_warrior_spirits
 	name = "Warrior Spirits"
 	desc = "Tear out part of your spirit, and manifest it into a spectral warrior!"
 	button_icon_state = "warriors"
@@ -584,7 +584,7 @@ GLOBAL_LIST_EMPTY(TAarenafolks) // we're just going to use a list and add to it.
 	var/list/spell_modes = list(RAVOX_SIMPLE, RAVOX_CARBON)
 	var/static/list/spell_mode_labels = list(RAVOX_SIMPLE = "SIMPLE", RAVOX_CARBON = "CARBON")
 
-/datum/action/cooldown/spell/TAraise_warrior_spirits/cast(atom/cast_on)
+/datum/action/cooldown/spell/ravox/TAraise_warrior_spirits/cast(atom/cast_on)
 	. = ..()
 
 	var/mob/living/carbon/human/user = owner
@@ -649,7 +649,7 @@ GLOBAL_LIST_EMPTY(TAarenafolks) // we're just going to use a list and add to it.
 	return FALSE
 
 
-/datum/action/cooldown/spell/TAraise_warrior_spirits/proc/get_spirit_type()
+/datum/action/cooldown/spell/ravox/TAraise_warrior_spirits/proc/get_spirit_type()
 	switch(spell_mode)
 		if(RAVOX_SIMPLE)
 			return "simple"
@@ -657,7 +657,7 @@ GLOBAL_LIST_EMPTY(TAarenafolks) // we're just going to use a list and add to it.
 			return "carbon"
 	return null
 
-/datum/action/cooldown/spell/TAraise_warrior_spirits/toggle_alt_mode(mob/user)
+/datum/action/cooldown/spell/ravox/TAraise_warrior_spirits/toggle_alt_mode(mob/user)
 	var/current_index = spell_modes.Find(spell_mode)
 	current_index = (current_index % length(spell_modes)) + 1
 	spell_mode = spell_modes[current_index]
