@@ -557,7 +557,7 @@ GLOBAL_LIST_EMPTY(TAarenafolks) // we're just going to use a list and add to it.
 
 /datum/action/cooldown/spell/ravox/TAraise_warrior_spirits
 	name = "Warrior Spirits"
-	desc = "Tear out part of your spirit, and manifest it into a spectral warrior!"
+	desc = "Tear out part of your spirit, and manifest it into a spectral warrior! Toggle spell mode, to choise - One Carbon Warrior or Three Siple Spirits"
 	button_icon_state = "warriors"
 	sound = 'sound/magic/magnet.ogg'
 
