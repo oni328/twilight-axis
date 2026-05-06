@@ -13,6 +13,7 @@
 			STATKEY_INT = 3,
 			STATKEY_CON = 2,
 			STATKEY_WIL = 2,
+			STATKEY_PER = 2 // TA EDIT
 	)
 	age_mod = /datum/class_age_mod/mystic
 	subclass_mage_aspects = list("mastery" = FALSE, "major" = 0, "minor" = 2, "utilities" = 4)
@@ -179,6 +180,17 @@
 	C.grant_miracles(H, cleric_tier = CLERIC_T1, passive_gain = CLERIC_REGEN_MINOR, devotion_limit = CLERIC_REQ_1)
 	if(H.mind)
 		H.mind.RemoveSpell(/datum/action/cooldown/spell/miracle/bloodmiracle)
+		//TA EDIT
+		var/weapons = list("Goedendag", "Quarterstaff")
+		var/weapon_choice = input(H, "Choose your weapon.", "TAKE UP ARMS") as anything in weapons
+		switch(weapon_choice)
+			if("Goedendag")
+				beltr = /obj/item/rogueweapon/mace/goden
+				H.adjust_skillrank_up_to(/datum/skill/combat/maces, 3, TRUE)
+			if("Quarterstaff")
+				r_hand = /obj/item/rogueweapon/woodstaff/quarterstaff/iron
+				H.adjust_skillrank_up_to(/datum/skill/combat/staves, 3, TRUE)
+		//TA EDIT
 	switch(H.patron?.type)
 		if(/datum/patron/old_god)
 			neck = /obj/item/clothing/neck/roguetown/psicross

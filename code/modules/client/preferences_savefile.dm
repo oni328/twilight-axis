@@ -7,7 +7,7 @@
 //	where you would want the updater procs below to run
 
 //	This also works with decimals.
-#define SAVEFILE_VERSION_MAX	35
+#define SAVEFILE_VERSION_MAX	33.9
 
 /*
 SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Carn
@@ -95,29 +95,6 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 						species_name = "Venardine"
 		_load_species(S, species_name)
-	if(current_version < 35) // Migrate old 3-slot loadout to gear_list
-		gear_list = list()
-		var/list/old_keys = list(
-			list("loadout", "loadout_1_hex"),
-			list("loadout2", "loadout_2_hex"),
-			list("loadout3", "loadout_3_hex"),
-		)
-		for(var/list/pair in old_keys)
-			var/loadout_type
-			S[pair[1]] >> loadout_type
-			if(!loadout_type || !ispath(loadout_type))
-				continue
-			var/datum/loadout_item/LI = GLOB.loadout_items[loadout_type]
-			if(!LI || LI.name == "Parent loadout datum")
-				continue
-			var/list/meta = list()
-			var/old_hex
-			S[pair[2]] >> old_hex
-			if(old_hex)
-				if(old_hex[1] != "#")
-					old_hex = "#[old_hex]"
-				meta["color"] = old_hex
-			gear_list[LI.name] = meta
 
 /datum/preferences/proc/load_path(ckey,filename="preferences.sav")
 	if(!ckey)
@@ -164,6 +141,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["anonymize"]			>> anonymize
 	S["stopdroning"]		>> stopdroning
 	S["masked_examine"]		>> masked_examine
+	S["nsfw_examine_always"]>> nsfw_examine_always // TA EDIT
 	S["full_examine"]		>> full_examine
 	S["feint_hud"]			>> feint_hud
 	S["mute_animal_emotes"]	>> mute_animal_emotes
@@ -211,6 +189,13 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	// Custom hotkeys
 	S["key_bindings"]		>> key_bindings
 
+	S["defiant"]			>> defiant
+	// TA Addition start - new ERP SYSTEM
+	S["erp_custom_actions"] >> erp_custom_actions	
+	S["erp_kink_prefs"] >> erp_kink_prefs
+	S["erp_organ_sensitivity"] >> erp_organ_prefs
+	// TA Addition end - new ERP SYSTEM
+
 	//try to fix any outdated data if necessary
 	if(needs_update >= 0)
 		update_preferences(needs_update, S)		//needs_update = savefile_version if we need an update (positive integer)
@@ -252,6 +237,16 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	pda_style		= sanitize_inlist(pda_style, GLOB.pda_styles, initial(pda_style))
 	pda_color		= sanitize_hexcolor(pda_color, 6, 1, initial(pda_color))
 	key_bindings 	= sanitize_islist(key_bindings, list())
+	defiant	= sanitize_integer(defiant, FALSE, TRUE, TRUE)
+	//TA Addition start - new ERP SYSTEM
+	erp_custom_actions = sanitize_islist(erp_custom_actions, list())
+	sanitize_erp_custom_actions()
+	erp_kink_prefs = sanitize_islist(erp_kink_prefs, list())
+	sanitize_erp_kink_prefs()
+	erp_organ_prefs = sanitize_islist(erp_organ_prefs, list())
+	sanitize_erp_organ_prefs()
+	//TA Addition end - new ERP SYSTEM
+	
 
 	verify_keybindings_valid()
 	return TRUE
@@ -288,6 +283,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["anonymize"], anonymize)
 	WRITE_FILE(S["stopdroning"], stopdroning)
 	WRITE_FILE(S["masked_examine"], masked_examine)
+	WRITE_FILE(S["nsfw_examine_always"], nsfw_examine_always) // TA EDIT
 	WRITE_FILE(S["full_examine"], full_examine)
 	WRITE_FILE(S["feint_hud"], feint_hud)
 	WRITE_FILE(S["mute_animal_emotes"], mute_animal_emotes)
@@ -345,6 +341,12 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["key_bindings"], key_bindings)
 	WRITE_FILE(S["attack_blip_frequency"] , attack_blip_frequency)
 	WRITE_FILE(S["compliance_notifs"], compliance_notifs)
+	WRITE_FILE(S["defiant"], defiant)
+	// TA Addition start - new ERP SYSTEM
+	WRITE_FILE(S["erp_custom_actions"], erp_custom_actions)
+	WRITE_FILE(S["erp_kink_prefs"], erp_kink_prefs)
+	WRITE_FILE(S["erp_organ_sensitivity"], erp_organ_prefs)
+	// TA Addition end - new ERP SYSTEM
 	return TRUE
 
 
@@ -536,14 +538,14 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	else
 		virtue_origin = new /datum/virtue/none
 
-/datum/preferences/proc/_load_gear_list(savefile/S)
-	S["gear_list"] >> gear_list
-	if(!islist(gear_list))
-		gear_list = list()
-	// Validate: remove items that no longer exist
-	for(var/item_name in gear_list)
-		if(!(item_name in GLOB.loadout_items_by_name))
-			gear_list -= item_name
+/datum/preferences/proc/_load_loadout(S)
+	S["selected_loadout_items"] >> selected_loadout_items
+	selected_loadout_items = SANITIZE_LIST(selected_loadout_items)
+
+/datum/preferences/proc/_load_loadout_colours(S)
+	S["loadout_1_hex"] >> loadout_1_hex
+	S["loadout_2_hex"] >> loadout_2_hex
+	S["loadout_3_hex"] >> loadout_3_hex
 
 /datum/preferences/proc/_load_height(S)
 	var/preview_height
@@ -646,7 +648,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	// LETHALSTONE edit: jank-ass load our statpack choice
 	_load_statpack(S)
 
-	_load_gear_list(S)
+	_load_loadout(S)
 
 	_load_combat_music(S)
 
@@ -685,6 +687,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	//Load prefs
 	S["job_preferences"] >> job_preferences
 
+	S["job_characters"] >> job_characters //TA EDIT
+
 	//Quirks
 	S["all_quirks"] >> all_quirks
 
@@ -714,12 +718,22 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["flavortext"]			>> flavortext
 	S["ooc_notes"]			>> ooc_notes
 	S["ooc_extra"]			>> ooc_extra
+	S["ooc_extra_img"]		>> ooc_extra_img
+	S["ooc_extra_img_link"]	>> ooc_extra_img_link
+	if(!valid_headshot_link(null, ooc_extra_img_link, FALSE, list("jpg", "jpeg", "png", "gif", "mp4")))
+		ooc_extra_img = null
+		ooc_extra_img_link = null
 	S["rumour"]			>> rumour
 	S["noble_gossip"]			>> noble_gossip
 	S["averse_chosen_faction"] >> averse_chosen_faction
 	S["song_artist"]		>> song_artist
 	S["song_title"]			>> song_title
 	S["nsfwflavortext"]	>> nsfwflavortext
+	S["nsfw_ooc_extra_img"]		>> nsfw_ooc_extra_img
+	S["nsfw_ooc_extra_img_link"]	>> nsfw_ooc_extra_img_link
+	if(!valid_headshot_link(null, nsfw_ooc_extra_img_link, FALSE, list("jpg", "jpeg", "png", "gif", "mp4")))
+		nsfw_ooc_extra_img = null
+		nsfw_ooc_extra_img_link = null
 	S["erpprefs"]			>> erpprefs
 	S["preset_bounty_enabled"] >> preset_bounty_enabled
 	S["preset_bounty_poster_key"] >> preset_bounty_poster_key
@@ -730,7 +744,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["img_gallery"]	>> img_gallery
 	img_gallery = SANITIZE_LIST(img_gallery)
 
-	S["nsfw_img_gallery"]	>> nsfw_img_gallery
+	S["nsfw_img_gallery"] >> nsfw_img_gallery
 	nsfw_img_gallery = SANITIZE_LIST(nsfw_img_gallery)
 
 	S["examine_theme"]		>> examine_theme
@@ -840,12 +854,68 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		topjob = null
 		WRITE_FILE(S["topjob"], topjob)
 
+	if(!islist(job_characters)) //TA EDIT START
+		job_characters = list()
+	for(var/job_title in job_characters)
+		
+		var/slot_num = job_characters[job_title]
+		if(!isnum(slot_num) || slot_num < 1 || slot_num > max_save_slots)
+			job_characters -= job_title //TA EDIT END
+	
 	all_quirks = SANITIZE_LIST(all_quirks)
 
 	S["customizer_entries"] >> customizer_entries
 	validate_customizer_entries()
-
+	
 	return TRUE
+
+/datum/preferences/proc/fast_scan_for_job(savefile/S, slot)
+	S.cd = "/character[slot]"
+	
+	
+	S["real_name"] >> real_name
+	if(!real_name) real_name = "Slot [slot]"
+
+	
+	var/species_name
+	S["species"] >> species_name
+	if(species_name && GLOB.species_list[species_name])
+		var/race_type = GLOB.species_list[species_name]
+		pref_species = new race_type
+	else
+		pref_species = new default_species.type
+
+	
+	S["age"] >> age
+	S["gender"] >> gender
+
+	
+	var/patron_typepath
+	S["selected_patron"] >> patron_typepath
+	if(patron_typepath && GLOB.patronlist[patron_typepath])
+		selected_patron = GLOB.patronlist[patron_typepath]
+	else
+		selected_patron = GLOB.patronlist[default_patron]
+
+	
+	var/virtue_type
+	var/virtuetwo_type
+	var/origin_type
+	S["virtue"] >> virtue_type
+	S["virtuetwo"] >> virtuetwo_type
+	S["virtue_origin"] >> origin_type
+	
+	virtue = virtue_type ? new virtue_type : new /datum/virtue/none
+	virtuetwo = virtuetwo_type ? new virtuetwo_type : new /datum/virtue/none
+	virtue_origin = origin_type ? new origin_type : new /datum/virtue/none
+
+	
+	charflaws.Cut()
+	var/list/loaded_flaws
+	S["charflaws"] >> loaded_flaws
+	if(loaded_flaws)
+		for(var/ftype in loaded_flaws)
+			if(ispath(ftype)) charflaws += new ftype
 
 /datum/preferences/proc/save_character()
 	if(!path)
@@ -911,6 +981,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	//Write prefs
 	WRITE_FILE(S["job_preferences"] , job_preferences)
 
+	WRITE_FILE(S["job_characters"]  , job_characters) //TA EDIT
+
 	//Quirks
 	WRITE_FILE(S["all_quirks"]			, all_quirks)
 
@@ -949,6 +1021,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["flavortext"] , html_decode(flavortext))
 	WRITE_FILE(S["ooc_notes"] , html_decode(ooc_notes))
 	WRITE_FILE(S["ooc_extra"] ,	ooc_extra)
+	WRITE_FILE(S["ooc_extra_img"] , ooc_extra_img)
+	WRITE_FILE(S["ooc_extra_img_link"] , ooc_extra_img_link)
 	WRITE_FILE(S["rumour"] , html_decode(rumour))
 	WRITE_FILE(S["noble_gossip"] , html_decode(noble_gossip))
 	WRITE_FILE(S["averse_chosen_faction"] , html_decode(averse_chosen_faction))
@@ -969,11 +1043,12 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["combat_music"], combat_music.type)
 	WRITE_FILE(S["body_size"] , features["body_size"])
 	WRITE_FILE(S["nsfwflavortext"] , html_decode(nsfwflavortext))
+	WRITE_FILE(S["nsfw_ooc_extra_img"] , nsfw_ooc_extra_img)
+	WRITE_FILE(S["nsfw_ooc_extra_img_link"] , nsfw_ooc_extra_img_link)
 	WRITE_FILE(S["erpprefs"] , html_decode(erpprefs))
 	WRITE_FILE(S["img_gallery"] , img_gallery)
 	WRITE_FILE(S["nsfw_img_gallery"] , nsfw_img_gallery)
-
-	WRITE_FILE(S["gear_list"], gear_list)
+	WRITE_FILE(S["selected_loadout_items"], selected_loadout_items)
 
 	//Familiar Files
 	WRITE_FILE(S["familiar_names"] , familiar_prefs.familiar_names)
@@ -986,6 +1061,14 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["familiar_ooc_notes_display"] , familiar_prefs.familiar_ooc_notes_display)
 	WRITE_FILE(S["familiar_ooc_extra"] , familiar_prefs.familiar_ooc_extra)
 	WRITE_FILE(S["familiar_ooc_extra_link"] , familiar_prefs.familiar_ooc_extra_link)
+
+	WRITE_FILE(S["loadout_1_hex"], loadout_1_hex)
+	WRITE_FILE(S["loadout_2_hex"], loadout_2_hex)
+	WRITE_FILE(S["loadout_3_hex"], loadout_3_hex)
+
+	if(loaded_job_slots["[default_slot]"]) //TA EDIT
+		loaded_job_slots["[default_slot]"] = null
+
 
 	return TRUE
 
