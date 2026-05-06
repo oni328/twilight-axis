@@ -119,6 +119,24 @@
 	obj_flags = UNIQUE_RENAME
 	var/heavy_bow = FALSE //used for adding a STR check to the charge time of a bow
 	cartridge_articles = "an"
+	var/datum/special_intent/special
+
+/obj/item/gun/ballistic/revolver/grenadelauncher/bow/equipped(mob/user, slot)
+	. = ..()
+	if(slot == ITEM_SLOT_HANDS)
+		if(HAS_TRAIT(user, TRAIT_BOW_DOUBLESHOT))
+			if(!istype(special, /datum/special_intent/bow_doubleshot))
+				special = new /datum/special_intent/bow_doubleshot()
+				
+		else if(HAS_TRAIT(user, TRAIT_BOW_LONGSHOT))
+			if(!istype(special, /datum/special_intent/bow_longshot))
+				special = new /datum/special_intent/bow_longshot()
+		else
+			special = null
+
+/obj/item/gun/ballistic/revolver/grenadelauncher/bow/dropped(mob/user, silent)
+	. = ..()
+	special = null
 
 /obj/item/gun/ballistic/revolver/grenadelauncher/bow/get_mechanics_examine(mob/user)
 	. += span_info("Bows increase in damage and accuracy the higher your <b>PERCEPTION</b>.")
