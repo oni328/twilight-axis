@@ -181,13 +181,22 @@
 	sort_category = "Shirts"
 
 /datum/loadout_item/formalshirt
-	name = "formal shirt"
+	name = "Formal Shirt"
 	path = /obj/item/clothing/suit/roguetown/shirt/undershirt/formal
 	sort_category = "Shirts"
 
 /datum/loadout_item/fancymaiddress
-	name = "maid dress"
+	name = "Valorian Maid Dress"
 	path = /obj/item/clothing/suit/roguetown/shirt/dress/maidfancy
 	sort_category = "Shirts"
+  
+/datum/loadout_item/wedding_dress
+	name = "Wedding Dress"
+	path = /obj/item/clothing/suit/roguetown/shirt/dress/silkdress/weddingdress
+	sort_category = "Shirts"
 
+/datum/loadout_item/maiddress
+	name = "Maid Dress"
+	path = /obj/item/clothing/suit/roguetown/shirt/dress/maid
+	sort_category = "Shirts"
 */
