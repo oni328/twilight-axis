@@ -1,6 +1,7 @@
 /datum/advclass/mercenary/anthrax
 	name = "Underdark Pursuer" //TA EDIT
-	tutorial = "Frontline shock troopers of Her blessed legions, Pursuers are clad in darksteel armor and are first to march into the fray when the Spider Queen demands it. You have been chosen for a mission to the surface, and while out there, you will have to earn coin to sustain yourself. Regardless of whom you work for, never forget where your true allegiance lies." //TA EDIT
+tutorial = "Frontline shock troopers of Her blessed legions, Pursuers are clad in darksteel armor and are first to march into the fray when the Spider Queen demands it. You have been chosen for a mission to the surface, and while out there, you will have to earn coin to sustain yourself. Regardless of whom you work for, never forget where your true allegiance lies." //TA EDIT
+	forbidden_races = list(RACES_ANTHRAX)
 	allowed_races = list(
 		/datum/species/elf/dark
 	)
@@ -99,9 +100,7 @@
 	from afar or take a second sabre and weave a beautiful dance of death. All that matters is \
 	that your contract is fulfilled and your pockets heavy with mammon."
 	outfit = /datum/outfit/job/roguetown/mercenary/anthrax_assassin
-	allowed_races = list(
-		/datum/species/elf/dark
-	)
+	forbidden_races = list(RACES_ANTHRAX)
 	category_tags = list(CTAG_MERCENARY)
 	class_select_category = CLASS_CAT_RACIAL
 	cmode_music = 'sound/music/combat_delf.ogg'
