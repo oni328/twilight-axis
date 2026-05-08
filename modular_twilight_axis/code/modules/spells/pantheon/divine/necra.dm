@@ -178,75 +178,70 @@
 	if(attacker?.is_lesser_npc_undead())
 		return TRUE
 
-/datum/element/tranquility_shroud/proc/on_owner_item_attack(mob/living/source, mob/living/target, mob/living/user, obj/item/weapon)
-	SIGNAL_HANDLER
+/datum/element/tranquility_shroud/proc/should_break_from_outgoing_aggression(mob/living/source, atom/target, obj/item/weapon)
+	if(QDELETED(source) || !isliving(target) || target == source)
+		return FALSE
+	if(weapon?.force)
+		return TRUE
+	if(source.used_intent?.type == INTENT_HELP)
+		return FALSE
+	return TRUE
+
+/datum/element/tranquility_shroud/proc/break_from_incoming_attack(atom/target, atom/attacker)
 	if(!isliving(target))
 		return
 	var/mob/living/living_target = target
-	if(living_target.is_lesser_npc_undead())
+	var/mob/living/undead_attacker
+	if(isliving(attacker))
+		var/mob/living/living_attacker = attacker
+		if(living_attacker.mob_biotypes & MOB_UNDEAD)
+			undead_attacker = living_attacker
+	living_target.remove_tranquility_shroud(undead_attacker ? TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK : TRANQUILITY_SHROUD_REMOVAL_AGGRESSION, undead_attacker)
+
+/datum/element/tranquility_shroud/proc/on_owner_item_attack(mob/living/source, mob/living/target, mob/living/user, obj/item/weapon)
+	SIGNAL_HANDLER
+	if(should_break_from_outgoing_aggression(source, target, weapon))
 		source.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_AGGRESSION)
 
 /datum/element/tranquility_shroud/proc/on_owner_unarmed_attack(mob/living/source, atom/target, proximity)
 	SIGNAL_HANDLER
-	if(!proximity || !isliving(target))
+	if(!proximity)
 		return
-	var/mob/living/living_target = target
-	if(living_target.is_lesser_npc_undead())
+	if(should_break_from_outgoing_aggression(source, target, null))
 		source.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_AGGRESSION)
 
 /datum/element/tranquility_shroud/proc/on_owner_ranged_attack(mob/living/source, atom/target, params)
 	SIGNAL_HANDLER
-	if(!isliving(target))
-		return
-	var/mob/living/living_target = target
-	if(living_target.is_lesser_npc_undead())
+	if(should_break_from_outgoing_aggression(source, target, null))
 		source.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_AGGRESSION)
 
 /datum/element/tranquility_shroud/proc/on_owner_attackby(atom/target, obj/item/weapon, mob/attacker, list/modifiers)
 	SIGNAL_HANDLER
-	if(!isliving(target) || !weapon?.force || !isliving(attacker))
-		return
-	var/mob/living/living_attacker = attacker
-	if(living_attacker.is_lesser_npc_undead())
-		var/mob/living/living_target = target
-		living_target.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, living_attacker)
+	break_from_incoming_attack(target, attacker)
 
 /datum/element/tranquility_shroud/proc/on_owner_attack_generic(atom/target, mob/living/attacker, list/modifiers)
 	SIGNAL_HANDLER
-	if(!isliving(target) || !attacker?.cmode)
-		return
-	if(attacker.is_lesser_npc_undead())
-		var/mob/living/living_target = target
-		living_target.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, attacker)
+	break_from_incoming_attack(target, attacker)
 
 /datum/element/tranquility_shroud/proc/on_owner_attack_npc(atom/target, mob/living/attacker)
 	SIGNAL_HANDLER
-	if(!isliving(target))
-		return
-	if(attacker?.is_lesser_npc_undead())
-		var/mob/living/living_target = target
-		living_target.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, attacker)
+	break_from_incoming_attack(target, attacker)
 
 /datum/element/tranquility_shroud/proc/on_owner_bullet_act(atom/target, obj/projectile/hit_projectile)
 	SIGNAL_HANDLER
-	if(!isliving(target) || !hit_projectile || hit_projectile.nodamage || !isliving(hit_projectile.firer))
+	if(!hit_projectile)
 		return
-	var/mob/living/living_attacker = hit_projectile.firer
-	if(living_attacker.is_lesser_npc_undead())
-		var/mob/living/living_target = target
-		living_target.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, living_attacker)
+	break_from_incoming_attack(target, hit_projectile.firer)
 
 /datum/element/tranquility_shroud/proc/on_owner_hitby(atom/target, atom/movable/hit_atom, skipcatch = FALSE, hitpush = TRUE, blocked = FALSE, datum/thrownthing/throwingdatum)
 	SIGNAL_HANDLER
-	if(!isliving(target) || !isitem(hit_atom))
+	if(!hit_atom)
 		return
-	var/obj/item/hit_item = hit_atom
-	if(!hit_item.throwforce || !isliving(hit_item.thrownby))
-		return
-	var/mob/living/living_attacker = hit_item.thrownby
-	if(living_attacker.is_lesser_npc_undead())
-		var/mob/living/living_target = target
-		living_target.remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK, living_attacker)
+	var/atom/attacker
+	if(isitem(hit_atom))
+		var/obj/item/hit_item = hit_atom
+		attacker = hit_item.thrownby
+	break_from_incoming_attack(target, attacker)
 
 /mob/living/proc/has_tranquility_shroud()
 	return !!has_status_effect(/datum/status_effect/tranquility_shroud)
@@ -277,17 +272,6 @@
 		return FALSE
 	return TRUE
 
-/mob/living/proc/is_player_raised_undead()
-	if(summoner)
-		return TRUE
-	if(faction)
-		if(FACTION_CABAL in faction)
-			return TRUE
-		for(var/faction_name as anything in faction)
-			if(istext(faction_name) && findtext(faction_name, "_faction"))
-				return TRUE
-	return FALSE
-
 /mob/living/proc/can_undead_see_target(mob/living/target)
 	if(!target || QDELETED(target))
 		return TRUE
@@ -311,7 +295,6 @@
 		var/list/aggro_table = ai_controller.blackboard[BB_MOB_AGGRO_TABLE]
 		if(aggro_table && aggro_table[target])
 			aggro_table -= target
-			ai_controller.blackboard[BB_MOB_AGGRO_TABLE] = aggro_table
 		ai_controller.CancelActions()
 	var/mob/living/simple_animal/hostile/hostile_mob = src
 	if(istype(hostile_mob) && hostile_mob.target == target)
