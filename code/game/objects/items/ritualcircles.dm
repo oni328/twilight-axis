@@ -1257,7 +1257,7 @@
 	icon = 'icons/roguetown/items/natural.dmi'
 	icon_state = "luxthread"
 	var/strungtogether = 1
-	var/max_threads = 10
+	var/max_threads = 8
 	sellprice = 3
 	grid_width = 32
 	grid_height = 32
@@ -1337,7 +1337,7 @@
 	grid_width = 32
 	grid_height = 32
 	name = "toll"
-	desc = "Proof of ten souls being sent to Necra, formed of a material that is not metal, constantly weeping a minute amount of blood. Ten souls for one, the Ferryman may send one back before Necra fully has them."
+	desc = "A hollow token of strange metal that softly weeps blood, mysteriously formed when enough shimmering lux-threads are tangled together as an offering. It is said the Ferryman grants tolls to those who aid in its work, and claim them back in exchange for favors."
 	icon = 'icons/roguetown/underworld/enigma_husks.dmi'
 	icon_state = "soultoken"
 	sellprice = 30
@@ -1559,7 +1559,7 @@
 			for(var/mob/living/carbon/human/persononrune in onrune)
 				if(HAS_TRAIT(persononrune, TRAIT_CABAL))
 					folksonrune += persononrune
-			var/target = input(user, "Choose a host") as null|anything in folksonrune
+			var/mob/living/carbon/human/target = input(user, "Choose a host") as null|anything in folksonrune
 			if(!target)
 				return
 			if(!do_after(user, 5 SECONDS))
@@ -1602,7 +1602,14 @@
 			if(!do_after(user, 5 SECONDS))
 				return
 			icon_state = "zizo_active"
-			user.apply_status_effect(/datum/status_effect/debuff/ritesexpended)
+			var/rite_cooldown = /datum/status_effect/debuff/ritesexpended
+			var/is_heretic = istype(user.mind?.picked_advclass, /datum/advclass/wretch/heretic)
+			if(is_heretic)
+				rite_cooldown = /datum/status_effect/debuff/ritesexpended/heretic
+			user.apply_status_effect(rite_cooldown)
+			if(is_heretic && target != user)
+				user.apply_status_effect(/datum/status_effect/debuff/lux_exhausted)
+				target.apply_status_effect(/datum/status_effect/debuff/lux_exhausted)
 			zizoarmaments(target, helm_choice, armor_choice, weapon_choice)
 			spawn(120)
 				icon_state = "zizo_chalky"
@@ -1725,7 +1732,7 @@
 			for(var/mob/living/carbon/human/persononrune in onrune)
 				if(HAS_TRAIT(persononrune, TRAIT_FREEMAN))
 					folksonrune += persononrune
-			var/target = input(user, "Choose a host") as null|anything in folksonrune
+			var/mob/living/carbon/human/target = input(user, "Choose a host") as null|anything in folksonrune
 			if(!target)
 				return
 			if(!do_after(user, 5 SECONDS))
@@ -1740,7 +1747,14 @@
 			if(!do_after(user, 5 SECONDS))
 				return
 			icon_state = "matthios_active"
-			user.apply_status_effect(/datum/status_effect/debuff/ritesexpended)
+			var/rite_cooldown = /datum/status_effect/debuff/ritesexpended
+			var/is_heretic = istype(user.mind?.picked_advclass, /datum/advclass/wretch/heretic)
+			if(is_heretic)
+				rite_cooldown = /datum/status_effect/debuff/ritesexpended/heretic
+			user.apply_status_effect(rite_cooldown)
+			if(is_heretic && target != user)
+				user.apply_status_effect(/datum/status_effect/debuff/lux_exhausted)
+				target.apply_status_effect(/datum/status_effect/debuff/lux_exhausted)
 			matthiosarmaments(target)
 			spawn(120)
 				icon_state = "matthios_chalky"
@@ -1897,7 +1911,7 @@
 			for(var/mob/living/carbon/human/persononrune in onrune)
 				if(HAS_TRAIT(persononrune, TRAIT_HORDE))
 					folksonrune += persononrune
-			var/target = input(user, "Choose a host") as null|anything in folksonrune
+			var/mob/living/carbon/human/target = input(user, "Choose a host") as null|anything in folksonrune
 			if(!target)
 				return
 			if(!do_after(user, 5 SECONDS))
@@ -1935,7 +1949,14 @@
 			if(!do_after(user, 5 SECONDS))
 				return
 			icon_state = "graggar_active"
-			user.apply_status_effect(/datum/status_effect/debuff/ritesexpended)
+			var/rite_cooldown = /datum/status_effect/debuff/ritesexpended
+			var/is_heretic = istype(user.mind?.picked_advclass, /datum/advclass/wretch/heretic)
+			if(is_heretic)
+				rite_cooldown = /datum/status_effect/debuff/ritesexpended/heretic
+			user.apply_status_effect(rite_cooldown)
+			if(is_heretic && target != user)
+				user.apply_status_effect(/datum/status_effect/debuff/lux_exhausted)
+				target.apply_status_effect(/datum/status_effect/debuff/lux_exhausted)
 			graggararmor(target, helm_choice, armor_choice, weapon_choice)
 			spawn(120)
 				icon_state = "graggar_chalky" 

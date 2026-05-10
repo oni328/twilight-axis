@@ -991,6 +991,9 @@ GLOBAL_LIST_INIT(ravox_aggro, world.file2list("strings/rt/ravoxspiritlines.txt")
 	dna.update_ui_block(DNA_HAIR_COLOR_BLOCK)
 	dna.species.handle_body(src)
 
+	var/newcolor = rgb(58, 193, 255)
+	add_atom_colour(newcolor, ADMIN_COLOUR_PRIORITY)
+
 	if(organ_eyes)
 		organ_eyes.eye_color = "#0f70b1"
 		organ_eyes.accessory_colors = "#FFBF00#FFBF00"
