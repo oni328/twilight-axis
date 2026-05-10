@@ -48,11 +48,9 @@
 	sound = 'sound/magic/whiteflame.ogg'
 
 /datum/action/cooldown/spell/touch/shroud_of_tranquility/on_hand_deleted(datum/source)
-	SIGNAL_HANDLER
 	remove_hand(null, FALSE)
 
 /datum/action/cooldown/spell/touch/shroud_of_tranquility/on_hand_dropped(datum/source, mob/living/dropper)
-	SIGNAL_HANDLER
 	remove_hand(dropper, FALSE)
 
 /datum/action/cooldown/spell/touch/shroud_of_tranquility/cast(mob/living/carbon/cast_on)

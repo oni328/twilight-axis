@@ -11,7 +11,7 @@
 	addtimer(CALLBACK(src, PROC_REF(tranquility_shroud_anger_nearby_undead)), 0)
 	if(ishuman(src))
 		var/mob/living/carbon/human/H = src
-		H.tranquility_shroud_punishment_summon(reason)
+		addtimer(CALLBACK(H, TYPE_PROC_REF(/mob/living/carbon/human, tranquility_shroud_punishment_summon), reason), 0)
 	return TRUE
 
 /mob/living/proc/tranquility_shroud_anger_nearby_undead()
@@ -77,8 +77,6 @@
 		if(T.density)
 			continue
 		if(T == get_turf(src))
-			continue
-		if(isspaceturf(T))
 			continue
 		candidates += T
 	for(var/i in 1 to count)
