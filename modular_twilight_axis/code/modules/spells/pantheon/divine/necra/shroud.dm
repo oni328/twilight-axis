@@ -7,13 +7,14 @@
 #define TRANQUILITY_SHROUD_FILTER "tranquility_shroud_glow"
 #define TRANQUILITY_SHROUD_EXPENSIVE_ITEM_VALUE 30
 #define TRANQUILITY_SHROUD_ANGER_THREAT 1000
-#define TRANQUILITY_SHROUD_DEADITE_MASK_SKILL SKILL_LEVEL_JOURNEYMAN
-#define TRANQUILITY_SHROUD_ALLY_MASK_SKILL SKILL_LEVEL_EXPERT
-#define TRANQUILITY_SHROUD_ALLY_MASK_TIER CLERIC_T2
 #define TRANQUILITY_SHROUD_ANGER_SOUND 'sound/vo/mobs/skel/skeleton_laugh.ogg'
 #define TRANQUILITY_SHROUD_REMOVAL_AGGRESSION "aggression"
 #define TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK "undead_attack"
 #define TRANQUILITY_SHROUD_REMOVAL_NECRA_ANGER "necra_anger"
+#define TRANQUILITY_SHROUD_TRAIT_SOURCE "tranquility_shroud"
+#define TRANQUILITY_SHROUD_DEADITE_SKIN "78a060"
+#define TRANQUILITY_SHROUD_VAMPIRE_SKIN "c9d3de"
+#define TRANQUILITY_SHROUD_SUN_BURN_DAMAGE 3
 
 /datum/action/cooldown/spell/touch/shroud_of_tranquility
 	name = "Shroud of Tranquility"
@@ -144,6 +145,10 @@
 	var/holy_skill = 0
 	var/shroud_tier = CLERIC_T0
 	var/datum/weakref/caster_ref
+	var/retaliation_used = FALSE
+	var/list/cached_appearance
+	var/granted_undead_faction = FALSE
+	var/granted_norun_trait = FALSE
 
 /datum/status_effect/tranquility_shroud/on_creation(mob/living/new_owner, mob/living/caster, caster_holy_skill, applied_shroud_tier = CLERIC_T0)
 	if(caster)
@@ -158,10 +163,12 @@
 	owner.AddElement(/datum/element/tranquility_shroud)
 	if(!owner.get_filter(TRANQUILITY_SHROUD_FILTER))
 		owner.add_filter(TRANQUILITY_SHROUD_FILTER, 2, list("type" = "outline", "color" = outline_colour, "alpha" = 120, "size" = 2))
+	apply_shroud_disguise()
 	return TRUE
 
 /datum/status_effect/tranquility_shroud/on_remove()
 	if(owner && !QDELETED(owner))
+		remove_shroud_disguise()
 		owner.RemoveElement(/datum/element/tranquility_shroud)
 		owner.remove_filter(TRANQUILITY_SHROUD_FILTER)
 		if(removal_reason == TRANQUILITY_SHROUD_REMOVAL_AGGRESSION || removal_reason == TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK || removal_reason == TRANQUILITY_SHROUD_REMOVAL_NECRA_ANGER)
@@ -177,16 +184,6 @@
 	if(reason == TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK)
 		on_shroud_broken_by_undead(undead_source)
 	qdel(src)
-
-/datum/status_effect/tranquility_shroud/proc/on_shroud_broken_by_undead(mob/living/undead_source)
-	// TODO: Apprentice+ scaling hook for a mild holy debuff once boss/resistance rules are settled.
-	return
-
-/datum/status_effect/tranquility_shroud/proc/uses_deadite_mask()
-	return holy_skill >= TRANQUILITY_SHROUD_DEADITE_MASK_SKILL
-
-/datum/status_effect/tranquility_shroud/proc/uses_deadite_ally_mask()
-	return holy_skill >= TRANQUILITY_SHROUD_ALLY_MASK_SKILL && shroud_tier >= TRANQUILITY_SHROUD_ALLY_MASK_TIER
 
 /atom/movable/screen/alert/status_effect/buff/tranquility_shroud
 	name = "Shroud of Tranquility"
@@ -212,6 +209,7 @@
 	RegisterSignal(owner, COMSIG_ATOM_BULLET_ACT, PROC_REF(on_owner_bullet_act))
 	RegisterSignal(owner, COMSIG_ATOM_HITBY, PROC_REF(on_owner_hitby))
 	RegisterSignal(owner, TRANQUILITY_SHROUD_ITEM_PICKUP_SIGNAL, PROC_REF(on_owner_picked_up_item))
+	RegisterSignal(owner, COMSIG_HUMAN_LIFE, PROC_REF(on_owner_life))
 	owner.tranquility_shroud_hide_from_nearby_undead()
 
 /datum/element/tranquility_shroud/Detach(datum/source, ...)
@@ -227,13 +225,18 @@
 		COMSIG_ATOM_BULLET_ACT,
 		COMSIG_ATOM_HITBY,
 		TRANQUILITY_SHROUD_ITEM_PICKUP_SIGNAL,
+		COMSIG_HUMAN_LIFE,
 	))
 	return ..()
 
 /datum/element/tranquility_shroud/proc/on_ai_target_check(mob/living/source, mob/living/attacker)
 	SIGNAL_HANDLER
 	var/datum/status_effect/tranquility_shroud/shroud = source.has_status_effect(/datum/status_effect/tranquility_shroud)
-	if(shroud?.uses_deadite_mask() && attacker?.tranquility_shroud_respects_deadites())
+	if(!shroud)
+		return
+	if(shroud.uses_vampire_mask() && attacker?.tranquility_shroud_respects_vampire_mask())
+		return TRUE
+	if(shroud.uses_deadite_mask() && attacker?.tranquility_shroud_respects_deadites())
 		return TRUE
 	if(attacker?.is_lesser_npc_undead())
 		return TRUE
@@ -313,6 +316,15 @@
 		return
 	source.break_tranquility_shroud_and_anger_necra("theft")
 
+/datum/element/tranquility_shroud/proc/on_owner_life(mob/living/carbon/human/source)
+	SIGNAL_HANDLER
+	if(!ishuman(source) || QDELETED(source) || source.stat == DEAD)
+		return
+	var/datum/status_effect/tranquility_shroud/shroud = source.has_status_effect(/datum/status_effect/tranquility_shroud)
+	if(!shroud)
+		return
+	shroud.process_sun_burn()
+
 /mob/living/proc/has_tranquility_shroud()
 	return !!has_status_effect(/datum/status_effect/tranquility_shroud)
 
@@ -347,13 +359,21 @@
 	var/datum/status_effect/tranquility_shroud/shroud = has_status_effect(/datum/status_effect/tranquility_shroud)
 	return shroud?.uses_deadite_mask()
 
+/mob/living/proc/tranquility_shroud_has_vampire_mask()
+	var/datum/status_effect/tranquility_shroud/shroud = has_status_effect(/datum/status_effect/tranquility_shroud)
+	return shroud?.uses_vampire_mask()
+
 /mob/living/proc/tranquility_shroud_undead_examine_text(mob/examiner)
 	var/datum/status_effect/tranquility_shroud/shroud = has_status_effect(/datum/status_effect/tranquility_shroud)
-	if(!shroud || !shroud.uses_deadite_mask())
+	if(!shroud)
 		return null
-	if(shroud.uses_deadite_ally_mask())
-		return span_boldnotice("Another deadite. My ally.")
-	return span_boldnotice("Another deadite.")
+	if(isliving(examiner))
+		var/mob/living/living_examiner = examiner
+		if(shroud.uses_vampire_mask() && living_examiner.mind?.has_antag_datum(/datum/antagonist/vampire))
+			return span_boldnotice("Низший вампир. Из мелкого ответвления, недавно обращённый.")
+	if(shroud.uses_deadite_mask())
+		return span_boldnotice("Another deadite.")
+	return null
 
 /mob/living/proc/tranquility_shroud_respects_deadites()
 	if(!(mob_biotypes & MOB_UNDEAD))
@@ -370,6 +390,9 @@
 		return FALSE
 	return (FACTION_UNDEAD in faction) || ("zombie" in faction)
 
+/mob/living/proc/tranquility_shroud_respects_vampire_mask()
+	return !!mind?.has_antag_datum(/datum/antagonist/vampire)
+
 /mob/living/proc/tranquility_shroud_has_nearby_protected_undead()
 	for(var/mob/living/witness in viewers(TRANQUILITY_SHROUD_ANGER_RANGE, src))
 		if(witness == src)
@@ -377,48 +400,6 @@
 		if(witness.tranquility_shroud_is_valid_anger_undead() && !witness.can_undead_see_target(src))
 			return TRUE
 	return FALSE
-
-/mob/living/proc/break_tranquility_shroud_and_anger_necra(reason)
-	if(QDELETED(src) || stat == DEAD)
-		return FALSE
-	if(!remove_tranquility_shroud(TRANQUILITY_SHROUD_REMOVAL_NECRA_ANGER))
-		return FALSE
-	playsound(get_turf(src), TRANQUILITY_SHROUD_ANGER_SOUND, 80, TRUE)
-	to_chat(src, span_userdanger("Ваши действия прогневили Некру. Вы чувствуете ледяной озноб и взгляд, устремленный на вас из темноты."))
-	addtimer(CALLBACK(src, PROC_REF(tranquility_shroud_anger_nearby_undead)), 0)
-	return TRUE
-
-/mob/living/proc/tranquility_shroud_anger_nearby_undead()
-	if(QDELETED(src) || stat == DEAD)
-		return FALSE
-	var/angered_any = FALSE
-	for(var/mob/living/undead in viewers(TRANQUILITY_SHROUD_ANGER_RANGE, src))
-		if(undead == src)
-			continue
-		if(undead.tranquility_shroud_force_undead_aggro(src))
-			angered_any = TRUE
-	return angered_any
-
-/mob/living/proc/tranquility_shroud_force_undead_aggro(mob/living/target)
-	if(!target || QDELETED(target) || target.stat == DEAD || !tranquility_shroud_is_valid_anger_undead())
-		return FALSE
-	if(ai_controller)
-		var/list/aggro_table = ai_controller.blackboard[BB_MOB_AGGRO_TABLE]
-		if(!aggro_table)
-			aggro_table = list()
-			ai_controller.blackboard[BB_MOB_AGGRO_TABLE] = aggro_table
-		aggro_table[target] = max(aggro_table[target] || 0, TRANQUILITY_SHROUD_ANGER_THREAT)
-		ai_controller.set_blackboard_key(BB_BASIC_MOB_CURRENT_TARGET, target)
-		ai_controller.set_blackboard_key(BB_HIGHEST_THREAT_MOB, target)
-		ai_controller.set_ai_status(AI_STATUS_ON)
-		ai_controller.CancelActions()
-	var/datum/component/ai_aggro_system/aggro = GetComponent(/datum/component/ai_aggro_system)
-	if(aggro)
-		aggro.add_threat_to_mob(target, TRANQUILITY_SHROUD_ANGER_THREAT)
-	var/mob/living/simple_animal/hostile/hostile_mob = src
-	if(istype(hostile_mob))
-		hostile_mob.GiveTarget(target)
-	return TRUE
 
 /mob/living/proc/is_lesser_npc_undead()
 	if(!(mob_biotypes & MOB_UNDEAD))
@@ -459,6 +440,8 @@
 		return TRUE
 	if(!target.has_tranquility_shroud())
 		return TRUE
+	if(target.tranquility_shroud_has_vampire_mask() && tranquility_shroud_respects_vampire_mask())
+		return FALSE
 	if(target.tranquility_shroud_has_deadite_mask() && tranquility_shroud_respects_deadites())
 		return FALSE
 	return !is_lesser_npc_undead()
@@ -486,27 +469,3 @@
 
 /obj/item/proc/is_expensive_for_tranquility_shroud()
 	return get_real_price() > TRANQUILITY_SHROUD_EXPENSIVE_ITEM_VALUE
-
-/obj/structure/closet/dirthole/closed/attackby(obj/item/attacking_item, mob/user, params)
-	if(istype(attacking_item, /obj/item/rogueweapon/shovel) && isliving(user))
-		var/mob/living/living_user = user
-		if(living_user.used_intent?.type == /datum/intent/shovelscoop && living_user.has_tranquility_shroud())
-			living_user.break_tranquility_shroud_and_anger_necra("grave")
-	return ..()
-
-#undef TRANQUILITY_SHROUD_DURATION
-#undef TRANQUILITY_SHROUD_APPLY_TIME
-#undef TRANQUILITY_SHROUD_FORGET_RANGE
-#undef TRANQUILITY_SHROUD_ANGER_RANGE
-#undef TRANQUILITY_SHROUD_AI_TARGET_SIGNAL
-#undef TRANQUILITY_SHROUD_ITEM_PICKUP_SIGNAL
-#undef TRANQUILITY_SHROUD_FILTER
-#undef TRANQUILITY_SHROUD_EXPENSIVE_ITEM_VALUE
-#undef TRANQUILITY_SHROUD_ANGER_THREAT
-#undef TRANQUILITY_SHROUD_DEADITE_MASK_SKILL
-#undef TRANQUILITY_SHROUD_ALLY_MASK_SKILL
-#undef TRANQUILITY_SHROUD_ALLY_MASK_TIER
-#undef TRANQUILITY_SHROUD_ANGER_SOUND
-#undef TRANQUILITY_SHROUD_REMOVAL_AGGRESSION
-#undef TRANQUILITY_SHROUD_REMOVAL_UNDEAD_ATTACK
-#undef TRANQUILITY_SHROUD_REMOVAL_NECRA_ANGER
