@@ -209,7 +209,7 @@
 
 /obj/item/gun/ballistic/twilight_firearm/shoot_live_shot(mob/living/user as mob|obj, pointblank = 0, mob/pbtarget = null, message = 1)
 	if(silenced)
-		fire_sound = "modular_twilight_axis/firearms/sound/umbra_fire.ogg"
+		fire_sound = "modular_twilight_axis/firearms/sound/umbra_fire2.ogg"
 	else
 		switch(gunpowder)
 			if("fyrepowder", "holy fyrepowder", "psypowder")
