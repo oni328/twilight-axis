@@ -1058,6 +1058,7 @@
 	desc = "The world is yours, as they say - yet, why doth the Gods still led us astray?"
 	color = "#ffc960"
 	smeltresult = /obj/item/ingot/component/matthios
+	unenchantable = TRUE
 
 /obj/item/clothing/neck/roguetown/chaincoif/chainmantle/matthios/Initialize()
 	. = ..()
@@ -1073,6 +1074,7 @@
 	material_category = ARMOR_MAT_PLATE
 	armor_class = ARMOR_CLASS_MEDIUM
 	smeltresult = /obj/item/ingot/component/zizo
+	unenchantable = TRUE
 
 /obj/item/clothing/neck/roguetown/bevor/zizo/Initialize()
 	. = ..()
@@ -1095,6 +1097,7 @@
 	desc = "Curled plate, cradling the neck. Once, they were chains - now, they've allowed you to break free."
 	color = "#ddc0a7"
 	smeltresult = /obj/item/ingot/component/graggar
+	unenchantable = TRUE
 
 /obj/item/clothing/neck/roguetown/gorget/steel/graggar/Initialize()
 	. = ..()
