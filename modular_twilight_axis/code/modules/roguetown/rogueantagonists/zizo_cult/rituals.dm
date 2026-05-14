@@ -502,6 +502,8 @@ GLOBAL_LIST_INIT(ritual_counters, list())
 	w_req = /obj/item/alch/viscera
 	e_req = /obj/item/alch/taraxacum
 
+	is_cultist_ritual = TRUE
+
 /datum/ritual/servantry/heartache/invoke(mob/user, turf/center)
 	new /obj/item/corruptedheart(center)
 	to_chat(user, span_notice("A corrupted heart. When used on a non-enlightened mortal their heart shall ache and they will be immobilized and too stunned to speak. Perfect for getting new soon-to-be enlightened. Now, just don't use it at the combat ready."))
