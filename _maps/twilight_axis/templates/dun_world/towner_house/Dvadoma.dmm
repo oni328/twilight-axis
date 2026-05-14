@@ -1086,6 +1086,9 @@
 "FQ" = (
 /obj/structure/closet/crate/roguecloset/inn,
 /obj/machinery/light/rogue/candle/r,
+/obj/item/book/granter/crafting_recipe/tailor/western,
+/obj/item/book/granter/crafting_recipe/tailor/eastern,
+/obj/item/book/granter/crafting_recipe/tailor,
 /turf/open/floor/carpet/red,
 /area/rogue/indoors/town)
 "Gg" = (
