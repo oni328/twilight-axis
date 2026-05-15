@@ -644,6 +644,8 @@
 		browse_messages(target_ckey = target, linkless = TRUE)
 
 	else if(href_list["messageedits"])
+		if(usr.client?.holder?.rank.name == "Eventmin") // TA EDIT
+			return // TA EDIT
 		if(!check_rights(R_BAN))
 			return
 		var/datum/DBQuery/query_get_message_edits = SSdbcore.NewQuery(
@@ -1539,6 +1541,8 @@
 		show_player_panel(M)
 
 	else if(href_list["modtriumphs"])
+		if(usr.client?.holder?.rank.name == "Eventmin") // TA EDIT
+			return // TA EDIT
 		if(!check_rights(R_BAN))
 			return
 		var/mob/M = locate(href_list["mob"]) in GLOB.mob_list
@@ -1546,6 +1550,8 @@
 		show_player_panel(M)
 
 	else if(href_list["modpq"])
+		if(usr.client?.holder?.rank.name == "Eventmin") // TA EDIT
+			return // TA EDIT
 		if(!check_rights(R_BAN))
 			return
 		var/mob/M = locate(href_list["mob"]) in GLOB.mob_list
