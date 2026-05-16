@@ -149,6 +149,7 @@
 		if(find_and_confirm_newlywed(H))
 			return
 		if(!(family_mode & FAMILYTREE_MODE_LEGACY_SPOUSE))
+			wait_for_new_family_match(H, "no suitable new-family match")
 			return
 		if(!relative_join_phase_open)
 			if(!join_create_phase_open)
@@ -1421,6 +1422,22 @@
 	if(!(H in viable_spouses))
 		viable_spouses += H
 	INVOKE_ASYNC(src, PROC_REF(find_and_confirm_newlywed), H)
+	wait_for_new_family_match(H, "waiting for a new family founder")
+
+/datum/controller/subsystem/familytree/proc/wait_for_new_family_match(mob/living/carbon/human/H, reason)
+	if(!H || QDELETED(H) || H.family_datum || H.familytree_opted_out)
+		return
+	if(H.familytree_confirmation_pending)
+		ftlog("WAIT_NEW_FAMILY SKIP: [H.real_name] confirmation pending reason=[reason]")
+		return
+	if(H.familytree_assignment_scheduled)
+		ftlog("WAIT_NEW_FAMILY SKIP: [H.real_name] already scheduled reason=[reason]")
+		return
+	if(!(H in viable_spouses))
+		viable_spouses += H
+	ftlog("WAIT_NEW_FAMILY: [H.real_name] reason=[reason], scheduling re-assignment in 20s")
+	H.familytree_assignment_scheduled = TRUE
+	addtimer(CALLBACK(src, PROC_REF(run_local_assignment), H, H.familytree_pref), 20 SECONDS)
 
 /datum/controller/subsystem/familytree/proc/FindNewlyWedMatch(mob/living/carbon/human/H)
 	if(!H)

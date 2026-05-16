@@ -368,7 +368,8 @@ SUBSYSTEM_DEF(familytree)
 		return
 
 	if(H in viable_spouses)
-		ftlog("try_queue SKIP: [H.real_name] already in viable_spouses")
+		ftlog("try_queue WAIT: [H.real_name] already in viable_spouses; scheduling recheck")
+		wait_for_new_family_match(H, "queue requested while already waiting in new-family pool")
 		return
 
 	if(!P)
