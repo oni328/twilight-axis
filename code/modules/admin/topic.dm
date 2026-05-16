@@ -629,6 +629,8 @@
 		browse_messages("watchlist entry", filter = TRUE)
 
 	else if(href_list["showmessageckey"])
+		if(usr.client?.holder?.rank.name == "Eventmin") // TA EDIT
+			return // TA EDIT
 		if(!check_rights(R_BAN))
 			return
 		var/target = href_list["showmessageckey"]
@@ -642,6 +644,8 @@
 		browse_messages(target_ckey = target, linkless = TRUE)
 
 	else if(href_list["messageedits"])
+		if(usr.client?.holder?.rank.name == "Eventmin") // TA EDIT
+			return // TA EDIT
 		if(!check_rights(R_BAN))
 			return
 		var/datum/DBQuery/query_get_message_edits = SSdbcore.NewQuery(
@@ -1537,6 +1541,8 @@
 		show_player_panel(M)
 
 	else if(href_list["modtriumphs"])
+		if(usr.client?.holder?.rank.name == "Eventmin") // TA EDIT
+			return // TA EDIT
 		if(!check_rights(R_BAN))
 			return
 		var/mob/M = locate(href_list["mob"]) in GLOB.mob_list
@@ -1544,6 +1550,8 @@
 		show_player_panel(M)
 
 	else if(href_list["modpq"])
+		if(usr.client?.holder?.rank.name == "Eventmin") // TA EDIT
+			return // TA EDIT
 		if(!check_rights(R_BAN))
 			return
 		var/mob/M = locate(href_list["mob"]) in GLOB.mob_list
@@ -1639,6 +1647,8 @@
 				to_chat(C, "<span class=\"admin\"><span class=\"prefix\">ADMIN LOG:</span> <span class=\"message linkify\">Your PQ has been adjusted by [amt2change] by [usr.key] for reason: [raisin]</span></span>")
 				return
 	else if(href_list["showpq"])
+		if(usr.client?.holder?.rank.name == "Eventmin") // TA EDIT
+			return // TA EDIT
 		if(!check_rights(R_BAN))
 			return
 		var/mob/M = locate(href_list["mob"]) in GLOB.mob_list
