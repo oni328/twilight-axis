@@ -509,6 +509,11 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	path = /obj/item/clothing/cloak/sleevedtabard
 
 //SHOES
+/datum/loadout_item/leatherboots
+	name = "Leather Boots"
+	category = "Обувь"
+	path = /obj/item/clothing/shoes/roguetown/boots/leather
+
 /datum/loadout_item/darkboots
 	name = "Dark Boots"
 	category = "Обувь"
