@@ -1,0 +1,4 @@
+author: "Baneuus"
+delete-after: True
+changes:
+  - bugfix: "Флешменд теперь хилит и воскрешает корректно."
