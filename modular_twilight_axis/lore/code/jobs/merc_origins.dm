@@ -102,3 +102,6 @@
 
 /datum/advclass/mercenary/underdweller
 	origin_limits = list(/datum/virtue/origin/racial/underdark, /datum/virtue/origin/racial/underdark_drow, /datum/virtue/origin/racial/akhdruk)
+
+/datum/advclass/mercenary/twilight_conquistador
+	origin_limits = list(/datum/virtue/origin/etrusca)

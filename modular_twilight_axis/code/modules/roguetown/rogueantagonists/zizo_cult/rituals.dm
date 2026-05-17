@@ -768,7 +768,7 @@ GLOBAL_LIST_INIT(ritual_counters, list())
 
 	new /obj/item/clothing/under/roguetown/platelegs/zizo/heavy(center)
 
-	new /obj/item/clothing/shoes/roguetown/boots/armor/zizo/heavy(center)
+	new /obj/item/clothing/shoes/roguetown/boots/armor/zizo(center)
 
 	new /obj/item/clothing/wrists/roguetown/bracers/zizo/heavy(center)
 

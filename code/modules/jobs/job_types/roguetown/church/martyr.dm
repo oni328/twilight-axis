@@ -673,8 +673,8 @@
 				H.ignite_mob()
 			return FALSE
 		else	//Everyone else
-			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch this thing."))
-			H.emote("groan")
+			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch [src]]."))
+			H.emote("groan", forced = TRUE)
 			H.Stun(10)
 			return FALSE
 	else
@@ -791,8 +791,8 @@
 				H.ignite_mob()
 			return FALSE
 		else	//Everyone else
-			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch this thing."))
-			H.emote("groan")
+			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch [src]]."))
+			H.emote("groan", forced = TRUE)
 			H.Stun(10)
 			return FALSE
 	else
@@ -893,8 +893,8 @@
 				H.ignite_mob()
 			return FALSE
 		else	//Everyone else
-			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch this thing."))
-			H.emote("groan")
+			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch [src]]."))
+			H.emote("groan", forced = TRUE)
 			H.Stun(10)
 			return FALSE
 	else
@@ -997,8 +997,8 @@
 				H.ignite_mob()
 			return FALSE
 		else	//Everyone else
-			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch this thing."))
-			H.emote("groan")
+			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch [src]]."))
+			H.emote("groan", forced = TRUE)
 			H.Stun(10)
 			return FALSE
 	else
@@ -1060,8 +1060,8 @@
 				H.ignite_mob()
 			return FALSE
 		else	//Everyone else
-			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch this thing."))
-			H.emote("groan")
+			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch [src]]."))
+			H.emote("groan", forced = TRUE)
 			H.Stun(10)
 			return FALSE
 	else
@@ -1107,8 +1107,8 @@
 				H.ignite_mob()
 			return FALSE
 		else	//Everyone else
-			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch this thing."))
-			H.emote("groan")
+			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch [src]]."))
+			H.emote("groan", forced = TRUE)
 			H.Stun(10)
 			return FALSE
 	else
@@ -1155,8 +1155,8 @@
 				H.ignite_mob()
 			return FALSE
 		else	//Everyone else
-			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch this thing."))
-			H.emote("groan")
+			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch [src]]."))
+			H.emote("groan", forced = TRUE)
 			H.Stun(10)
 			return FALSE
 	else
@@ -1202,8 +1202,8 @@
 				H.ignite_mob()
 			return FALSE
 		else	//Everyone else
-			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch this thing."))
-			H.emote("groan")
+			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch [src]]."))
+			H.emote("groan", forced = TRUE)
 			H.Stun(10)
 			return FALSE
 	else
@@ -1253,13 +1253,13 @@
 				H.ignite_mob()
 			return FALSE
 		else	//Everyone else
-			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch this thing."))
-			H.emote("groan")
+			to_chat(user, span_warning("A painful jolt across your entire body sends you to the ground. You cannot touch [src]]."))
+			H.emote("groan", forced = TRUE)
 			H.Stun(10)
 			return FALSE
 	else
 		return FALSE
-		
+
 /obj/item/clothing/head/roguetown/helmet/heavy/holysee/ComponentInitialize()
 	AddComponent(/datum/component/adjustable_clothing, (HEAD|EARS|HAIR), (HIDEEARS|HIDEHAIR), null, 'sound/items/visor.ogg', null, UPD_HEAD)	//Standard helmet
 
@@ -1324,91 +1324,3 @@
 #undef STATE_SAFE
 #undef STATE_MARTYR
 #undef STATE_MARTYRULT
-
-
-///////////////////////////////////
-// Versions for UNDIVIDED ritual //
-///////////////////////////////////
-
-///////////
-// PLATE //
-///////////
-
-/obj/item/clothing/suit/roguetown/armor/plate/full/holysee/ritual
-	name = "crusader silver plate"
-	armor_class = ARMOR_CLASS_MEDIUM
-
-/obj/item/clothing/suit/roguetown/armor/plate/full/holysee/ritual/mob_can_equip(mob/living/M, mob/living/equipper, slot, disable_warning = FALSE, bypass_equip_delay_self = FALSE)
-	return TRUE
-
-/obj/item/clothing/suit/roguetown/armor/plate/full/holysee/ritual/Initialize()
-	. = ..()
-	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
-
-/obj/item/clothing/suit/roguetown/armor/plate/full/holysee/ritual/dropped(mob/living/carbon/human/user)
-	. = ..()
-	if(QDELETED(src))
-		return
-	qdel(src)
-
-////////////
-// GLOVES //
-////////////
-
-/obj/item/clothing/gloves/roguetown/plate/holysee/ritual
-	name = "crusader silver plate gauntlets"
-
-/obj/item/clothing/gloves/roguetown/plate/holysee/ritual/mob_can_equip(mob/living/M, mob/living/equipper, slot, disable_warning = FALSE, bypass_equip_delay_self = FALSE)
-	return TRUE
-
-/obj/item/clothing/gloves/roguetown/plate/holysee/ritual/Initialize()
-	. = ..()
-	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
-
-/obj/item/clothing/gloves/roguetown/plate/holysee/ritual/dropped(mob/living/carbon/human/user)
-	. = ..()
-	if(QDELETED(src))
-		return
-	qdel(src)
-
-///////////
-// PANTS //
-///////////
-
-/obj/item/clothing/under/roguetown/platelegs/holysee/ritual
-	name = "crusader silver chausses"
-	armor_class = ARMOR_CLASS_MEDIUM
-
-/obj/item/clothing/under/roguetown/platelegs/holysee/ritual/mob_can_equip(mob/living/M, mob/living/equipper, slot, disable_warning = FALSE, bypass_equip_delay_self = FALSE)
-	return TRUE
-
-/obj/item/clothing/under/roguetown/platelegs/holysee/ritual/Initialize()
-	. = ..()
-	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
-
-/obj/item/clothing/under/roguetown/platelegs/holysee/ritual/dropped(mob/living/carbon/human/user)
-	. = ..()
-	if(QDELETED(src))
-		return
-	qdel(src)
-
-///////////
-// BOOTS //
-///////////
-
-/obj/item/clothing/shoes/roguetown/boots/armor/holysee/ritual
-	name = "crusader silver plated boots"
-
-/obj/item/clothing/shoes/roguetown/boots/armor/holysee/ritual/mob_can_equip(mob/living/M, mob/living/equipper, slot, disable_warning = FALSE, bypass_equip_delay_self = FALSE)
-	return TRUE
-
-/obj/item/clothing/shoes/roguetown/boots/armor/holysee/ritual/Initialize()
-	. = ..()
-	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
-
-/obj/item/clothing/shoes/roguetown/boots/armor/holysee/ritual/dropped(mob/living/carbon/human/user)
-	. = ..()
-	if(QDELETED(src))
-		return
-	qdel(src)
-
