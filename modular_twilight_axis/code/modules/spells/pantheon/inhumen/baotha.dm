@@ -56,7 +56,7 @@
 	if(arousal_data["arousal"] >= 90)
 		to_chat(user, span_love("My pray has arousual!"))
 		point_count += 2
-	if(H.has_stress_event(/datum/stressevent/lasthigh))
+	if(H.has_stress_event(/datum/stressevent/TAlasthigh))
 		to_chat(user, span_love("My pray has under my high-blessing!"))
 		point_count += 1
 	if(H.has_status_effect(/datum/status_effect/buff/druqks))
@@ -68,7 +68,7 @@
 	if(H.has_status_effect(/datum/status_effect/buff/ozium))
 		to_chat(user, span_love("My pray has under ozium!"))
 		point_count += 1
-	if(point_count <= 2)
+	if(point_count < 2)
 		revert_cast()
 		return FALSE
 	user.visible_message(span_love("[user] brings his lips close to [H]'s, capturing [H] in a passionate kiss!"))
