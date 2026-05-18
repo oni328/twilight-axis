@@ -93,11 +93,11 @@
 	id = "drugden"
 	width = 20
 	height = 20
-
-	north_offset = 10
-	south_offset = 10
-	east_offset = 9
-	west_offset = 9
+	
+	north_offset = 10 
+	south_offset = 10 
+	west_offset = 9   
+	east_offset = 9   
 
 /datum/map_template/dungeon/room/dwelfhome
 	mappath = "_maps/dungeon_generator/room/dwelfhome.dmm"
@@ -447,6 +447,7 @@
 	north_offset = 2
 	west_offset = 3
 	east_offset = 2
+
 
 /datum/map_template/dungeon/hallway/t_junction_nsw
 	width = 6

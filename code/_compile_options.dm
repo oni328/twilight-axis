@@ -9,7 +9,7 @@
 //12 minutes norma
 //#define ROUNDTIMERBOAT (300 MINUTES)
 #define INITIAL_ROUND_TIMER (165 MINUTES)
-#define ROUND_EXTENSION_TIME (30 MINUTES)
+#define ROUND_EXTENSION_TIME (60 MINUTES)
 #define ROUND_END_TIME (15 MINUTES)
 #define ROUND_END_TIME_VERBAL "15 minutes"
 //180 norma
@@ -77,3 +77,4 @@
 // Comment this to remove traits based skill gating (The traits exist, but it will not have any effect)
 #define USES_TRAIT_SKILL_GATING
 
+#define REVIVE_GRACE // TA EDIT
