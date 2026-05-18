@@ -174,7 +174,7 @@
 	vampire_sunlit = TRUE
 	H.fire_act(1, TRANQUILITY_SHROUD_SUN_BURN_DAMAGE)
 	if(H.on_fire)
-		H.freak_out()
+		addtimer(CALLBACK(H, TYPE_PROC_REF(/mob/living/carbon, freak_out)), 0, TIMER_UNIQUE | TIMER_OVERRIDE)
 
 /mob/living/carbon/human/proc/is_face_concealed_for_shroud()
 	if(wear_mask && (wear_mask.flags_inv & HIDEFACE))
