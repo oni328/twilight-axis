@@ -138,21 +138,14 @@
 			var/static/regex/regex = regex(@"[,.!?]", "g")
 			pre_color_msg = regex.Replace(pre_color_msg, "")
 			pre_color_msg = trim(pre_color_msg, MAX_MESSAGE_LEN)
-		// Build the styled name for chat
-		var/styled_name
+		// Checks to see if we're emoting on the body while we have a head, or if we're emoting on the head.
 		if(human && human.voice_color)
 			var/color_to_use = human.voice_color
 			if(human.voicecolor_override)
 				color_to_use = human.voicecolor_override
-			styled_name = "<span style='color:#[color_to_use];text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'><b>[emotelocation]</b></span>"
+			msg = "<span style='color:#[color_to_use];text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'><b>[emotelocation]</b></span> " + msg
 		else
-			styled_name = "<b>[emotelocation]</b>"
-		// If the message contains $n, substitute it with the name instead of prepending
-		if(findtext(msg, "$n"))
-			msg = trim(replacetext(msg, "$n", styled_name))
-			pre_color_msg = trim(replacetext(pre_color_msg, "$n", "[emotelocation]"))
-		else
-			msg = "[styled_name] [msg]"
+			msg = "<b>[emotelocation]</b> " + msg
 		for(var/mob/M in GLOB.dead_mob_list)
 			if(!M.client || isnewplayer(M))
 				continue
@@ -178,6 +171,7 @@
 	else if(STASTR < 10)
 		pitch_modifier += (10 - STASTR) * 0.03
 	return clamp(final_pitch + pitch_modifier, 0.5, 2)
+
 /datum/emote/proc/get_env(mob/living/user)
 	return
 

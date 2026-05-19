@@ -48,7 +48,7 @@
 		"I set aside the shield, peace be with me.",
 		"Aegis, me relinquere!",
 	)
-	choice_spells = list(
+	fixed_spells = list(
 		/datum/action/cooldown/spell/conjure_aegis,
 	)
 

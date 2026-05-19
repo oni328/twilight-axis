@@ -102,9 +102,9 @@
 	var/mob/living/carbon/human/human_user = user
 	var/can_remove = FALSE
 	var/can_premium = FALSE
-	if(can_addremove && (human_user.job in list("Man at Arms","Inquisitor", "Knight", "Sergeant", "Orthodoxist", "Absolver", "Marshal", "Hand", "Grand Duke"))) //why was KC here but not marshal ?
+	if(can_addremove && (human_user.job in list("Man at Arms", "Royal Guard", "Town Sheriff", "Town Watch", "Inquisitor", "Knight", "Royal Knight", "Sergeant", "Royal Guard Sergeant", "Orthodoxist", "Absolver", "Marshal", "Hand", "Grand Duke", "Mayor", "Bailiff"))) //why was KC here but not marshal ?
 		can_remove = TRUE
-	if(can_addremove && (human_user.job in list("Bathmaster","Merchant", "Innkeeper", "Steward", "Court Magician", "Town Crier", "Keeper", "Grand Duke")))
+	if(can_addremove && (human_user.job in list("Bathmaster","Merchant", "Innkeeper", "Steward", "Court Magician", "Town Crier", "Keeper", "Grand Duke", "Mayor")))
 		can_premium = TRUE
 	var/contents
 	contents += "<center>NOTICEBOARD<BR>"
@@ -156,10 +156,19 @@
 		contents += "Scouts rate how dangerous a region is from Safe -> Low -> Moderate -> Dangerous -> Bleak <br>"
 		contents += "A safe region is safe and travelers are unlikely to be ambushed by common creechurs and brigands. <br>"
 		contents += "A low threat region is unlikely to manifest any great threat and brigands and creechurs are often found alone. <br>"
-		contents += "Only Azure Basin, Azure Grove and the Terrorbog can be rendered safe entirely. <br>"
-		contents += "Regions not listed are beyond the charge of the wardens. Danger will be constant in these regions. <br>"
-		contents += "Danger is reduced by luring villains and creechurs and killing them when they ambush you. Traveling in groups draws larger ambushes, but each additional companion contributes less to taming the region than a lone traveler would. <br>"
-		contents += "The signal horns wardens have been issued can provoke a sizeable fight proportional to the region's dangers, and is the surest way to tame a region. Bandits and wild creechurs trickle back in over time, generally overnight. Take care with the horn, and bring friends."
+		contents += "According to scouts, the following regions do not have a villain foothold and thus can potentially be rendered safe entirely: <br>"
+		for(var/TR in regional_threats)
+			var/datum/threat_region_display/TRS = TR
+			if(TRS && TRS.can_be_cleared)
+				contents += ("[TRS.region_name] <br>")
+		if(SSmapping.config.map_name == "Rockhill")
+			contents += "Regions not listed are beyond the charge of the Vanguard. Danger will be constant in these regions. <br>"
+			contents += "Danger is reduced by luring villains and creechurs and killing them when they ambush you. Traveling in groups draws larger ambushes, but each additional companion contributes less to taming the region than a lone traveler would. <br>"
+			contents += "The battle horns the Vanguard has been issued can provoke a sizeable fight proportional to the region's dangers, and are the surest way to tame a region. Bandits and wild creechurs trickle back in over time, generally overnight. Take care with using them, and bring friends."
+		else
+			contents += "Regions not listed are beyond the charge of the wardens. Danger will be constant in these regions. <br>"
+			contents += "Danger is reduced by luring villains and creechurs and killing them when they ambush you. Traveling in groups draws larger ambushes, but each additional companion contributes less to taming the region than a lone traveler would. <br>"
+			contents += "The signal horns wardens have been issued can provoke a sizeable fight proportional to the region's dangers, and are the surest way to tame a region. Bandits and wild creechurs trickle back in over time, generally overnight. Take care with the horn, and bring friends."
 	else if(current_category == "Mercenary Roster")
 		if(SSroguemachine.mercenary_statue)
 			contents += SSroguemachine.mercenary_statue.get_readonly_roster_html()
@@ -170,9 +179,6 @@
 		contents += "<hr></center>"
 		for(var/id in SStreasury.decrees)
 			var/datum/decree/D = SStreasury.decrees[id]
-			// Dormant charters (never activated this round) are hidden from the public Charters
-			// listing. A charter the Lord has never pressed doesn't exist as far as the town is
-			// concerned - the Notice Board only reflects what's in actual force or was recently.
 			if(!D.has_ever_been_active)
 				continue
 			var/state_color = D.active ? "#2a8a2a" : "#8a2a2a"
@@ -299,10 +305,10 @@
 	guy.apply_status_effect(/datum/status_effect/debuff/postcooldown)
 	message_admins("[ADMIN_LOOKUPFLW(guy)] has made a notice board post. The message was: [inputmessage]")
 	for(var/obj/structure/roguemachine/noticeboard/board in SSroguemachine.noticeboards)
+		board.update_icon()
 		if(board != src)
 			playsound(board, 'sound/ambience/noises/birds (7).ogg', 50, FALSE, -1)
 			board.visible_message(span_smallred("A ZAD lands, delivering a new posting!"))
-			board.update_icon()
 
 /obj/structure/roguemachine/noticeboard/proc/make_post(mob/living/carbon/human/guy)
 	if(guy.has_status_effect(/datum/status_effect/debuff/postcooldown))
@@ -387,8 +393,6 @@
 			GLOB.noticeboard_posts -= removing_post
 			message_admins("[ADMIN_LOOKUPFLW(guy)] has authoritavely removed a post, the message was [removing_post.message]")
 
-
-
 /proc/add_post(message, chosentitle, chosenname, chosenrole, truename, premium)
 	var/datum/noticeboardpost/new_post = new /datum/noticeboardpost
 	new_post.poster = chosenname
@@ -402,8 +406,6 @@
 		GLOB.noticeboard_posts += new_post
 	else
 		GLOB.premium_noticeboardposts += new_post
-
-
 
 /proc/compose_post(datum/noticeboardpost/new_post)
 	new_post.banner += "<center><b>[new_post.title]</b><BR>"

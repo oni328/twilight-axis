@@ -247,6 +247,9 @@
 		if(MUTE_DEADCHAT)
 			mute_string = "deadchat and DSAY"
 			feedback_string = "Deadchat"
+		if(MUTE_MEDITATE)
+			mute_string = "meditate"
+			feedback_string = "Meditate"
 		if(MUTE_ALL)
 			mute_string = "everything"
 			feedback_string = "Everything"
@@ -420,24 +423,83 @@ Traitors and the like can also be revived with the previous role mostly intact.
 	log_admin("[key_name(usr)] healed / revived [key_name(M)]")
 	var/msg = span_danger("Admin [key_name_admin(usr)] healed / revived [ADMIN_LOOKUPFLW(M)]!")
 	message_admins(msg)
-	admin_ticket_log(M, msg)
+	// Friendlier ticket-log line for the player
+	admin_ticket_log(M, "<font color='green'>[key_name_admin(usr)] has fully healed you in relation to this ticket.</font>")
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Rejuvinate") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 
-/client/proc/cmd_admin_create_centcom_report()
-	set category = "-Server-"
-	set name = "Create Command Report"
+/client/proc/admin_spawn_cake(mob/living/M in GLOB.mob_list)
+	set category = "-GameMaster-"
+	set name = "Give Cake Slice"
 
 	if(!check_rights(R_ADMIN))
+		return
+	if(!M)
+		return
+
+	var/turf/T = get_turf(M)
+	if(!T)
+		return
+
+	var/list/cake_types = list(
+		/obj/item/reagent_containers/food/snacks/rogue/cakeslice,
+		/obj/item/reagent_containers/food/snacks/rogue/frostedcakeslice,
+	)
+	var/cake_type = pick(cake_types)
+	new cake_type(T)
+
+	log_admin("[key_name(usr)] gave a cake slice ([cake_type]) to [key_name(M)].")
+	var/msg = span_adminnotice("[key_name_admin(usr)] gave a cake slice to [ADMIN_LOOKUPFLW(M)].")
+	message_admins(msg)
+	// Tell the player (and ticket) in a friendly way
+	to_chat(M, span_notice("[key_name_admin(usr)] has given you a cake slice. How nice!"))
+	admin_ticket_log(M, "<font color='green'>[key_name_admin(usr)] has given you a cake slice. How nice!</font>")
+	SSblackbox.record_feedback("tally", "admin_verb", 1, "Give Cake Slice") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
+
+/client/proc/cmd_admin_create_centcom_report()
+	set category = "-Special Verbs-"
+	set name = "Make IC Announcement"
+
+	if(!check_rights(R_ADMIN))
+		return
+
+	var/title = input(usr, "Заголовок объявления?", "Announcement Title", "") as text|null
+	if(!title)
 		return
 
 	var/input = input(usr, "Enter a Command Report. Ensure it makes sense IC.", "What?", "") as message|null
 	if(!input)
 		return
 
+	var/list/sound_options = list("Bell(Base)", "Alert", "HorrorWhispers", "TerribleHorn", "EvilLaugh", "NecromancerLaugh", "Monsters", "OtavaComing", "Custom(file)")
+	var/sound_choice = input(src, "Какой звук?", "Announcement Sound", "Bell(Base)") as null|anything in sound_options
+	if(!sound_choice)
+		return
+
+	var/announce_sound = 'sound/misc/bell.ogg'
+	switch(sound_choice)
+		if("Alert")
+			announce_sound = 'sound/misc/alert.ogg'
+		if("HorrorWhispers")
+			announce_sound = 'sound/misc/carriage3.ogg'
+		if("TerribleHorn")
+			announce_sound = 'sound/misc/carriage4.ogg'
+		if("EvilLaugh")
+			announce_sound = 'sound/misc/HL (1).ogg'
+		if("NecromancerLaugh")
+			announce_sound = 'sound/misc/zizo.ogg'
+		if("Monsters")
+			announce_sound = 'sound/misc/kybraxor.ogg'
+		if("OtavaComing")
+			announce_sound = 'sound/misc/otavanlament.ogg'
+		if("Custom(file)")
+			announce_sound = input(src, "Выберите звуковой файл", "Custom Announcement Sound") as sound|null
+			if(!announce_sound)
+				return
+
 	var/confirm = alert(src, "Do you want to announce the contents of the report to the crew?", "Announce", "Yes", "No", "Cancel")
 	switch(confirm)
 		if("Yes")
-			priority_announce(input, null, 'sound/blank.ogg')
+			priority_announce(input, "<span class='reallybig'>[html_encode(title)]</span>", announce_sound, sender = usr)
 		if("Cancel")
 			return
 
@@ -747,16 +809,16 @@ Traitors and the like can also be revived with the previous role mostly intact.
 		if(ADMIN_PUNISHMENT_BRAINDAMAGE)
 			target.adjustOrganLoss(ORGAN_SLOT_BRAIN, 199, 199)
 		if(ADMIN_PUNISHMENT_PSYDON)
-			sleep(60)
+			stoplag(6 SECONDS)
 			target.psydo_nyte()
 			target.playsound_local(target, 'sound/misc/psydong.ogg', 100, FALSE)
-			sleep(20)
+			stoplag(2 SECONDS)
 			target.psydo_nyte()
 			target.playsound_local(target, 'sound/misc/psydong.ogg', 100, FALSE)
-			sleep(15)
+			stoplag(1.5 SECONDS)
 			target.psydo_nyte()
 			target.playsound_local(target, 'sound/misc/psydong.ogg', 100, FALSE)
-			sleep(10)
+			stoplag(1 SECONDS)
 			target.gib(FALSE)
 		if(ADMIN_PUNISHMENT_GIB)
 			target.gib(FALSE)
@@ -826,7 +888,7 @@ Traitors and the like can also be revived with the previous role mostly intact.
 			humie.add_stress(/datum/stressevent/maniac_woke_up)
 			to_chat(humie, span_deadsay("<span class='reallybig'>... WHERE AM I? ...</span>"))
 			var/static/list/slop_lore = list(
-				span_deadsay("... Azure Peak? No ... It doesn't exist ..."),
+				span_deadsay("... Twilight Axis? No ... It doesn't exist ..."),
 				span_deadsay("... My name is Trey. Trey Liam, Liamtific Troverseer ..."),
 				span_deadsay("... I'm on NT Liam, a self Treystaining ship, used to Treyserve what Liamains of roguemanity ..."),
 				span_deadsay("... Launched into the Grim Darkness, War and Grim Darkness preserves their grimness ... Their edge ..."),
