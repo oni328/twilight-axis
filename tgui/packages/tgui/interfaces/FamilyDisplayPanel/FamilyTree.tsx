@@ -266,10 +266,11 @@ function placeSubtree(
     slotLeft += slotWidth + CARD_GAP_X;
   }
 
-  const selfCenterX = selfX + ownRow / 2;
+  const selfCenterX = selfAnchorX;
+  const familyCenterX = selfX + ownRow / 2;
 
   if (children.length > 0) {
-    const parentBottomX = selfCenterX;
+    const parentBottomX = familyCenterX;
     const busY = y + ROW_H - ROW_GAP_PAD / 2;
 
     edges.push({

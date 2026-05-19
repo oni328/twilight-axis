@@ -100,6 +100,7 @@ export const FamilyTreeCard = ({
         backgroundColor,
         border: `1px solid ${accentColor}`,
         borderRadius: '6px',
+        boxSizing: 'border-box',
         boxShadow:
           node.isSelf
             ? `0 0 12px ${accentColor}`
@@ -115,6 +116,7 @@ export const FamilyTreeCard = ({
         position: 'relative',
         transition: 'box-shadow 0.15s ease, transform 0.15s ease',
         transform: hovered && clickable ? 'translateY(-1px)' : 'none',
+        width: '100%',
       }}>
       <Box
         style={{
