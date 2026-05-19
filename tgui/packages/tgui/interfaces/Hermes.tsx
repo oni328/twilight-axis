@@ -20,7 +20,7 @@ type Data = {
   is_court_agent?: boolean; // TA EDIT
 };
 
-export const Hermes = (props: any, context: any) => {
+export const Hermes = (props, context) => {
   const { act, data } = useBackend<Data>();
   const { balance, paper_cost, quill_cost, letter_cost, has_tube, is_court_agent } = data; // TA EDIT
 
