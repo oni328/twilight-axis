@@ -1333,7 +1333,7 @@ GLOBAL_LIST_INIT(ritual_counters, list())
 /datum/ritual/weaponary/summonaxe
 	name = "Создание боевого топора"
 	desk = "Призывает особо-острый боевой топор."
-	center_requirement = /obj/item/rogueweapon/stoneaxe/handaxe
+	center_requirement = /obj/item/rogueweapon/stoneaxe
 	
 	n_req = /obj/item/ingot/steel/zizo
 
