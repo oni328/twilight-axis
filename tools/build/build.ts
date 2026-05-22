@@ -213,6 +213,7 @@ export const DmTarget = new Juke.Target({
     "sound/**",
     "tgui/public/tgui.html",
     "modular/**",
+    "modular_twilight_axis/**",
     `${DME_NAME}.dme`,
     NamedVersionFile,
   ],

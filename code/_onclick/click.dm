@@ -107,6 +107,12 @@
 	* mob/RangedAttack(atom,params) - used only ranged, only used for tk and laser eyes but could be changed
 */
 /mob/proc/ClickOn( atom/A, params )
+	var/list/modifiers
+	if(islist(params))
+		modifiers = params
+	else
+		modifiers = params2list(params)
+
 	if(curplaying)
 		curplaying.on_mouse_up()
 
@@ -114,7 +120,6 @@
 		return
 	next_click = world.time + 1
 
-	var/list/modifiers = (click_params == params && click_mods) ? click_mods : params2list(params)
 
 	last_client_interact = world.time
 
@@ -378,6 +383,7 @@
 							if(used_intent.miss_text)
 								visible_message(span_warning("[src] [used_intent.miss_text]!"), \
 												span_warning("I [used_intent.miss_text]!"))
+					try_consume_attack_effects(src, T, zone_selected) // TA Add - SOUNDBREAKER
 					aftermiss()
 					atkswinging = null
 					//update_warning()
@@ -441,6 +447,12 @@
 /mob/proc/resolveAdjacentClick(atom/A,obj/item/W,params,used_hand)
 	if(!A)
 		return
+	// TA Add start - SOUNDBREAKER
+	if(used_intent.is_attack_swing())
+		if(try_consume_attack_effects(src, A, zone_selected))
+			atkswinging = null
+			return
+	// TA Add end - SOUNDBREAKER
 	if(W)
 		W.melee_attack_chain(src, A, params)
 		if(isliving(src))

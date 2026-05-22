@@ -60,7 +60,7 @@
 				to_chat(user, span_notice("I look inside the machine and find no letter, how strange."))
 			H.remove_status_effect(/datum/status_effect/ugotmail)
 	if(!ishuman(user))
-		return	
+		return
 	if (user.mind?.has_bomb) //for TRAIT_EXPLOSIVE_SUPPLY. One bomb per one day.
 		var/mob/living/carbon/human/H = user
 		H.mind?.has_bomb = FALSE
@@ -226,7 +226,7 @@
 						STR.handle_item_insertion(P, prevent_warning=TRUE)
 						X.new_mail = TRUE
 						X.update_icon()
-						send_ooc_note("New letter from <b>[sentfrom].</b>", name = send2place)
+						send_ooc_note("You got new letter waiting for you in HERMES.", name = send2place) // TA EDIT
 						for(var/mob/living/carbon/human/H in GLOB.human_list)
 							if(H.real_name == send2place)
 								H.apply_status_effect(/datum/status_effect/ugotmail)
@@ -333,16 +333,16 @@
 					to_chat(user, span_warning("I [inqonly ? "enable" : "disable"] the Puritan's Lock."))
 					return display_marquette(user)
 
-	if(istype(P, /obj/item/inqarticles/bmirror))		
-		if((HAS_TRAIT(user, TRAIT_INQUISITION) || HAS_TRAIT(user, TRAIT_PURITAN)))	
-			var/obj/item/inqarticles/bmirror/I = P		
+	if(istype(P, /obj/item/inqarticles/bmirror))
+		if((HAS_TRAIT(user, TRAIT_INQUISITION) || HAS_TRAIT(user, TRAIT_PURITAN)))
+			var/obj/item/inqarticles/bmirror/I = P
 			if(I.broken && !I.bloody)
 				visible_message(span_warning("[user] sends something."))
 				budget2change(2, user, "MARQUE")
 				qdel(I)
 				record_round_statistic(STATS_MARQUES_MADE, 2)
 				playsound(loc, 'sound/misc/otavanlament.ogg', 100, FALSE, -1)
-				playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)	
+				playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
 			else
 				if(!I.broken)
 					to_chat(user, (span_warning("It isn't broken.")))
@@ -350,7 +350,7 @@
 					to_chat(user, (span_warning("Clean it first.")))
 
 	if(istype(P, /obj/item/paper/inqslip/confession))
-		if((HAS_TRAIT(user, TRAIT_INQUISITION) || HAS_TRAIT(user, TRAIT_PURITAN)))	
+		if((HAS_TRAIT(user, TRAIT_INQUISITION) || HAS_TRAIT(user, TRAIT_PURITAN)))
 			var/obj/item/paper/inqslip/confession/I = P
 			if(I.signee && I.signed)
 				var/no
@@ -365,12 +365,12 @@
 					selfreport = TRUE
 				if(HAS_TRAIT(I.signee, TRAIT_CABAL) || HAS_TRAIT(I.signee, TRAIT_HORDE) || HAS_TRAIT(I.signee, TRAIT_DEPRAVED) || HAS_TRAIT(I.signee, TRAIT_FREEMAN))
 					correct = TRUE
-				if(I.signee.name in GLOB.excommunicated_players)	
+				if(I.signee.name in GLOB.excommunicated_players)
 					correct = TRUE
-				if(I.paired)	
+				if(I.paired)
 					if(HAS_TRAIT(I.paired.subject, TRAIT_INQUISITION))
 						selfreport = TRUE
-						indexed = TRUE	
+						indexed = TRUE
 					if(I.paired.subject && I.paired.full && !selfreport)
 						if(I.paired.cursedblood)
 							if(HAS_TRAIT(I.paired.subject.mind, TRAIT_CBLOOD))
@@ -381,7 +381,7 @@
 								if(GLOB.cursedsamples.len)
 									GLOB.cursedsamples += ", [I.paired.subject.mind]"
 								else
-									GLOB.cursedsamples += "[I.paired.subject.mind]"			
+									GLOB.cursedsamples += "[I.paired.subject.mind]"
 						if(GLOB.indexed)
 							if(HAS_TRAIT(I.paired.subject.mind, TRAIT_INDEXED))
 								indexed = TRUE
@@ -402,9 +402,9 @@
 						if(GLOB.confessors.len)
 							GLOB.confessors += ", [I.signee]"
 						else
-							GLOB.confessors += "[I.signee]"			
-				if(no | selfreport)		
-					if(I.paired)	
+							GLOB.confessors += "[I.signee]"
+				if(no | selfreport)
+					if(I.paired)
 						qdel(I.paired)
 					qdel(I)
 					visible_message(span_warning("[user] sends something."))
@@ -419,7 +419,7 @@
 						visible_message(span_warning("[user] recieves something."))
 						var/obj/item/inqarticles/indexer/replacement = new /obj/item/inqarticles/indexer/
 						user.put_in_hands(replacement)
-					return		
+					return
 				else
 					if(!correct)
 						if(cursedblood)
@@ -430,34 +430,34 @@
 							record_round_statistic(STATS_MARQUES_MADE, bonuses)
 						if(I.paired && !indexed && !correct && !cursedblood)
 							if(I.waxed)
-								bonuses += 2	
+								bonuses += 2
 						budget2change(bonuses, user, "MARQUE")
 						record_round_statistic(STATS_MARQUES_MADE, bonuses)
 					else
 						if(I.paired && !indexed && !cursedblood)
 							I.marquevalue += bonuses
 						if(cursedblood)
-							bonuses = bonuses + bonuses * I.paired.cursedblood	
+							bonuses = bonuses + bonuses * I.paired.cursedblood
 							I.marquevalue += bonuses
-						if(accused)	
+						if(accused)
 							I.marquevalue -= 4
 						budget2change(I.marquevalue, user, "MARQUE")
 						record_round_statistic(STATS_MARQUES_MADE, I.marquevalue)
-					if(I.paired)	
-						qdel(I.paired)	
+					if(I.paired)
+						qdel(I.paired)
 					qdel(I)
 					visible_message(span_warning("[user] sends something."))
 					playsound(loc, 'sound/misc/otavanlament.ogg', 100, FALSE, -1)
 					playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
-			return	
+			return
 
 	if(istype(P, /obj/item/inqarticles/indexer))
-		if((HAS_TRAIT(user, TRAIT_INQUISITION) || HAS_TRAIT(user, TRAIT_PURITAN)))	
+		if((HAS_TRAIT(user, TRAIT_INQUISITION) || HAS_TRAIT(user, TRAIT_PURITAN)))
 			to_chat(user, span_warning("It needs to be paired with a slip or confession."))
 			return
 
 	if(istype(P, /obj/item/paper/inqslip/arrival))
-		if((HAS_TRAIT(user, TRAIT_INQUISITION) || HAS_TRAIT(user, TRAIT_PURITAN)))	
+		if((HAS_TRAIT(user, TRAIT_INQUISITION) || HAS_TRAIT(user, TRAIT_PURITAN)))
 			var/obj/item/paper/inqslip/arrival/I = P
 			if(I.signee && I.signed)
 				message_admins("INQ ARRIVAL: [user.real_name] ([user.ckey]) has just arrived as a [user.job], earning [I.marquevalue] Marques.")
@@ -468,10 +468,10 @@
 				visible_message(span_warning("[user] sends something."))
 				playsound(loc, 'sound/misc/otavasent.ogg', 100, FALSE, -1)
 				playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
-			return				
+			return
 
 	if(istype(P, /obj/item/paper/inqslip/accusation))
-		if((HAS_TRAIT(user, TRAIT_INQUISITION) || HAS_TRAIT(user, TRAIT_PURITAN)))	
+		if((HAS_TRAIT(user, TRAIT_INQUISITION) || HAS_TRAIT(user, TRAIT_PURITAN)))
 			var/obj/item/paper/inqslip/accusation/I = P
 			if(I.paired)
 				if(I.signee && I.paired.full && I.paired.subject)
@@ -487,7 +487,7 @@
 						selfreport = TRUE
 					if(HAS_TRAIT(I.paired.subject, TRAIT_CABAL) || HAS_TRAIT(I.paired.subject, TRAIT_HORDE) || HAS_TRAIT(I.paired.subject, TRAIT_DEPRAVED) || HAS_TRAIT(I.paired.subject, TRAIT_FREEMAN))
 						correct = TRUE
-					if(I.paired.subject.name in GLOB.excommunicated_players)	
+					if(I.paired.subject.name in GLOB.excommunicated_players)
 						correct = TRUE
 					if(GLOB.indexed && !selfreport)
 						if(HAS_TRAIT(I.paired.subject.mind, TRAIT_INDEXED))
@@ -498,7 +498,7 @@
 								GLOB.indexed += ", [I.paired.subject]"
 							else
 								GLOB.indexed += "[I.paired.subject]"
-					if(I.paired.cursedblood)		
+					if(I.paired.cursedblood)
 						if(HAS_TRAIT(I.paired.subject.mind, TRAIT_CBLOOD))
 							stopfarming = TRUE
 						if(!stopfarming)
@@ -507,7 +507,7 @@
 							if(GLOB.cursedsamples.len)
 								GLOB.cursedsamples += ", [I.paired.subject.mind]"
 							else
-								GLOB.cursedsamples += "[I.paired.subject.mind]"								
+								GLOB.cursedsamples += "[I.paired.subject.mind]"
 					if(GLOB.accused && !selfreport)
 						if(HAS_TRAIT(I.paired.subject.mind, TRAIT_ACCUSED))
 							no = TRUE
@@ -520,14 +520,14 @@
 					if(GLOB.confessors && !selfreport)
 						if(HAS_TRAIT(I.paired.subject.mind, TRAIT_CONFESSED))
 							no = TRUE
-							specialno = TRUE	
-					if(cursedblood)	
+							specialno = TRUE
+					if(cursedblood)
 						bonuses = bonuses + bonuses * I.paired.cursedblood
 						if(I.waxed)
 							bonuses += 2
 						budget2change(bonuses, user, "MARQUE")
 						record_round_statistic(STATS_MARQUES_MADE, bonuses)
-					if(no || selfreport || stopfarming)		
+					if(no || selfreport || stopfarming)
 						qdel(I.paired)
 						qdel(I)
 						visible_message(span_warning("[user] sends something."))
@@ -543,11 +543,11 @@
 							else if(stopfarming)
 								to_chat(user, span_notice("We've already collected a sample of their accursed blood."))
 							else
-								to_chat(user, span_notice("They've already been accused."))	
+								to_chat(user, span_notice("They've already been accused."))
 						return
 					else
 						if(!indexed && !correct && !cursedblood)
-							(I.marquevalue -= 4) += bonuses 
+							(I.marquevalue -= 4) += bonuses
 							budget2change(I.marquevalue, user, "MARQUE")
 							record_round_statistic(STATS_MARQUES_MADE, I.marquevalue)
 						if(correct)
@@ -562,20 +562,20 @@
 						playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
 						return
 				else
-					if(!I.paired.full)		
+					if(!I.paired.full)
 						to_chat(user, span_warning("[I.paired] needs to be full of the accused's blood."))
 						return
-					else	
-						to_chat(user, span_warning("[I] is missing a signature."))	
+					else
+						to_chat(user, span_warning("[I] is missing a signature."))
 						return
 			else
 				to_chat(user, span_warning("[I] is missing an INDEXER."))
-				return							
-		
+				return
+
 	if(istype(P, /obj/item/paper) || istype(P, /obj/item/smallDelivery))
 		if(inqcoins)
 			to_chat(user, span_warning("The machine doesn't respond."))
-			return	
+			return
 		if(alert(user, "Send Mail?",,"YES","NO") == "YES")
 			var/send2place = input(user, "Where to? (Person or #number)", "ROGUETOWN", null)
 			var/sentfrom = input(user, "Who is this from? (Leave blank to send anonymously)", "ROGUETOWN", null)
@@ -623,14 +623,14 @@
 					STR.handle_item_insertion(P, prevent_warning=TRUE)
 					X.new_mail=TRUE
 					X.update_icon()
-					playsound(src.loc, 'sound/misc/hiss.ogg', 100, FALSE, -1)				
+					playsound(src.loc, 'sound/misc/hiss.ogg', 100, FALSE, -1)
 				if(!findmaster)
 					to_chat(user, span_warning("The master of mails has perished?"))
 				else
 					log_mail_send(user, sentfrom, send2place)
 					visible_message(span_warning("[user] sends something."))
 					playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
-					send_ooc_note("New letter from <b>[sentfrom].</b>", name = send2place)
+					send_ooc_note("You got new letter waiting for you in HERMES.</b>", name = send2place) // TA EDIT
 					if(mailrecipient)
 						mailrecipient.apply_status_effect(/datum/status_effect/ugotmail)
 						mailrecipient.playsound_local(mailrecipient, 'sound/misc/mail.ogg', 100, FALSE, -1)
@@ -640,7 +640,7 @@
 		return
 
 	if(istype(P, /obj/item/roguecoin/inqcoin))
-		if(HAS_TRAIT(user, TRAIT_INQUISITION))	
+		if(HAS_TRAIT(user, TRAIT_INQUISITION))
 			if(coin_loaded && !inqcoins)
 				return
 			var/obj/item/roguecoin/M = P
@@ -651,7 +651,7 @@
 			playsound(src, 'sound/misc/coininsert.ogg', 100, FALSE, -1)
 			return display_marquette(usr)
 		else
-			return	
+			return
 
 	if(istype(P, /obj/item/roguecoin))
 		var/obj/item/roguecoin/C = P
@@ -676,7 +676,7 @@
 
 /obj/structure/roguemachine/mail/update_icon()
 	cut_overlays()
-	if(coin_loaded)	
+	if(coin_loaded)
 		if(inqcoins > 0)
 			add_overlay(mutable_appearance(icon, "mail-i"))
 			set_light(1, 1, 1, l_color = "#ffffff")
@@ -800,13 +800,13 @@
 	PA.name = "[initial(PA.name)] ([PA.remaining]/[PA.maximum]) - ᛉ [PA.marquescost] ᛉ"
 	if(!PA.remaining)
 		PA.name = "[initial(PA.name)] (OUT OF STOCK) - ᛉ [PA.marquescost] ᛉ"
-	return		
+	return
 
 /obj/structure/roguemachine/mail/proc/display_marquette(mob/user)
 	var/contents
 	contents = "<center>✤ ── L'INQUISITION MARQUETTE D'OTAVA ── ✤<BR>"
 	contents += "POUR L'ÉRADICATION DE L'HÉRÉSIE, TANT QUE PSYDON ENDURE.<BR>"
-	if(HAS_TRAIT(user, TRAIT_PURITAN))		
+	if(HAS_TRAIT(user, TRAIT_PURITAN))
 		contents += "✤ ── <a href='?src=[REF(src)];locktoggle=1]'> PURITAN'S LOCK: [inqonly ? "OUI":"NON"]</a> ── ✤<BR>"
 	else
 		contents += "✤ ── PURITAN'S LOCK: [inqonly ? "OUI":"NON"] ── ✤<BR>"
@@ -819,19 +819,19 @@
 				contents += "<tr>"
 				contents += "<td style='width: 100%; text-align: center;'>\
 					<a href='?src=[REF(src)];changecat=[inq_category[i]]'>[inq_category[i]]</a>\
-					</td>"	
+					</td>"
 				contents += "</tr>"*/
 		for(var/i = 1, i <= category.len, i++)
 			contents += "<tr>"
 			contents += "<td style='width: 100%; text-align: center;'>\
 				<a href='?src=[REF(src)];changecat=[category[i]]'>[category[i]]</a>\
-				</td>"	
+				</td>"
 			contents += "</tr>"
 		contents += "</table>"
 	else
 		contents += "<center>[cat_current]<BR></center>"
-		contents += "<center><a href='?src=[REF(src)];changecat=1'>\[RETURN\]</a><BR><BR></center>"			
-		contents += "<center>"			
+		contents += "<center><a href='?src=[REF(src)];changecat=1'>\[RETURN\]</a><BR><BR></center>"
+		contents += "<center>"
 		var/list/items = list()
 		for(var/pack in GLOB.inqsupplies)
 			var/datum/inqports/PA = pack
@@ -842,11 +842,11 @@
 		for(var/pack in sortNames(items, order=0))
 			var/datum/inqports/PA = pack
 			var/name = uppertext(PA.name)
-			if(inqonly && !HAS_TRAIT(user, TRAIT_PURITAN) || (PA.maximum && !PA.remaining) || inqcoins < PA.marquescost) 
+			if(inqonly && !HAS_TRAIT(user, TRAIT_PURITAN) || (PA.maximum && !PA.remaining) || inqcoins < PA.marquescost)
 				contents += "[name]<BR>"
 			else
 				contents += "<a href='?src=[REF(src)];buy=[PA.type]'>[name]</a><BR>"
-		contents += "</center>"			
+		contents += "</center>"
 	var/datum/browser/popup = new(user, "VENDORTHING", "", 500, 600)
 	popup.set_content(contents)
 	if(inqcoins == 0)
@@ -863,7 +863,7 @@
 		if(inqcoins <= 0)
 			return
 		coin_loaded = FALSE
-		update_icon()	
+		update_icon()
 		budget2change(inqcoins, usr, "MARQUE")
 		inqcoins = 0
 
@@ -880,7 +880,7 @@
 		var/datum/inqports/PA = GLOB.inqsupplies[path]
 
 		inqcoins -= PA.marquescost
-		if(PA.maximum)	
+		if(PA.maximum)
 			decreaseremaining(PA)
 		visible_message(span_warning("[usr] sends something."))
 		if(!inqcoins)
@@ -898,7 +898,7 @@
 		playsound(T, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
 		new pathi(get_turf(T))
 
-	return display_marquette(usr)		
+	return display_marquette(usr)
 
 /*
 	INQUISITION INTERACTIONS - END
