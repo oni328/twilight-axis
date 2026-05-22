@@ -1,9 +1,0 @@
-author: "PatapoIIIa"
-delete-after: True
-changes:
-  - rscadd: "Added Shroud of Tranquility, a tier 0 Necra miracle that can temporarily hide a protected target from lesser undead NPCs."
-  - rscadd: "Added Necra's wrath interactions for abusing the shroud: grave-robbing under undead protection can break the blessing and turn nearby undead hostile."
-  - rscadd: "Added undead disguise behavior for stronger miracle users, allowing undead observers to perceive the shrouded caster as one of their own."
-  - balance: "Shroud of Tranquility now has stricter break conditions tied to aggression, dropping the conjured hand, and abusing the protection for looting."
-  - image: "Added a new action icon for Shroud of Tranquility."
-  - code_imp: "Added modular shroud, disguise, punishment, retaliation, and AI target-check logic for undead interaction."
