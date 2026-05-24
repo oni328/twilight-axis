@@ -13,7 +13,6 @@
 GLOBAL_LIST_EMPTY(cmode_tracks_by_type)
 GLOBAL_LIST_EMPTY(cmode_tracks_by_name)
 
-#define CUSTOM_COMBAT_MUSIC_MAX_SIZE (4 * 1024 * 1024) // TA EDIT START
 
 /proc/get_custom_combat_music_extension(filename)
 	if(!istext(filename) || !length(filename))
@@ -69,7 +68,7 @@ GLOBAL_LIST_EMPTY(cmode_tracks_by_name)
 	if(file_ext != ".ogg")
 		return "Combat music must be an .ogg file."
 
-	if(file_size > CUSTOM_COMBAT_MUSIC_MAX_SIZE)
+	if(file_size > (4 * 1024 * 1024))
 		return "Combat music file is too large. 4 MB or less."
 
 	message_admins("[ADMIN_LOOKUPFLW(user)] uploaded custom combat music [filename] of size [file_size / 1000000] (~MB).")
