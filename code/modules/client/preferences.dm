@@ -150,6 +150,9 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/stopdroning = FALSE
 
 	var/anonymize = TRUE
+	var/donor_ooc_color = TRUE // TA EDIT 
+	var/donor_ooc_icon = TRUE // TA EDIT 
+	var/donor_examine_icon = TRUE // TA EDIT
 	var/masked_examine = FALSE
 	var/nsfw_examine_always = FALSE // TA EDIT
 	var/full_examine = FALSE
@@ -874,6 +877,12 @@ GLOBAL_LIST_EMPTY(chosen_names)
 
 				if(unlock_content || check_rights_for(user.client, R_ADMIN))
 					dat += "<b>OOC Color:</b> <span style='border: 1px solid #161616; background-color: [ooccolor ? ooccolor : GLOB.normal_ooc_colour];'>&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=ooccolor;task=input'>Change</a><br>"
+
+				if(ta_is_donor_visual_ckey(user.ckey)) // TA EDIT START
+					dat += "<br><h2>Donator Visuals</h2>"
+					dat += "<b>OOC Donator Color:</b> <a href='?_src_=prefs;preference=donor_ooc_color'>[donor_ooc_color ? "Enabled" : "Disabled"]</a><br>"
+					dat += "<b>OOC Donator Icon:</b> <a href='?_src_=prefs;preference=donor_ooc_icon'>[donor_ooc_icon ? "Enabled" : "Disabled"]</a><br>"
+					dat += "<b>Examine Donator Icon:</b> <a href='?_src_=prefs;preference=donor_examine_icon'>[donor_examine_icon ? "Enabled" : "Disabled"]</a><br>" // TA EDIT END
 
 			dat += "</td>"
 
@@ -3000,6 +3009,27 @@ GLOBAL_LIST_EMPTY(chosen_names)
 
 				if("pull_requests")
 					chat_toggles ^= CHAT_PULLR
+
+				if("donor_ooc_color") // TA EDIT START
+					if(ta_is_donor_visual_ckey(user.ckey))
+						donor_ooc_color = !donor_ooc_color
+						save_preferences()
+					else
+						to_chat(user, span_warning("This option is only available to donators."))
+
+				if("donor_ooc_icon")
+					if(ta_is_donor_visual_ckey(user.ckey))
+						donor_ooc_icon = !donor_ooc_icon
+						save_preferences()
+					else
+						to_chat(user, span_warning("This option is only available to donators."))
+
+				if("donor_examine_icon")
+					if(ta_is_donor_visual_ckey(user.ckey))
+						donor_examine_icon = !donor_examine_icon
+						save_preferences()
+					else
+						to_chat(user, span_warning("This option is only available to donators.")) // TA EDIT END
 
 				if("allow_midround_antag")
 					toggles ^= MIDROUND_ANTAG

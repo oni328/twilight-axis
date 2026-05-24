@@ -140,6 +140,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["lobbymusicvol"]		>> lobbymusicvol
 	S["ambiencevol"]		>> ambiencevol
 	S["anonymize"]			>> anonymize
+	S["donor_ooc_color"]	>> donor_ooc_color // TA EDIT
+	S["donor_ooc_icon"]	>> donor_ooc_icon // TA EDIT 
+	S["donor_examine_icon"]	>> donor_examine_icon // TA EDIT
 	S["stopdroning"]		>> stopdroning
 	S["masked_examine"]		>> masked_examine
 	S["nsfw_examine_always"]>> nsfw_examine_always // TA EDIT
@@ -238,6 +241,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	pda_style		= sanitize_inlist(pda_style, GLOB.pda_styles, initial(pda_style))
 	pda_color		= sanitize_hexcolor(pda_color, 6, 1, initial(pda_color))
 	key_bindings 	= sanitize_islist(key_bindings, list())
+	donor_ooc_color	= sanitize_integer(donor_ooc_color, FALSE, TRUE, TRUE) // TA EDIT
+	donor_ooc_icon	= sanitize_integer(donor_ooc_icon, FALSE, TRUE, TRUE) // TA EDIT
+	donor_examine_icon	= sanitize_integer(donor_examine_icon, FALSE, TRUE, TRUE) // TA EDIT
 	defiant	= sanitize_integer(defiant, FALSE, TRUE, TRUE)
 	//TA Addition start - new ERP SYSTEM
 	erp_custom_actions = sanitize_islist(erp_custom_actions, list())
@@ -282,6 +288,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["lobbymusicvol"], lobbymusicvol)
 	WRITE_FILE(S["ambiencevol"], ambiencevol)
 	WRITE_FILE(S["anonymize"], anonymize)
+	WRITE_FILE(S["donor_ooc_color"], donor_ooc_color) // TA EDIT
+	WRITE_FILE(S["donor_ooc_icon"], donor_ooc_icon) // TA EDIT 
+	WRITE_FILE(S["donor_examine_icon"], donor_examine_icon) // TA EDIT
 	WRITE_FILE(S["stopdroning"], stopdroning)
 	WRITE_FILE(S["masked_examine"], masked_examine)
 	WRITE_FILE(S["nsfw_examine_always"], nsfw_examine_always) // TA EDIT
