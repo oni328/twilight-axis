@@ -1,6 +1,6 @@
 /obj/structure/roguemachine/mail
 	name = "HERMES"
-	desc = "Carrier zads have fallen severely out of fashion ever since the advent of this hydropneumatic mail system. Feed it coinage to access a slice of modernity."
+	desc = "Carrier zads have fallen severely out of fashion ever since the advent of this hydropneumatic mail system. The first letter every 5 minutes is free; thereafter, feed it coinage."
 	icon = 'icons/roguetown/misc/machines.dmi'
 	icon_state = "mail"
 	density = FALSE
@@ -10,6 +10,7 @@
 	var/inqcoins = 0
 	var/inqonly = FALSE // Has the Inquisitor locked Marque-spending for lessers?
 	var/keycontrol = "puritan"
+	var/static/list/last_free_send = list()
 	var/cat_current = "1"
 	var/list/all_category = list(
 		"✤ RELIQUARY ✤",
@@ -40,6 +41,28 @@
 	set_light(0)
 	SSroguemachine.hermailers -= src
 	return ..()
+
+/obj/structure/roguemachine/mail/proc/free_send_ready(mob/user)
+	if(!user || !user.ckey)
+		return FALSE
+	var/last = last_free_send[user.ckey]
+	if(!last)
+		return TRUE
+	return world.time >= last + HERMES_FREE_COOLDOWN
+
+/obj/structure/roguemachine/mail/proc/free_send_remaining(mob/user)
+	if(!user || !user.ckey)
+		return 0
+	var/last = last_free_send[user.ckey]
+	if(!last)
+		return 0
+	var/remaining = (last + HERMES_FREE_COOLDOWN) - world.time
+	return max(0, remaining)
+
+/obj/structure/roguemachine/mail/proc/mark_free_send(mob/user)
+	if(!user || !user.ckey)
+		return
+	last_free_send[user.ckey] = world.time
 
 /obj/structure/roguemachine/mail/attack_hand(mob/user)
 	if(ishuman(user))
@@ -86,15 +109,16 @@
 				H.remove_status_effect(/datum/status_effect/ugotmail)
 	if(!ishuman(user))
 		return
-	if (user.mind?.has_bomb) //for TRAIT_EXPLOSIVE_SUPPLY. One bomb per one day.
+	if(user.mind?.has_bomb) //for TRAIT_EXPLOSIVE_SUPPLY. One bomb per one day.
 		var/mob/living/carbon/human/H = user
 		H.mind?.has_bomb = FALSE
 		var/bomb_type
-		var/static/list/bomb_type_list = list(/obj/item/tntstick,
-		/obj/item/impact_grenade/explosion,
-		/obj/item/impact_grenade/smoke/poison_gas,
-		/obj/item/impact_grenade/smoke/fire_gas,
-		/obj/item/impact_grenade/smoke/healing_gas,
+		var/static/list/bomb_type_list = list(
+			/obj/item/tntstick,
+			/obj/item/impact_grenade/explosion,
+			/obj/item/impact_grenade/smoke/poison_gas,
+			/obj/item/impact_grenade/smoke/fire_gas,
+			/obj/item/impact_grenade/smoke/healing_gas,
 		)
 		var/bonus = 0
 		if(H.STALUC > 10)
@@ -105,17 +129,36 @@
 			bomb_type = pick(bomb_type_list)
 		var/obj/item/S = new bomb_type(get_turf(H))
 		H.put_in_hands(S)
-		if(HAS_TRAIT(H, TRAIT_BOMBER_EXPERT))	//additional random second bomb.
+		if(HAS_TRAIT(H, TRAIT_BOMBER_EXPERT)) //additional random second bomb.
 			bomb_type_list |= /obj/item/bomb
 			bomb_type = pick(bomb_type_list)
 			var/obj/item/B = new bomb_type(get_turf(H))
 			H.put_in_hands(B)
+	if(user.mind?.has_drug_delivery) //for TRAIT_DRUG_SUPPLY. One delivery per day.
+		var/mob/living/carbon/human/H = user
+		H.mind.has_drug_delivery = FALSE
+		var/static/list/common_drug_list = list(
+			/obj/item/reagent_containers/powder/spice,
+			/obj/item/reagent_containers/powder/moondust,
+			/obj/item/reagent_containers/powder/starsugar
+		)
+		var/static/list/rare_drug_list = list(
+			/obj/item/reagent_containers/powder/moondust_purest,
+			/obj/item/reagent_containers/powder/herozium
+		)
+		var/drug_type
+		if(prob(20))
+			drug_type = pick(rare_drug_list)
+		else
+			drug_type = pick(common_drug_list)
+		var/obj/item/D = new drug_type(get_turf(H))
+		H.put_in_hands(D)
 	if(HAS_TRAIT(user, TRAIT_INQUISITION))
 		if(!coin_loaded && !inqcoins)
 			to_chat(user, span_notice("It needs a Marque."))
 			return
 		user.changeNext_move(CLICK_CD_MELEE)
-		display_marquette(usr)
+		display_marquette(user)
 
 /obj/structure/roguemachine/mail/get_mechanics_examine(mob/user)
 	. = ..()
@@ -140,6 +183,11 @@
 	if(!coin_loaded && !is_court_agent) 
 		to_chat(user, span_warning("Insert coins to use the terminal."))
 		return // TA EDIT END
+	if(!coin_loaded && !free_send_ready(user))
+		var/wait_ds = free_send_remaining(user)
+		var/mins = round(wait_ds / 600) + 1
+		to_chat(user, span_warning("No free letter ready ([mins] minute\s to refresh) and no coin loaded."))
+		return
 	if(inqcoins)
 		to_chat(user, span_warning("The machine doesn't respond."))
 		return
@@ -167,6 +215,8 @@
 /obj/structure/roguemachine/mail/ui_data(mob/user)
 	var/list/data = list()
 	data["balance"] = coin_loaded
+	data["free_send_ready"] = free_send_ready(user) ? TRUE : FALSE
+	data["free_send_remaining_ds"] = free_send_remaining(user)
 	return data
 
 /obj/structure/roguemachine/mail/proc/log_mail_send(mob/user, sender_name, recipient_name)
@@ -238,6 +288,18 @@
 				to_chat(user, span_warning("Letter too long."))
 				return TRUE
 
+			var/is_free = free_send_ready(user)
+			if(!is_free && coin_loaded < 1)
+				to_chat(user, span_warning("No free letter ready and no coin loaded. Wait the cooldown or insert a coin."))
+				return TRUE
+			var/send2place = params["recipient"]
+			var/sentfrom = params["sender"]
+			var/content = params["content"]
+			if(!send2place)
+				return TRUE
+			if(length(content) > 2000)
+				to_chat(user, span_warning("Letter too long."))
+				return TRUE
 			var/obj/item/paper/P = new
 			P.info += content
 			P.mailer = sentfrom
@@ -266,6 +328,7 @@
 				return TRUE 
 			// TA EDIT END
 
+			var/sent_ok = FALSE
 			if(findtext(send2place, "#"))
 				var/box2find = text2num(copytext(send2place, findtext(send2place, "#")+1))
 				var/found = FALSE
@@ -286,6 +349,7 @@
 						coin_loaded -= 1
 						if(coin_loaded <= 0)
 							update_icon()
+					sent_ok = TRUE
 				else
 					to_chat(user, span_warning("Failed to send. Bad number?"))
 					qdel(P)
@@ -314,6 +378,20 @@
 				else
 					to_chat(user, span_warning("The master of mails has perished?"))
 					qdel(P)
+					sent_ok = TRUE
+				else
+					to_chat(user, span_warning("The master of mails has perished?"))
+					qdel(P)
+			if(sent_ok)
+				if(is_free)
+					mark_free_send(user)
+					to_chat(user, span_notice("Your free letter has been sent. Another may be sent in [HERMES_FREE_COOLDOWN / 600] minute\s."))
+				else
+					SStreasury.mint(SStreasury.discretionary_fund, 1, "Mail Income")
+					record_round_statistic(STATS_TAXES_COLLECTED, 1)
+					coin_loaded -= 1
+					if(coin_loaded <= 0)
+						update_icon()
 			return TRUE
 		if("refund")
 			if(coin_loaded > 0)
@@ -732,7 +810,7 @@
 					log_mail_send(user, sentfrom, send2place)
 					visible_message(span_warning("[user] sends something."))
 					playsound(loc, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
-					send_ooc_note("You got new letter waiting for you in HERMES.</b>", name = send2place) // TA EDIT
+					send_ooc_note("You got new letter waiting for you in HERMES.", name = send2place) // TA EDIT
 					if(mailrecipient)
 						mailrecipient.apply_status_effect(/datum/status_effect/ugotmail)
 						mailrecipient.playsound_local(mailrecipient, 'sound/misc/mail.ogg', 100, FALSE, -1)
@@ -751,7 +829,7 @@
 			update_icon()
 			qdel(M)
 			playsound(src, 'sound/misc/coininsert.ogg', 100, FALSE, -1)
-			return display_marquette(usr)
+			return display_marquette(user)
 		else
 			return
 
@@ -792,15 +870,6 @@
 /obj/structure/roguemachine/mail/examine(mob/user)
 	. = ..()
 	. += "<a href='?src=[REF(src)];directory=1'>Directory:</a> [mailtag]"
-
-/obj/structure/roguemachine/mail/Topic(href, href_list)
-	..()
-
-	if(!usr)
-		return
-
-	if(href_list["directory"])
-		view_directory(usr)
 
 /obj/structure/roguemachine/mail/proc/view_directory(mob/user)
 	var/dat
@@ -970,9 +1039,20 @@
 		popup.open()
 
 /obj/structure/roguemachine/mail/Topic(href, href_list)
-	..()
+	. = ..()
+
+	if(!usr)
+		return
+
+	if(href_list["directory"])
+		view_directory(usr)
+		return
+
 	if(!usr.canUseTopic(src, BE_CLOSE))
 		return
+
+	var/refresh_marquette = FALSE
+
 	if(href_list["eject"])
 		if(inqcoins <= 0)
 			return
@@ -980,18 +1060,23 @@
 		update_icon()
 		budget2change(inqcoins, usr, "MARQUE")
 		inqcoins = 0
+		refresh_marquette = TRUE
 
 	if(href_list["changecat"])
 		cat_current = href_list["changecat"]
+		refresh_marquette = TRUE
 
 	if(href_list["locktoggle"])
 		playsound(loc, 'sound/misc/beep.ogg', 100, FALSE, -1)
 		for(var/obj/structure/roguemachine/mail/everyhermes in SSroguemachine.hermailers)
 			everyhermes.inqlock()
+		refresh_marquette = TRUE
 
 	if(href_list["buy"])
 		var/path = text2path(href_list["buy"])
 		var/datum/inqports/PA = GLOB.inqsupplies[path]
+		if(!PA)
+			return
 
 		inqcoins -= PA.marquescost
 		if(PA.maximum)
@@ -1011,8 +1096,10 @@
 		var/pathi = pick(PA.item_type)
 		playsound(T, 'sound/misc/disposalflush.ogg', 100, FALSE, -1)
 		new pathi(get_turf(T))
+		refresh_marquette = TRUE
 
-	return display_marquette(usr)
+	if(refresh_marquette)
+		return display_marquette(usr)
 
 /*
 	INQUISITION INTERACTIONS - END

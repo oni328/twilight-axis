@@ -137,6 +137,8 @@
 
 #define SLOP				(1<<13)
 
+#define ATC					(1<<12)
+
 #define TESTER		(1<<0)
 
 
@@ -148,6 +150,7 @@
 #define JCOLOR_VANGUARD "#790f73"
 #define JCOLOR_CHURCH "#b0955d"
 #define JCOLOR_BURGHER "#759259"
+#define JCOLOR_ATC "#5b9bd5"
 #define JCOLOR_PEASANT "#685542"
 #define JCOLOR_SIDEFOLK "#aea176"
 #define JCOLOR_WANDERER  "#23763a"
@@ -216,8 +219,11 @@
 #define JDO_ACOLYTE 5.4
 #define JDO_SEXTON 5.5
 
-// Town Burghers
+// Azurian Trading Company
 #define JDO_MERCHANT 6
+#define JDO_SHOPHAND 6.05
+
+// Town Burghers
 #define JDO_GUILDMASTER 6.1
 #define JDO_GUILDSMAN 6.2
 #define JDO_TAILOR 6.3
@@ -235,7 +241,6 @@
 #define JDO_COOK 7.1
 #define JDO_TAPSTER 7.2
 #define JDO_SERVANT 7.3
-#define JDO_SHOPHAND 7.4
 #define JDO_SOILSON 7.5
 #define JDO_VILLAGER 7.6
 

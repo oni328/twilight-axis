@@ -1,4 +1,0 @@
-author: "WeNeedMorePhoron"
-delete-after: True
-changes:
-  - bugfix: "Removed every single runtime fixes from the runtimes fix pack after discovered it drove typecacheof to the highest performance eating individual proc with 30s of overtime and 150s of total cpu time out of 1701 total on a mid pop."

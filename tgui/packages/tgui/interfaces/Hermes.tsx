@@ -16,19 +16,41 @@ type Data = {
   paper_cost: number;
   quill_cost: number;
   letter_cost: number;
+  free_send_ready: 0 | 1;
+  free_send_remaining_ds: number;
   has_tube?: boolean;
   is_court_agent?: boolean; // TA EDIT
 };
 
-export const Hermes = (props, context) => {
+const dsToClock = (ds: number) => {
+  if (ds <= 0) return '0s';
+  const totalSeconds = Math.ceil(ds / 10);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  if (minutes <= 0) return `${seconds}s`;
+  return `${minutes}m ${seconds}s`;
+};
+
+export const Hermes = (props: any, context: any) => {
   const { act, data } = useBackend<Data>();
-  const { balance, paper_cost, quill_cost, letter_cost, has_tube, is_court_agent } = data; // TA EDIT
+  const {
+    balance,
+    paper_cost,
+    quill_cost,
+    letter_cost,
+    free_send_ready,
+    free_send_remaining_ds,
+    has_tube,
+    is_court_agent
+  } = data;
 
   const [recipient, setRecipient] = useState('');
   const [sender, setSender] = useState('');
   const [letterContent, setLetterContent] = useState('');
 
   const canSendLetter = (balance >= letter_cost || is_court_agent) && recipient.length > 0; // TA EDIT
+  const isFree = !!free_send_ready;
+  const canSendLetter = recipient.length > 0 && (isFree || balance >= letter_cost);
   const canBuyPaper = balance >= paper_cost;
   const canBuyQuill = balance >= quill_cost;
   const canSendTube = letterContent.length > 0;
@@ -84,7 +106,11 @@ export const Hermes = (props, context) => {
 
           <Stack.Item grow>
             <Section
-              title={`Write Letter (${letter_cost} mammon)`}
+              title={
+                isFree
+                  ? 'Write Letter (free letter ready)'
+                  : `Write Letter (${letter_cost} mammon, next free in ${dsToClock(free_send_remaining_ds)})`
+              }
               fill
             >
               <Stack vertical fill>
@@ -124,6 +150,7 @@ export const Hermes = (props, context) => {
                       <Button
                         fluid
                         icon="paper-plane"
+                        color={isFree ? 'good' : undefined}
                         disabled={!canSendLetter}
                         onClick={() =>
                           act('send_letter', {
@@ -133,7 +160,7 @@ export const Hermes = (props, context) => {
                           })
                         }
                       >
-                        Send Letter
+                        {isFree ? 'Send Letter (Free)' : 'Send Letter'}
                       </Button>
                     </Stack.Item>
                     {has_tube && (
