@@ -217,11 +217,14 @@ GLOBAL_LIST_EMPTY(antagonists)
 	return ""
 
 /datum/antagonist/proc/enabled_in_preferences(datum/mind/M)
+	if(M && M.current && is_banned(M.current))
+		return FALSE
+
 	if(job_rank)
-		if(M.current && M.current.client && (job_rank in M.current.client.prefs.be_special))
+		if(M && M.current && M.current.client && M.current.client.prefs && (job_rank in M.current.client.prefs.be_special))
 			return TRUE
-		else
-			return FALSE
+		return FALSE
+
 	return TRUE
 
 // List if ["Command"] = CALLBACK(), user will be appeneded to callback arguments on execution
