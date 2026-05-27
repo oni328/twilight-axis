@@ -1992,6 +1992,13 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	donatitem = TRUE
 	donat_tier = 2
 
+/datum/loadout_item/donator/des_gaebolg
+	name = "Dontaor Kit - Gae Bolg - Required: Spear, Partizan, Halberd, Glaive Or Eagle's Beak"
+	category = list("Оружие", "Донат")
+	path = /obj/item/enchantingkit/weapon/des_gaebolg
+	donatitem = TRUE
+	donat_tier = 2
+
 /datum/loadout_item/donator_dasfox/periapt
 	name = "Donator Item - Defiled Astratan Periapt"
 	path = /obj/item/clothing/neck/roguetown/psicross/astrata/dasfox
