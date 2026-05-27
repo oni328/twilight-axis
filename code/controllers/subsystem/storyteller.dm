@@ -1471,6 +1471,7 @@ SUBSYSTEM_DEF(gamemode)
 	current_storyteller = chosen_storyteller
 	if(SSjob?.occupations?.len)
 		gnollslot_update()
+		update_bandits_slots()
 //		update_scaling_slots()
 		enforce_storyteller_soft_antag_slots()
 	if(!secret_storyteller)
