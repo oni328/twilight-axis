@@ -186,14 +186,16 @@
 		max_range = gun.effective_range
 	..()
 
-/obj/projectile/bullet/on_hit(atom/target)
+/obj/projectile/bullet/on_hit(atom/target, blocked = FALSE)
 	if(isliving(target))
 		var/mob/living/T = target
 		if(istype(fired_from, /obj/item/gun/ballistic/twilight_firearm)) //Double damage in close range
 			var/is_within_effective_range = !check_range(get_turf(target))
 			if(is_within_effective_range)
-				if(!istype(T.get_inactive_held_item(), /obj/item/rogueweapon/shield) && !istype(T.get_active_held_item(), /obj/item/rogueweapon/shield))
-					switch(gunpowder) //Hande gunpowder types that are BLOCKED by shields and armor
+				var/has_projectile_shield = istype(T.get_inactive_held_item(), /obj/item/rogueweapon/shield) || istype(T.get_active_held_item(), /obj/item/rogueweapon/shield)
+				var/armor_softened = blocked > 0
+				if(!has_projectile_shield && !armor_softened)
+					switch(gunpowder) //Handle gunpowder types that are BLOCKED by shields and armor
 						if("fyrepowder")
 							if(istype(src, /obj/projectile/bullet/twilight_grapeshot))
 								T.adjust_fire_stacks(2)
@@ -234,7 +236,7 @@
 						if("terrorpowder")
 							gunpowder_npc_critfactor += 1
 				else
-					switch(gunpowder) //Hande gunpowder types that are NOT BLOCKED by shields and armor
+					switch(gunpowder) //Handle gunpowder types that are NOT BLOCKED by shields and armor
 						if("fyrepowder")
 							if(istype(src, /obj/projectile/bullet/twilight_grapeshot))
 								T.adjust_fire_stacks(1)
@@ -390,7 +392,7 @@
 				H.set_silence(5 SECONDS)
 
 /obj/projectile/bullet/twilight_cannonball/on_hit(atom/target, blocked = FALSE)
-	. = ..()
+	. = ..(target, blocked)
 
 	var/turf/epicenter = get_turf(target)
 	if(!epicenter)
