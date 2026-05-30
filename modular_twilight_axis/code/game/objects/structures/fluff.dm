@@ -16,8 +16,8 @@
 	icon = 'modular_twilight_axis/icons/roguetown/misc/statue_eora.dmi'
 
 /obj/structure/fluff/statue/zizo
-	name = "zaelorian statue"
-	desc = "Мраморная и серебряная статуя Заэлориан Кринзарис - тёмная эльфийка, стремившаяся к миру и прогрессу, \
+	name = "tenebra statue"
+	desc = "Мраморная и серебряная статуя Императрицы Тенебры - тёмной эльфийки, что стремилась к порядку и прогрессу, \
 	которая ныне печально известна как Зизо. По крайней мере так видят или хотели видеть ее последователи."
 	icon_state = "zaelorian_crynsaris"
 	icon = 'modular_twilight_axis/icons/roguetown/misc/statue_zizo.dmi'
