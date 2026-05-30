@@ -137,7 +137,7 @@
 
 #define SLOP				(1<<13)
 
-#define ATC					(1<<12)
+#define ATC					(1<<14)
 
 #define TESTER		(1<<0)
 
@@ -169,10 +169,12 @@
 	"Vanguard" = JCOLOR_VANGUARD,\
 	"Church" = JCOLOR_CHURCH,\
 	"Burghres" = JCOLOR_BURGHER,\
+	"Azurian Trading Company" = JCOLOR_ATC,\
 	"Peasants" = JCOLOR_PEASANT,\
 	"Inquisition" = JCOLOR_INQUISITION,\
 	"Sidefolk" = JCOLOR_SIDEFOLK,\
 	"Wanderers" = JCOLOR_WANDERER,\
+	"Antagonists" = JCOLOR_ANTAGONIST,\
 )
 
 // Ducal Family
