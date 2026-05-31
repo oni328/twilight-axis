@@ -11,6 +11,7 @@
 #define REALM_RANESHEN "raneshen"
 #define REALM_ZYBANTU "zybantu" //TA EDIT
 #define REALM_VALORIA "valoria" //TA EDIT
+#define REALM_HAMMERHOLD_TA "hammerhold" //TA EDIT
 
 #define TRADE_SHIP_DOCK_DURATION (60 MINUTES)
 #define TRADE_SHIP_SEND_AWAY_GRACE (20 MINUTES)
