@@ -79,6 +79,7 @@ GLOBAL_LIST_INIT(our_forest_sex, typecacheof(list(
 #define ishumannorthern(A) (is_species(A, /datum/species/human/northern))
 #define isdwarf(A) (is_species(A, /datum/species/dwarf))
 #define isdwarfmountain(A) (is_species(A, /datum/species/dwarf/mountain))
+#define isgnome(A) (is_species(A, /datum/species/dwarf/gnome))
 #define iself(A) (is_species(A, /datum/species/elf))
 #define isdarkelf(A) (is_species(A, /datum/species/elf/dark))
 #define iswoodelf(A) (is_species(A, /datum/species/elf/wood))
@@ -99,6 +100,7 @@ GLOBAL_LIST_INIT(our_forest_sex, typecacheof(list(
 #define isdracon(A) (is_species(A, /datum/species/dracon))
 #define islupian(A) (is_species(A, /datum/species/lupian))
 #define ismoth(A) (is_species(A, /datum/species/moth))
+#define isaura(A) (is_species(A, /datum/species/aura))
 #define istabaxi(A) (is_species(A, /datum/species/tabaxi))
 #define isvulp(A) (is_species(A, /datum/species/vulpkanin))
 #define isooze(A) (is_species(A, /datum/species/ooze))
@@ -203,3 +205,7 @@ GLOBAL_VAR_INIT(magic_appearance_detecting_image, new /image) // appearances are
 #define isappearance(thing) (!isimage(thing) && !ispath(thing) && istype(GLOB.magic_appearance_detecting_image, thing))
 #define isappearance_or_image(thing) (isimage(thing) || (!ispath(thing) && istype(GLOB.magic_appearance_detecting_image, thing)))
 #define is_ooze_wound(A) (istype(A, /datum/wound/fracture) || istype(A, /datum/wound/dislocation)) //Defines what kinds of wounds cause ooze limbs to melt.
+
+// TA
+#define is_zizolackey(mind) (mind.has_antag_datum(/datum/antagonist/zizocultist))
+#define is_zizocultist(mind) (mind.has_antag_datum(/datum/antagonist/zizocultist/leader))

@@ -16,9 +16,9 @@
 
 	display_order = JDO_BANDIT
 	announce_latejoin = FALSE
-	min_pq = 3
+	min_pq = 25
 	max_pq = null
-	round_contrib_points = 5
+	round_contrib_points = null
 
 	advclass_cat_rolls = list(CTAG_BANDIT = 20)
 	PQ_boost_divider = 10
@@ -29,7 +29,7 @@
 	job_reopens_slots_on_death = FALSE //no endless stream of bandits, unless the migration waves deem it so
 	job_traits = list(TRAIT_SELF_SUSTENANCE, TRAIT_STEELHEARTED)//Bandits and knaves truly though
 	vice_restrictions = list(/datum/charflaw/noeyer, /datum/charflaw/noeyel, /datum/charflaw/mute, /datum/charflaw/limbloss/arm_r, /datum/charflaw/limbloss/arm_l)
-	same_job_respawn_delay = 1 MINUTES
+	same_job_respawn_delay = 30 MINUTES
 	cmode_music = 'sound/music/cmode/antag/combat_deadlyshadows.ogg'
 	job_subclasses = list(
 		/datum/advclass/brigand,
@@ -38,7 +38,8 @@
 		/datum/advclass/hedgemage,
 		/datum/advclass/iconoclast,
 		/datum/advclass/knave,
-		/datum/advclass/sellsword
+		/datum/advclass/sellsword,
+		/datum/advclass/twilight_afreet
 	)
 
 /datum/job/roguetown/bandit/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
@@ -120,3 +121,60 @@
 
 	add_bounty(H.real_name, race, gender, descriptor_height, descriptor_body, descriptor_voice, bounty_total, FALSE, my_crime, bounty_poster)
 
+/proc/update_bandits_slots()
+	var/datum/job/bandit_job = SSjob.GetJob("Bandit")
+	if(!bandit_job)
+		return
+
+	var/slots = 0
+
+	if(!SSgamemode)
+		bandit_job.total_positions = 0
+		bandit_job.spawn_positions = 0
+		return
+
+	var/player_count = SSgamemode.get_correct_popcount()
+
+	if(!SSgamemode.story_antag_open_slots(/datum/antagonist/bandit, player_count))
+		bandit_job.total_positions = 0
+		bandit_job.spawn_positions = 0
+		return
+
+	var/storyteller_type = SSgamemode.story_policy_type(TRUE)
+	var/min_players = SSgamemode.story_antag_min_players(/datum/antagonist/bandit)
+
+	if(storyteller_type == /datum/storyteller/ravox)
+		if(player_count >= 41)
+			slots = 4
+		else if(player_count >= min_players)
+			slots = 2
+		slots = SSgamemode.story_antag_slots(slots, /datum/antagonist/bandit, player_count)
+		bandit_job.total_positions = slots
+		bandit_job.spawn_positions = slots
+		return
+
+	var/unlocks_bandits = SSgamemode.storyteller_unlocks_scaled_antag_slots(/datum/antagonist/bandit)
+
+	if(!unlocks_bandits && (SSgamemode.story_favor_flags(storyteller_type) & STORYTELLER_FAVOR_HARD_ANTAGS))
+		unlocks_bandits = TRUE
+
+	if(!unlocks_bandits)
+		bandit_job.total_positions = 0
+		bandit_job.spawn_positions = 0
+		return
+
+	var/max_slots = SSgamemode.story_antag_slot_cap(/datum/antagonist/bandit, TRUE, storyteller_type)
+	var/slot_scaling = SSgamemode.story_antag_scaling_step(/datum/antagonist/bandit)
+
+	slots = SSgamemode.storyteller_scale_slots(
+		max_slots,
+		player_count,
+		FALSE,
+		slot_scaling,
+		min_players,
+	)
+
+	slots = SSgamemode.story_antag_slots(slots, /datum/antagonist/bandit, player_count)
+
+	bandit_job.total_positions = slots
+	bandit_job.spawn_positions = slots

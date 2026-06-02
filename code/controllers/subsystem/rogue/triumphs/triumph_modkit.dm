@@ -48,6 +48,7 @@
 		/obj/item/rogueweapon/stoneaxe/battle	  						= /obj/item/rogueweapon/stoneaxe/battle/triumph
 		)
 	result_item = null
+	icon_loadout = /obj/item/rogueweapon/stoneaxe/battle/triumph
 
 /obj/item/enchantingkit/triumph_weaponkit_fancymace
 	name = "'Rungu-Shishpar' mace morphing elixir"
@@ -60,6 +61,7 @@
 		/obj/item/rogueweapon/mace								= /obj/item/rogueweapon/mace/rungu
 		)
 	result_item = null
+	icon_loadout = /obj/item/rogueweapon/mace/steel/rungu
 
 /obj/item/enchantingkit/triumph_weaponkit_kris
 	name = "'Kris' dagger morphing elixir"
@@ -71,6 +73,7 @@
 		/obj/item/rogueweapon/huntingknife/combat					= /obj/item/rogueweapon/huntingknife/combat/kris
 		)
 	result_item = null
+	icon_loadout = /obj/item/rogueweapon/huntingknife/combat/kris
 
 /obj/item/enchantingkit/triumph_weaponkit_njora
 	name = "'Njora' dagger morphing elixir"
@@ -82,6 +85,7 @@
 		/obj/item/rogueweapon/huntingknife								= /obj/item/rogueweapon/huntingknife/njora
 		)
 	result_item = null
+	icon_loadout = /obj/item/rogueweapon/huntingknife/combat/njora
 
 /obj/item/enchantingkit/triumph_weaponkit_whip
 	name = "'Alloytip' whip morphing elixir"
@@ -92,6 +96,7 @@
 		/obj/item/rogueweapon/whip						= /obj/item/rogueweapon/whip/triumph
 		)
 	result_item = null
+	icon_loadout = /obj/item/rogueweapon/whip/silver/triumph
 
 /obj/item/enchantingkit/triumph_weaponkit_tri
 	name = "'Valorian' longsword morphing elixir"
@@ -125,6 +130,7 @@
 		/obj/item/rogueweapon/estoc							= /obj/item/rogueweapon/estoc/triumph
 		)
 	result_item = null
+	icon_loadout = /obj/item/rogueweapon/estoc/triumph
 
 /obj/item/enchantingkit/triumph_weaponkit_psy
 	name = "'Psycrucifix' longsword morphing elixir"
@@ -142,7 +148,7 @@
 	target_items = list(
 		/obj/item/rogueweapon/sword/sabre/shamshir = /obj/item/rogueweapon/sword/sabre/shamshir/dono_scidragon_flame
 	)
-	
+	icon_loadout = /obj/item/rogueweapon/sword/sabre/shamshir/dono_scidragon_flame
 
 /obj/item/enchantingkit/sci_sand
 	name = "'Sandlash' morphing elixir"
@@ -150,7 +156,7 @@
 	target_items = list(
 		/obj/item/rogueweapon/sword/sabre/shamshir = /obj/item/rogueweapon/sword/sabre/shamshir/dono_scidragon_sand
 	)
-
+	icon_loadout = /obj/item/rogueweapon/sword/sabre/shamshir/dono_scidragon_sand
 //
 //'Skinned' variants. These are less thorough than the 'Replacement' variants, but are cleaner (and lead to a lot less extra instances that can clog up the spawning menu.)
 // Unlike the 'Replacement' variants, these basically just apply a new sprite onto the old item and call it a day. If you need to give custom onmobs to a certain weapon to make it look good, use the former method instead.
@@ -261,6 +267,7 @@
 	name = "valorian sword"
 	desc = "A modest take on a mythical design, hailing from the blood-splattered crossroads \
 	between Valoria and Rockhill. It feels right at home, in the palm of your hand."
+	icon = 'icons/roguetown/weapons/swords32.dmi'
 	icon_state = "iswordalt"
 	sheathe_icon = "iswordalt"
 

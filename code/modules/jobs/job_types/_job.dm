@@ -152,6 +152,7 @@
 
 	var/list/virtue_restrictions
 	var/list/vice_restrictions
+	var/list/origin_requirement //TA EDIT
 
 	///The job's stats
 	var/list/job_stats
@@ -202,6 +203,26 @@
 
 /datum/job/proc/uses_storyteller_slot_caps()
 	return title in list("Wretch", "Gnoll", "Assassin")
+
+/datum/job/proc/validate_prefs_for_job(datum/preferences/P) //TA EDIT START
+	if(!P) return FALSE
+	if(length(forbidden_races) && (P.pref_species.type in forbidden_races)) return FALSE
+	if(length(allowed_patrons) && !(P.selected_patron.type in allowed_patrons)) return FALSE
+	if(length(allowed_ages) && !(P.age in allowed_ages)) return FALSE
+	if(length(allowed_sexes) && !(P.gender in allowed_sexes)) return FALSE
+	
+	if(length(virtue_restrictions) && ((P.virtue.type in virtue_restrictions) || (P.virtuetwo?.type in virtue_restrictions) || (P.virtue_origin?.type in virtue_restrictions)))
+		return FALSE
+		
+	if(length(vice_restrictions))
+		for(var/datum/charflaw/cf in P.charflaws)
+			if(cf.type in vice_restrictions)
+				return FALSE
+
+	if(length(origin_requirement) && !(P.virtue_origin?.type in origin_requirement))
+		return FALSE
+
+	return TRUE //TA EDIT END
 
 /datum/job/proc/get_used_title(mob/player)
 	var/titles = player.titles_pref
@@ -280,8 +301,7 @@
 		var/used_title = display_title || title
 		if((H.titles_pref == TITLES_F) && f_title)
 			used_title = f_title
-		scom_announce("[H.real_name] the [used_title] arrives to Azure Peak.")
-
+		scom_announce("[H.real_name] the [used_title] arrives to [SSticker.realm_name].")
 	if(give_bank_account)
 		if(give_bank_account > TRUE)
 			SStreasury.create_bank_account(H, give_bank_account)
@@ -297,15 +317,19 @@
 
 	if(cmode_music)
 		H.cmode_music = cmode_music
-
+	var/department = SSjob.bitflag_to_department(department_flag, obsfuscated_job)
 	if (!hidden_job)
-		var/mob_name = H.real_name
-		var/mob_rank
-		if (obsfuscated_job)
-			mob_rank = "Adventurer"
+		var/mob/living/carbon/human/Hu = H
+		if (istype(H, /mob/living/carbon/human))
+			if (obsfuscated_job) // WANDERER
+				GLOB.actors_list[department] += list("[H.mobid]" = "[H.real_name] as the [Hu.dna.species.name] Adventurer<BR>")
+			else
+				GLOB.actors_list[department] += list("[H.mobid]" = "[H.real_name] as the [Hu.dna.species.name] [H.mind.assigned_role]<BR>")
 		else
-			mob_rank = H.mind.assigned_role
-		GLOB.actors_list[H.mobid] = list("name" = mob_name, "rank" = mob_rank)
+			if (obsfuscated_job)
+				GLOB.actors_list[department] += list("[H.mobid]" = "[H.real_name] as Adventurer<BR>")
+			else
+				GLOB.actors_list[department] += list("[H.mobid]" = "[H.real_name] as [H.mind.assigned_role]<BR>")
 
 	if(islist(advclass_cat_rolls))
 		hugboxify_for_class_selection(H)
@@ -574,6 +598,13 @@
 					for(var/stat in adv_ref.adv_stat_ceiling)
 						dat += "["[capitalize(stat)]: <b>\Roman[adv_ref.adv_stat_ceiling[stat]]</b>"] | "
 					dat += "<i><br>Regardless of your statpacks or race choice, you will not be able to exceed these stats on spawn.</i></font>"
+				if(length(adv_ref.origin_limits)) //TA EDIT START
+					dat += "["<br><font color = '#cf2a2a'><b>This subclass requires one of the following origins: "]</b></font><br>"
+					dat += " | "
+					for(var/orig in adv_ref.origin_limits)
+						var/datum/virtue/origin/origin = orig
+						dat += "[origin.name] | "
+					dat += "<i><br>Choosing this subclass with any other origin will enforce a compatiable origin on spawn.</i></font>" //TA EDIT END
 				if(LAZYLEN(adv_ref.subclass_mage_aspects))
 					var/list/aspect_cfg = adv_ref.subclass_mage_aspects
 					dat += "<font color = '#a3a7e0'><b>Mage Aspects:</b><br>"

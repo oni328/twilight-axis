@@ -13,6 +13,7 @@
 			STATKEY_INT = 3,
 			STATKEY_CON = 2,
 			STATKEY_WIL = 2,
+			STATKEY_PER = 2 // TA EDIT
 	)
 	age_mod = /datum/class_age_mod/mystic
 	subclass_mage_aspects = list("mastery" = FALSE, "major" = 0, "minor" = 2, "utilities" = 4)
@@ -194,7 +195,7 @@
 		H.mind.RemoveSpell(/datum/action/cooldown/spell/miracle/bloodmiracle)
 
 	if(H.mind)
-		var/weapons = list("lesser staff", "lesser wand")
+		var/weapons = list("lesser staff", "lesser wand", "Goedendag", "Quarterstaff") //TA EDIT
 		var/weapon_choice = input(H, "Choose your weapon.", "TAKE UP ARMS") as anything in weapons
 		switch(weapon_choice)
 			if("lesser staff")
@@ -204,6 +205,12 @@
 				r_hand = /obj/item/rogueweapon/wand
 				l_hand = /obj/item/rogueweapon/shield/wood
 				H.adjust_skillrank_up_to(/datum/skill/combat/shields, 2, TRUE)
+			if("Goedendag") //TA EDIT START
+				beltr = /obj/item/rogueweapon/mace/goden
+				H.adjust_skillrank_up_to(/datum/skill/combat/maces, 3, TRUE)
+			if("Quarterstaff")
+				r_hand = /obj/item/rogueweapon/woodstaff/quarterstaff/iron
+				H.adjust_skillrank_up_to(/datum/skill/combat/staves, 3, TRUE) //TA EDIT END
 
 	switch(H.patron?.type)
 		if(/datum/patron/old_god)

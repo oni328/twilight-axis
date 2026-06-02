@@ -12,7 +12,7 @@ GLOBAL_VAR_CONST(observer_move_delay_multiplier, 0.5)
 	layer = GHOST_LAYER
 	stat = DEAD
 	density = FALSE
-	sight = SEE_TURFS | SEE_MOBS | SEE_OBJS
+//	sight = SEE_TURFS | SEE_MOBS | SEE_OBJS
 	see_invisible = SEE_INVISIBLE_OBSERVER
 	see_in_dark = 100
 	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE
@@ -80,6 +80,15 @@ GLOBAL_VAR_CONST(observer_move_delay_multiplier, 0.5)
 	icon_state = "hollow"
 	alpha = 150
 
+/mob/dead/observer/rogue/Move(n, direct)
+	if(world.time < next_gmove)
+		return
+	next_gmove = world.time + 3
+
+	setDir(direct)
+
+	. = ..()
+
 /mob/dead/observer/screye
 //	see_invisible = SEE_INVISIBLE_LIVING
 	sight = 0
@@ -97,6 +106,7 @@ GLOBAL_VAR_CONST(observer_move_delay_multiplier, 0.5)
 
 /mob/dead/observer/Initialize()
 	set_invisibility(GLOB.observer_default_invisibility)
+	set_glide_size(DELAY_TO_GLIDE_SIZE(3)) // 6 is atom/movable animation speed TA EDIT
 
 	verbs += list(
 		/mob/dead/observer/proc/dead_tele,
@@ -789,7 +799,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		return
 	var/bt = world.time
 	SEND_SOUND(src, sound('sound/misc/notice (2).ogg'))
-	if(alert(src, "You have been summoned you to destroy Azuria!", "Join the Horde", "Yes", "No") == "Yes")
+	if(alert(src, "You have been summoned you to destroy [SSticker.realm_name]!", "Join the Horde", "Yes", "No") == "Yes")
 		if(world.time > bt + 5 MINUTES)
 			to_chat(src, span_warning("Too late."))
 			return FALSE

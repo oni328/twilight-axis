@@ -19,6 +19,7 @@ type Data = {
   free_send_ready: 0 | 1;
   free_send_remaining_ds: number;
   has_tube?: boolean;
+  is_court_agent?: boolean; // TA EDIT
 };
 
 const dsToClock = (ds: number) => {
@@ -40,6 +41,7 @@ export const Hermes = (props: any, context: any) => {
     free_send_ready,
     free_send_remaining_ds,
     has_tube,
+    is_court_agent
   } = data;
 
   const [recipient, setRecipient] = useState('');
@@ -47,7 +49,7 @@ export const Hermes = (props: any, context: any) => {
   const [letterContent, setLetterContent] = useState('');
 
   const isFree = !!free_send_ready;
-  const canSendLetter = recipient.length > 0 && (isFree || balance >= letter_cost);
+  const canSendLetter = recipient.length > 0 && (isFree || balance >= letter_cost || is_court_agent); // TA EDIT merged
   const canBuyPaper = balance >= paper_cost;
   const canBuyQuill = balance >= quill_cost;
   const canSendTube = letterContent.length > 0;

@@ -12,7 +12,7 @@
 	outfit_female = null
 	display_order = JDO_WRETCH
 	show_in_credits = FALSE
-	min_pq = 10
+	min_pq = 20
 	max_pq = null
 
 	obsfuscated_job = TRUE
@@ -20,14 +20,14 @@
 
 	advclass_cat_rolls = list(CTAG_WRETCH = 20)
 	PQ_boost_divider = 10
-	round_contrib_points = 2
+	round_contrib_points = null
 
 	announce_latejoin = FALSE
 	wanderer_examine = TRUE
 	advjob_examine = TRUE
 	always_show_on_latechoices = TRUE
 	job_reopens_slots_on_death = FALSE
-	same_job_respawn_delay = 1 MINUTES
+	same_job_respawn_delay = 30 MINUTES
 	virtue_restrictions = list(/datum/virtue/heretic/zchurch_keyholder) //all wretch classes automatically get this
 	job_traits = list(TRAIT_STEELHEARTED, TRAIT_OUTLAW, TRAIT_HERESIARCH, TRAIT_SELF_SUSTENANCE, TRAIT_ZURCH)
 	job_subclasses = list(
@@ -49,8 +49,8 @@
 		/datum/advclass/wretch/pariah,
 		/datum/advclass/wretch/heretic_spellblade,
 		/datum/advclass/wretch/ancient_spellblade,
-		/datum/advclass/wretch/ancient_deathknight,
 		/datum/advclass/wretch/slasher
+//		/datum/advclass/wretch/ancient_deathknight,
 	)
 
 /datum/job/roguetown/wretch/special_job_check(mob/dead/new_player/player)
@@ -74,10 +74,23 @@
 
 /datum/job/roguetown/wretch/on_round_removal(mob/M)
 	// Respawn delay applies immediately
-	if(same_job_respawn_delay && M.ckey)
+	if(same_job_respawn_delay && M?.ckey)
 		GLOB.job_respawn_delays[M.ckey] = world.time + same_job_respawn_delay
-	// Delayed slot reopen after 1 hour — subclass always reopens, global slot only if garrison criteria met
-	addtimer(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(wretch_delayed_slot_reopen), M.advjob), 1 HOURS)
+
+	addtimer(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(wretch_delayed_slot_reopen), M?.advjob), 1 HOURS)
+
+/proc/wretch_delayed_slot_reopen(advclass_name)
+	if(advclass_name)
+		var/datum/advclass/target_class = SSrole_class_handler.get_advclass_by_name(advclass_name)
+		if(target_class)
+			SSrole_class_handler.adjust_class_amount(target_class, -1)
+
+	var/datum/job/wretch_job = SSjob.GetJob("Wretch")
+	if(!wretch_job)
+		return
+
+	wretch_job.current_positions = max(0, wretch_job.current_positions - 1)
+	update_wretch_slots()
 
 // Proc for wretch to select a bounty
 /proc/wretch_select_bounty(mob/living/carbon/human/H)
@@ -142,10 +155,15 @@
 	to_chat(H, span_danger("You are playing an Antagonist role. By choosing to spawn as a Wretch, you are expected to actively create conflict with other players. Failing to play this role with the appropriate gravitas may result in punishment for Low Roleplay standards."))
 
 /// Returns an assoc list with all intermediate wretch scaling values for admin display.
-/// If override_player_count is provided (e.g. from readied player count at roundstart), use that instead of the live joined list.
 /proc/calculate_wretch_scaling(override_player_count)
 	var/list/result = list()
-	var/player_count = override_player_count || length(GLOB.joined_player_list)
+
+	var/player_count
+	if(isnull(override_player_count))
+		player_count = length(GLOB.joined_player_list)
+	else
+		player_count = override_player_count
+
 	result["player_count"] = player_count
 	var/cap = SSgamemode.current_storyteller?.wretch_slot_cap
 	if(isnull(cap))
@@ -184,6 +202,7 @@
 	var/holy_count = SSgamemode.holy_warrior
 	var/acolyte_count = SSgamemode.half_combatant
 	var/combat_count = garrison_count + holy_count + FLOOR(acolyte_count * 0.5, 1)
+
 	result["garrison"] = garrison_count
 	result["holy_warrior"] = holy_count
 	result["acolyte"] = acolyte_count
@@ -193,71 +212,25 @@
 	if(slots >= 10 && cap > 10 && !major_antag_active)
 		tier2_max = min(max(0, combat_count - 10), 5, cap - slots)
 		slots += tier2_max
+
 	result["tier2_extra"] = tier2_max
 	result["final_slots"] = max(0, min(slots, cap))
 
 	return result
 
-/proc/update_wretch_slots(override_player_count)
+/proc/update_wretch_slots()
 	var/datum/job/wretch_job = SSjob.GetJob("Wretch")
 	if(!wretch_job)
 		return
 	if(wretch_job.admin_slot_override)
 		return
+
+	var/override_player_count = null
+	if(SSticker.current_state == GAME_STATE_PREGAME)
+		override_player_count = length(GLOB.ready_player_list)
+
 	var/list/scaling = calculate_wretch_scaling(override_player_count)
-	var/slots = max(0, scaling["final_slots"])
-	// Never reduce below current occupancy
+	var/slots = scaling["final_slots"]
+
 	wretch_job.total_positions = max(wretch_job.current_positions, slots)
 	wretch_job.spawn_positions = max(wretch_job.current_positions, slots)
-
-/// Called after 1 hour delay when a wretch leaves the round.
-/// Always reopens the subclass slot. Only reopens the global slot if garrison criteria make sense.
-/proc/wretch_delayed_slot_reopen(advclass_name)
-	// Always reopen the subclass slot
-	if(advclass_name)
-		var/datum/advclass/target_class = SSrole_class_handler.get_advclass_by_name(advclass_name)
-		if(target_class)
-			SSrole_class_handler.adjust_class_amount(target_class, -1)
-
-	var/datum/job/wretch_job = SSjob.GetJob("Wretch")
-	if(!wretch_job)
-		return
-	wretch_job.current_positions = max(0, wretch_job.current_positions - 1)
-	update_scaling_slots()
-
-/// Returns an assoc list with intermediate adventurer scaling values for admin display.
-/// If override_player_count is provided (e.g. from readied player count at roundstart), use that instead of the live joined list.
-/proc/calculate_adventurer_scaling(override_player_count)
-	var/list/result = list()
-	var/player_count = override_player_count || length(GLOB.joined_player_list)
-	result["player_count"] = player_count
-
-	// Adventurer slots absorb the wretch headroom each pantheon forfeits below the original 15-slot ceiling.
-	var/cap = SSgamemode.current_storyteller?.wretch_slot_cap
-	if(isnull(cap))
-		cap = 10
-	var/wretch_offset = max(0, 15 - cap)
-	result["wretch_offset"] = wretch_offset
-
-	var/slots = 20 + wretch_offset
-	if(player_count > 70)
-		slots += floor((player_count - 70) / 10) * 2
-	slots = min(slots, 40 + wretch_offset)
-	result["final_slots"] = slots
-
-	return result
-
-/proc/update_adventurer_slots(override_player_count)
-	var/datum/job/adventurer_job = SSjob.GetJob("Adventurer")
-	if(!adventurer_job)
-		return
-	var/list/scaling = calculate_adventurer_scaling(override_player_count)
-	var/slots = scaling["final_slots"]
-	// Never reduce below current value, so admin-opened slots aren't overwritten.
-	adventurer_job.total_positions = max(adventurer_job.total_positions, slots)
-	adventurer_job.spawn_positions = max(adventurer_job.spawn_positions, slots)
-
-/// Convenience proc to update both wretch and adventurer scaling in one call.
-/proc/update_scaling_slots(override_player_count)
-	update_wretch_slots(override_player_count)
-	update_adventurer_slots(override_player_count)

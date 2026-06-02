@@ -16,20 +16,28 @@
 	if(!user.cmode)
 		if(ishuman(user) && ishuman(target))
 			var/mob/living/carbon/human/H = user
-			H.attempt_steal(user, target)
+			if(target.Adjacent(H))
+				H.attempt_steal(user, target)
 			return
 	if(user.has_status_effect(/datum/status_effect/debuff/specialcd))
 		return
 
 	user.face_atom(target)
 
-	var/obj/item/rogueweapon/W = user.get_active_held_item()
+	var/obj/item/W = user.get_active_held_item()
 	var/datum/special_intent/active_special
 	var/skillreq
 
-	if(istype(W, /obj/item/rogueweapon) && W.special)
-		active_special = W.special
-		skillreq = W.associated_skill
+	if(istype(W, /obj/item/rogueweapon))
+		var/obj/item/rogueweapon/RW = W
+		if(RW.special)
+			active_special = RW.special
+			skillreq = RW.associated_skill
+	else if(istype(W, /obj/item/gun/ballistic/revolver/grenadelauncher/bow))
+		var/obj/item/gun/ballistic/revolver/grenadelauncher/bow/B = W
+		if(B.special)
+			active_special = B.special
+			skillreq = /datum/skill/combat/bows
 	else if(!W && ishuman(user))
 		var/mob/living/carbon/human/HU = user
 		if(HU.unarmed_special)

@@ -1007,6 +1007,9 @@
 
 /// End the charging cycle
 /datum/action/cooldown/spell/proc/end_charging()
+	if(!currently_charging)
+		return
+
 	currently_charging = FALSE
 	charge_started_at = null
 	charge_target_time = null
