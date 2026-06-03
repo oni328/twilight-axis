@@ -134,7 +134,6 @@
 		/obj/item/rogueweapon/huntingknife/idagger/silver/psydagger = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1
 		)
-
 	H.verbs |= /mob/living/carbon/human/proc/faith_test
 	H.verbs |= /mob/living/carbon/human/proc/torture_victim
 	change_origin(H, /datum/virtue/origin/otava, "Holy order")

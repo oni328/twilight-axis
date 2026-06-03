@@ -17,8 +17,20 @@ import {
 import { type TabProps } from './types';
 
 const DENOMS = [
+  { id: 'GOLD_ROCKHILL', label: 'Gold', value: 14 },
   { id: 'GOLD', label: 'Gold', value: 10 },
   { id: 'SILVER', label: 'Silver', value: 5 },
+  { id: 'BRONZE', label: 'Bronze', value: 1 },
+];
+
+const DENOMS_DUN_WORLD = [
+  { id: 'GOLD', label: 'Gold', value: 10 },
+  { id: 'SILVER', label: 'Silver', value: 5 },
+  { id: 'BRONZE', label: 'Bronze', value: 1 },
+];
+
+const DENOMS_ROCKHILL = [
+  { id: 'GOLD', label: 'Gold', value: 14 },
   { id: 'BRONZE', label: 'Bronze', value: 1 },
 ];
 
@@ -57,26 +69,49 @@ export const PersonalTab = ({ data, act }: TabProps) => {
       <div style={sectionHeaderStyle}>Withdraw Coin</div>
       <div style={fieldRowStyle}>
         <div style={fieldLabelStyle}>Denomination</div>
-        <div style={fieldValueStyle}>
-          {DENOMS.map((d) => (
-            <button
-              type="button"
-              key={d.id}
-              style={{
-                ...inkButtonStyle({}),
-                marginRight: 4,
-                fontWeight: denom === d.id ? 'bold' : 'normal',
-                background:
-                  denom === d.id
-                    ? 'var(--p-tab-active-bg)'
-                    : BUTTON_BG,
-              }}
-              onClick={() => setDenom(d.id)}
-            >
-              {d.label} ({d.value}m)
-            </button>
-          ))}
-        </div>
+        {data.ta_map === 'Rockhill' ? (
+          <div style={fieldValueStyle}>
+            {DENOMS_ROCKHILL.map((d) => (
+              <button
+                type="button"
+                key={d.id}
+                style={{
+                  ...inkButtonStyle({}),
+                  marginRight: 4,
+                  fontWeight: denom === d.id ? 'bold' : 'normal',
+                  background:
+                    denom === d.id
+                      ? 'var(--p-tab-active-bg)'
+                      : BUTTON_BG,
+                }}
+                onClick={() => setDenom(d.id)}
+              >
+                {d.label} ({d.value}m)
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div style={fieldValueStyle}>
+            {DENOMS_DUN_WORLD.map((d) => (
+              <button
+                type="button"
+                key={d.id}
+                style={{
+                  ...inkButtonStyle({}),
+                  marginRight: 4,
+                  fontWeight: denom === d.id ? 'bold' : 'normal',
+                  background:
+                    denom === d.id
+                      ? 'var(--p-tab-active-bg)'
+                      : BUTTON_BG,
+                }}
+                onClick={() => setDenom(d.id)}
+              >
+                {d.label} ({d.value}m)
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       <div style={fieldRowStyle}>
         <div style={fieldLabelStyle}>Coins</div>

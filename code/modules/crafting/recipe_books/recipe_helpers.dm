@@ -3,13 +3,16 @@
 /proc/get_recipe_category(path)
 	if(!ispath(path))
 		return null
+
 	if(ispath(path, /datum/hag_boon))
 		var/datum/hag_boon/B = path
 		if(initial(B.hag_curse))
 			return "Curses"
 		var/pts = initial(B.points)
-		if(pts >= 50) return "Greater Boons"
+		if(pts >= 50)
+			return "Greater Boons"
 		return "Minor Boons"
+
 	var/datum/temp_recipe
 	var/category
 
@@ -47,6 +50,15 @@
 		temp_recipe = new path()
 		var/datum/runeritual/r = temp_recipe
 		category = r.category
+	else if(ispath(path, /datum/ritual))
+		if(ispath(path, /datum/ritual/transmutation))
+			category = "Transmutation"
+		else if(ispath(path, /datum/ritual/fleshcrafting))
+			category = "Fleshcrafting"
+		else if(ispath(path, /datum/ritual/servantry))
+			category = "Servantry"
+		else
+			category = "Rituals"
 	else if(ispath(path, /obj/effect/proc_holder/spell))
 		var/tier = initial(path:spell_tier)
 		category = "Tier [tier]"
@@ -63,18 +75,22 @@
 /proc/should_hide_recipe(path)
 	if(ispath(path, /datum/hag_boon))
 		return !initial(path:hag_is_valid)
+
 	if(ispath(path, /datum/crafting_recipe))
 		var/datum/crafting_recipe/recipe = path
 		if(initial(recipe.hides_from_books))
 			return TRUE
+
 	if(ispath(path, /datum/anvil_recipe))
 		var/datum/anvil_recipe/recipe = path
 		if(initial(recipe.hides_from_books))
 			return TRUE
+
 	if(ispath(path, /datum/runeritual))
 		var/datum/runeritual/ritual = path
 		if(initial(ritual.blacklisted))
 			return TRUE
+
 	return FALSE
 
 /proc/gather_recipe_categories(list/types)
@@ -91,6 +107,7 @@
 			var/category = get_recipe_category(path)
 			if(category && !(category in categories))
 				categories += category
+
 	categories = sortTim(categories, GLOBAL_PROC_REF(cmp_text_asc))
 	if("All" in categories)
 		categories -= "All"
@@ -104,21 +121,24 @@
 	var/html = "<div class='recipe-content'>"
 	var/recipe_name = "Unknown Recipe"
 	var/recipe_html = ""
-
 	var/datum/temp_recipe
+
 	if(ispath(path, /datum/hag_boon))
 		var/datum/hag_boon/B = path
-		html += "<h2>[initial(B.name)]</h2>"
-		html += "<p class='description'>[initial(B.desc)]</p>"
-		html += "<hr>"
-		html += "<div class='boon-stats'>"
-		html += "<b>Cost:</b> [initial(B.points)] Points<br>"
-		html += "<b>Transmutable:</b> [initial(B.transmutable) ? "Yes" : "No"]<br>"
+		html += "<h2 class='recipe-title'>[initial(B.name)]</h2>"
+		html += "<p class='recipe-desc'>[initial(B.desc)]</p>"
+		html += "<h3>Details</h3>"
+		html += "<ul>"
+		html += "<li><b>Cost:</b> [initial(B.points)] Points</li>"
+		html += "<li><b>Transmutable:</b> [initial(B.transmutable) ? "Yes" : "No"]</li>"
 		if(initial(B.hag_curse))
-			html += "<span class='boldwarning'>This is a Curse.</span>"
-		html += "</div>"
+			html += "<li><b>Type:</b> Curse</li>"
+		else
+			html += "<li><b>Type:</b> Boon</li>"
+		html += "</ul>"
 		html += "</div>"
 		return html
+
 	if(ispath(path, /datum/crafting_recipe))
 		temp_recipe = new path()
 		var/datum/crafting_recipe/r = temp_recipe
@@ -164,6 +184,10 @@
 		var/datum/runeritual/r = temp_recipe
 		recipe_name = initial(r.name)
 		recipe_html = r.generate_html(user)
+	else if(ispath(path, /datum/ritual))
+		temp_recipe = new path()
+		recipe_name = initial(path:name)
+		recipe_html = temp_recipe:generate_html(user)
 	else if(ispath(path, /datum/action/cooldown/spell))
 		recipe_name = initial(path:name)
 		recipe_html = generate_cooldown_spell_wiki_html(path)
@@ -237,23 +261,7 @@
 		if(proj_type)
 			displayed = initial(proj_type:damage)
 	if(displayed)
-		s_damage = "<tr><th>Damage</th><td>[displayed]</td></tr>"
-
-	var/html = {"
-		<h2>[s_name]</h2>
-		[s_desc ? "<div class='recipe-desc'>[s_desc]</div>" : ""]
-		<table>
-			<tr><th>Tier</th><td>[s_tier]</td></tr>
-			[s_damage]
-			<tr><th>Cost</th><td>[s_cost]</td></tr>
-			<tr><th>Range</th><td>[s_range]</td></tr>
-			<tr><th>Charge Time</th><td>[s_charge]</td></tr>
-			<tr><th>Cooldown</th><td>[s_cooldown]s</td></tr>
-			<tr><th>Invocation Type</th><td>[s_invoc_label]</td></tr>
-		</table>
-	"}
-	return html
-
+		s_damage = "[displayed]"
 
 /proc/describe_item_transforms(atom/path)
 	if(!ispath(path, /obj/item/reagent_containers/food/snacks))
@@ -280,3 +288,19 @@
 	if(!length(parts))
 		return ""
 	return "<br>Becomes: [parts.Join("; ")]."
+=======
+	var/html = ""
+	html += "<h2 class='recipe-title'>[s_name]</h2>"
+	if(s_desc)
+		html += "<p class='recipe-desc'>[s_desc]</p>"
+	html += "<ul>"
+	if(s_damage)
+		html += "<li><b>Damage:</b> [s_damage]</li>"
+	html += "<li><b>Tier:</b> [s_tier]</li>"
+	html += "<li><b>Cost:</b> [s_cost]</li>"
+	html += "<li><b>Range:</b> [s_range]</li>"
+	html += "<li><b>Charge Time:</b> [s_charge]</li>"
+	html += "<li><b>Cooldown:</b> [s_cooldown]s</li>"
+	html += "<li><b>Invocation Type:</b> [s_invoc_label]</li>"
+	html += "</ul>"
+	return html
