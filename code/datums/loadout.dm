@@ -1395,6 +1395,12 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	category = list("Триумфы")
 	triumph_cost = 6
 
+/datum/loadout_item/triumph_weaponkit_clericsword
+	name = "Morphing Elixir, 'Clerical Longsword' - Required: Long Sword"
+	path = /obj/item/enchantingkit/weapon/triumph_weaponkit_clericsword
+	category = list("Триумфы")
+	triumph_cost = 6
+
 // -5 TRI Minisection.
 
 /datum/loadout_item/triumph_shortsatchel
