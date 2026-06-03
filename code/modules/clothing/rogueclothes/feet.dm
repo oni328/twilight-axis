@@ -276,6 +276,15 @@
 	item_state = "freiboots"
 	max_integrity = ARMOR_INT_SIDE_HARDLEATHER + 50
 
+/obj/item/clothing/shoes/roguetown/boots/armor/dwarven
+	name = "grudgebearer dwarven boots"
+	desc = "Clatters mightily."
+	icon = 'icons/roguetown/clothing/special/race_armor.dmi'
+	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/race_armor.dmi'
+	allowed_race = list(/datum/species/dwarf, /datum/species/dwarf/mountain)
+	icon_state = "dwarfshoe"
+	item_state = "dwarfshoe"
+
 /obj/item/clothing/shoes/roguetown/boots/elven_boots
 	name = "woad elven boots"
 	desc = "'Tread lightly, for the ground remembers every footfall.'"
@@ -331,7 +340,6 @@
 	smelt_bar_num = 1
 	grid_height = 96
 	grid_width = 96
-	sellprice = 200
 	unenchantable = TRUE
 
 /obj/item/clothing/shoes/roguetown/boots/armor/gold/king

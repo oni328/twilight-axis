@@ -1,0 +1,4 @@
+author: "sadsadpart-cyber"
+delete-after: True
+changes:
+  - bugfix: "Акценты работают со знаками препинания"

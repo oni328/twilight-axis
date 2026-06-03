@@ -130,15 +130,20 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["tgui_fancy"]			>> tgui_fancy
 	S["tgui_lock"]			>> tgui_lock
 	S["tgui_theme"]			>> tgui_theme
+	S["parchment_skin"]		>> parchment_skin
 	S["preferred_ui_language"] >> preferred_ui_language
 	S["buttons_locked"]		>> buttons_locked
 	S["windowflash"]		>> windowflashing
 	S["be_special"] 		>> be_special
+	S["no_storyteller_events"] >> no_storyteller_events
 	S["triumphs"]			>> triumphs
 	S["musicvol"]			>> musicvol
 	S["lobbymusicvol"]		>> lobbymusicvol
 	S["ambiencevol"]		>> ambiencevol
 	S["anonymize"]			>> anonymize
+	S["donor_ooc_color"]	>> donor_ooc_color // TA EDIT
+	S["donor_ooc_icon"]	>> donor_ooc_icon // TA EDIT 
+	S["donor_examine_icon"]	>> donor_examine_icon // TA EDIT
 	S["stopdroning"]		>> stopdroning
 	S["masked_examine"]		>> masked_examine
 	S["nsfw_examine_always"]>> nsfw_examine_always // TA EDIT
@@ -157,6 +162,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["shake"]				>> shake
 	S["mastervol"]			>> mastervol
 	S["lastclass"]			>> lastclass
+	load_donor_job_boost_prefs(S) // TA EDIT
 	S["compliance_notifs"]  >> compliance_notifs
 
 
@@ -201,7 +207,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		update_preferences(needs_update, S)		//needs_update = savefile_version if we need an update (positive integer)
 
 	//Sanitize
-	asaycolor		= sanitize_ooccolor(sanitize_hexcolor(asaycolor, 6, 1, initial(asaycolor)))
+	asaycolor		= sanitize_hexcolor(asaycolor, 6, 1, initial(asaycolor)) // TA EDIT
 	ooccolor		= sanitize_ooccolor(sanitize_hexcolor(ooccolor, 6, 1, initial(ooccolor)))
 	lastchangelog	= sanitize_text(lastchangelog, initial(lastchangelog))
 	UI_style		= sanitize_inlist(UI_style, GLOB.available_ui_styles, GLOB.available_ui_styles[1])
@@ -214,6 +220,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	tgui_fancy		= sanitize_integer(tgui_fancy, 0, 1, initial(tgui_fancy))
 	tgui_lock		= sanitize_integer(tgui_lock, 0, 1, initial(tgui_lock))
 	tgui_theme		= sanitize_text(tgui_theme, initial(tgui_theme))
+	parchment_skin	= sanitize_parchment_skin(parchment_skin)
 	preferred_ui_language = sanitize_preferred_ui_language(preferred_ui_language)
 	buttons_locked	= sanitize_integer(buttons_locked, 0, 1, initial(buttons_locked))
 	windowflashing	= sanitize_integer(windowflashing, 0, 1, initial(windowflashing))
@@ -237,6 +244,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	pda_style		= sanitize_inlist(pda_style, GLOB.pda_styles, initial(pda_style))
 	pda_color		= sanitize_hexcolor(pda_color, 6, 1, initial(pda_color))
 	key_bindings 	= sanitize_islist(key_bindings, list())
+	donor_ooc_color	= sanitize_integer(donor_ooc_color, FALSE, TRUE, TRUE) // TA EDIT
+	donor_ooc_icon	= sanitize_integer(donor_ooc_icon, FALSE, TRUE, TRUE) // TA EDIT
+	donor_examine_icon	= sanitize_integer(donor_examine_icon, FALSE, TRUE, TRUE) // TA EDIT
 	defiant	= sanitize_integer(defiant, FALSE, TRUE, TRUE)
 	//TA Addition start - new ERP SYSTEM
 	erp_custom_actions = sanitize_islist(erp_custom_actions, list())
@@ -281,6 +291,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["lobbymusicvol"], lobbymusicvol)
 	WRITE_FILE(S["ambiencevol"], ambiencevol)
 	WRITE_FILE(S["anonymize"], anonymize)
+	WRITE_FILE(S["donor_ooc_color"], donor_ooc_color) // TA EDIT
+	WRITE_FILE(S["donor_ooc_icon"], donor_ooc_icon) // TA EDIT 
+	WRITE_FILE(S["donor_examine_icon"], donor_examine_icon) // TA EDIT
 	WRITE_FILE(S["stopdroning"], stopdroning)
 	WRITE_FILE(S["masked_examine"], masked_examine)
 	WRITE_FILE(S["nsfw_examine_always"], nsfw_examine_always) // TA EDIT
@@ -297,6 +310,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["sexable"], sexable)
 	WRITE_FILE(S["shake"], shake)
 	WRITE_FILE(S["lastclass"], lastclass)
+	save_donor_job_boost_prefs(S) // TA EDIT
 	WRITE_FILE(S["mastervol"], mastervol)
 	WRITE_FILE(S["ooccolor"], ooccolor)
 	WRITE_FILE(S["lastchangelog"], lastchangelog)
@@ -310,10 +324,12 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["tgui_fancy"], tgui_fancy)
 	WRITE_FILE(S["tgui_lock"], tgui_lock)
 	WRITE_FILE(S["tgui_theme"], tgui_theme)
+	WRITE_FILE(S["parchment_skin"], parchment_skin)
 	WRITE_FILE(S["preferred_ui_language"], preferred_ui_language)
 	WRITE_FILE(S["buttons_locked"], buttons_locked)
 	WRITE_FILE(S["windowflash"], windowflashing)
 	WRITE_FILE(S["be_special"], be_special)
+	WRITE_FILE(S["no_storyteller_events"], no_storyteller_events)
 	WRITE_FILE(S["default_slot"], default_slot)
 	WRITE_FILE(S["toggles"], toggles)
 	WRITE_FILE(S["chat_toggles"], chat_toggles)
@@ -556,7 +572,21 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 /datum/preferences/proc/_load_combat_music(S)
 	var/combat_music_type
 	S["combat_music"] >> combat_music_type
-	if (GLOB.cmode_tracks_by_type[combat_music_type])
+	S["custom_cmode_name"] >> custom_cmode_name // TA EDIT START
+	S["custom_cmode_file"] >> custom_cmode_file
+	S["custom_cmode_enabled"] >> custom_cmode_enabled
+
+	if(custom_cmode_file && !is_valid_custom_combat_music_path(custom_cmode_file))
+		custom_cmode_file = null
+		custom_cmode_name = null
+		custom_cmode_enabled = FALSE
+
+	if(custom_cmode_enabled)
+		if(build_custom_combat_music(parent?.ckey))
+			return
+		custom_cmode_enabled = FALSE
+
+	if(GLOB.cmode_tracks_by_type[combat_music_type]) // TA EDIT END
 		combat_music = GLOB.cmode_tracks_by_type[combat_music_type]
 	else
 		combat_music = GLOB.cmode_tracks_by_type[default_cmusic_type]
@@ -739,6 +769,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["preset_bounty_poster_key"] >> preset_bounty_poster_key
 	S["preset_bounty_severity_key"] >> preset_bounty_severity_key
 	S["preset_bounty_severity_b_key"] >> preset_bounty_severity_b_key
+	S["preset_bounty_severity_v_key"] >> preset_bounty_severity_v_key
 	S["preset_bounty_crime"] >> preset_bounty_crime
 
 	S["img_gallery"]	>> img_gallery
@@ -842,9 +873,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["topjob"] >> topjob
 	var/topjob_found = FALSE
 	for(var/j in job_preferences)
-		if(job_preferences[j] != JP_LOW && job_preferences[j] != JP_MEDIUM && job_preferences[j] != JP_HIGH)
+		if(job_preferences[j] != JP_LOW && job_preferences[j] != JP_MEDIUM && job_preferences[j] != JP_HIGH && job_preferences[j] != JP_BOOST) // TA EDIT
 			job_preferences -= j
-		if(job_preferences[j] == JP_HIGH)
+		if(job_preferences[j] == JP_HIGH || job_preferences[j] == JP_BOOST) // TA EDIT
 			topjob_found = TRUE
 			var/datum/job/prefjob = SSjob.GetJob(j)
 			if(prefjob)
@@ -853,6 +884,9 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	if(!topjob_found && topjob)	// Fallback in case we load a slot that had HIGH set but then it got unset / job got altered.
 		topjob = null
 		WRITE_FILE(S["topjob"], topjob)
+
+	if(parent) // TA EDIT
+		sanitize_donor_job_boost(parent.mob) // TA EDIT
 
 	if(!islist(job_characters)) //TA EDIT START
 		job_characters = list()
@@ -1021,6 +1055,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["preset_bounty_poster_key"] , preset_bounty_poster_key)
 	WRITE_FILE(S["preset_bounty_severity_key"] , preset_bounty_severity_key)
 	WRITE_FILE(S["preset_bounty_severity_b_key"] , preset_bounty_severity_b_key)
+	WRITE_FILE(S["preset_bounty_severity_v_key"] , preset_bounty_severity_v_key)
 	WRITE_FILE(S["preset_bounty_crime"] , preset_bounty_crime)
 	WRITE_FILE(S["flavortext"] , html_decode(flavortext))
 	WRITE_FILE(S["ooc_notes"] , html_decode(ooc_notes))
@@ -1044,7 +1079,13 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["virtuetwo"], virtuetwo)
 	WRITE_FILE(S["virtue_origin"], virtue_origin.type)
 	WRITE_FILE(S["race_bonus"], race_bonus)
-	WRITE_FILE(S["combat_music"], combat_music.type)
+	var/combat_music_save_type = default_cmusic_type // TA EDIT START
+	if(!custom_cmode_enabled && combat_music)
+		combat_music_save_type = combat_music.type
+	WRITE_FILE(S["combat_music"], combat_music_save_type)
+	WRITE_FILE(S["custom_cmode_name"], custom_cmode_name)
+	WRITE_FILE(S["custom_cmode_file"], custom_cmode_file)
+	WRITE_FILE(S["custom_cmode_enabled"], custom_cmode_enabled) // TA EDIT END
 	WRITE_FILE(S["body_size"] , features["body_size"])
 	WRITE_FILE(S["nsfwflavortext"] , html_decode(nsfwflavortext))
 	WRITE_FILE(S["nsfw_ooc_extra_img"] , nsfw_ooc_extra_img)

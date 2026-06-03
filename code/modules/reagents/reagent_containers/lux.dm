@@ -9,6 +9,7 @@
 	list_reagents = list(/datum/reagent/vitae = 5)
 	grind_results = list(/datum/reagent/vitae = 5)
 	sellprice = 90
+	dropshrink = 0.7
 
 /datum/reagent/vitae
 	name = "Vitae"
@@ -37,6 +38,7 @@
 	icon_state = "lux_impure"
 	item_state = "lux_impure"
 	sellprice = 15
+	dropshrink = 0.7
 	possible_transfer_amounts = list()
 	volume = 15
 	list_reagents = list(/datum/reagent/impure_vitae = 5)
@@ -68,3 +70,4 @@
 	icon_state = "mosslux"
 	item_state = "mosslux"
 	sellprice = 1
+	dropshrink = 0.7
