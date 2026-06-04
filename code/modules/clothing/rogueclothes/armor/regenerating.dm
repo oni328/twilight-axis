@@ -217,7 +217,7 @@
 	I thought you died alone, a long, long time ago.</br> \
 	Oh no, not me, I never lost control.</br> \
 	You're face to face, with the man who sold the world."
-	armor = ARMOR_DRAGONSKIN
+	armor = ARMOR_DRAGONSKIN 
 	max_integrity = 450
 	repair_time = 20 SECONDS
 

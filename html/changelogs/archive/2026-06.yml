@@ -55,6 +55,10 @@
   - rscadd: slowclap emote
   - bugfix: briar's curse now works on onehanded/unwieldable weapons
 2026-06-02:
+  Antoonij:
+  - bugfix: "\u043B\u0438\u0448\u043D\u0438\u0435 \u0437\u0430\u043F\u0440\u0435\u0449\
+      \u0435\u043D\u043D\u044B\u0435 \u0440\u0430\u0441\u044B \u0432 \u0440\u043E\u043B\
+      \u044F\u0445 \u043D\u0430 \u0440\u043E\u043A\u0445\u0438\u043B\u043B\u0435"
   FeniaFox:
   - bugfix: Fixed various helmets not respecting trait locks properly.
   - balance: Squire Errants now spawn with brush and polishing cream instead of tongs.
@@ -147,6 +151,17 @@
       ascendants as I am not privvy to their balance.
   Ryan180602:
   - bugfix: optimise rain
+  SillyMoff:
+  - bugfix: "Пофикшен ритуал баоты и спелл на кражу люкса"
+  UEDCommander:
+  - balance: "Свинцовая пуля - +20 урона"
+  - balance: "Максимальный запас пуль в фаретре 4 -> 6"
+  - balance: "Добавлен вторичный урон от огня свинцовым пулям, серебряным пулям, картечи. Оставляет ожоги и снижается защитой брони от огня."
+  - balance: "Множитель урона у Думсдае 1 -> 1.5"
+  - balance: "Размер пояса с кобурой 2х2 -> 3x3"
+  Vladmar11:
+  - bugfix: "Исправлен пофигизм пуль на броню, броня снова режет урон от пуль и получает от них дамаг"
+  - rscadd: "HIGH+ приоритет для донатеров от Т3"
   WeNeedMorePhoron:
   - rscadd: Renamed and repathed the old "Cooking" book, which was left unfinished,
       to a Brewing book
@@ -185,12 +200,17 @@
   - bugfix: fixed vice tracking, hopefully
   changelingonberry:
   - rscadd: Maestro Bard Wretch class
+  namenlos66:
+  - bugfix: "Пофикшена анонимность администратора через стелс-мод и анонимность ТГУИ-панельки тикетов."
   radarseas:
   - balance: portal goblins are slightly tougher, can use specials and always spawn
       with armor.
   - balance: due to respawnability + no shutdown nor cap, latejoin goblins still have
       worse stats.
   - bugfix: no expert skill gobins from latejoining ancient issues. F U C K.
+  sadsadpart-cyber:
+  - bugfix: "Попытка починки пения"
+  - bugfix: "Акценты работают со знаками препинания"
   sakke03:
   - balance: Maneaters are no longer revealed by walking over them in cases where
       they won't attack

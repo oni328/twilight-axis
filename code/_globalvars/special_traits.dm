@@ -43,19 +43,25 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 		apply_dnr_trait(character, player)
 	if(player.prefs.qsr_pref)
 		apply_qsr_trait(character, player)
-	var/triumph_discount_remaining = is_donator(player.ckey) ? 3 : 0 // donators get first 3 triumph points free
-	for(var/item_name in player.prefs.gear_list)
-		var/datum/loadout_item/LI = GLOB.loadout_items_by_name[item_name]
-		if(!LI)
-			continue
-		if(LI.triumph_cost)
-			var/discounted_cost = max(0, LI.triumph_cost - triumph_discount_remaining)
-			if(discounted_cost > 0 && character.get_triumphs() < discounted_cost)
+
+	var/triumph_discount_remaining = get_donator_triumph_discount(player.ckey) // TA EDIT
+	if(player.prefs.selected_loadout_items)
+		for(var/key in player.prefs.selected_loadout_items)
+			var/datum/loadout_item/item = GLOB.loadout_items_by_name[key]
+			if(!item)
 				continue
-			triumph_discount_remaining = max(0, triumph_discount_remaining - LI.triumph_cost)
-			if(discounted_cost > 0)
-				character.adjust_triumphs(-discounted_cost)
-		character.mind.special_items[LI.name] = LI.path
+
+			if(item.triumph_cost)
+				var/discounted_cost = max(0, item.triumph_cost - triumph_discount_remaining)
+				if(discounted_cost > 0 && character.get_triumphs() < discounted_cost)
+					to_chat(character, span_warning("Недостаточно триумфов для [item.name]."))
+					continue
+
+				triumph_discount_remaining = max(0, triumph_discount_remaining - item.triumph_cost)
+				if(discounted_cost > 0)
+					character.adjust_triumphs(-discounted_cost)
+
+			character.mind.special_items[item.name] = item.path
 	var/datum/job/assigned_job = SSjob.GetJob(character.mind?.assigned_role)
 	if(assigned_job)
 		assigned_job.clamp_stats(character)
@@ -75,6 +81,9 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 	if((H.advjob != "Knight Banneret" && H.mind.assigned_role != "Court Agent" && H.mind.assigned_role != "Adventurer" && H.mind.assigned_role != "Prince" && H.mind.assigned_role != "Court Magician" && H.mind.assigned_role != "Inquisitor"))
 		if(!H.mind.has_antag_datum(/datum/antagonist/skeleton) && !H.mind.has_antag_datum(/datum/antagonist/lich) && !H.mind.has_antag_datum(/datum/antagonist/vampire) && !H.mind.has_antag_datum(/datum/antagonist/vampire/lord))
 			ADD_TRAIT(H, TRAIT_TEMPO, SPECIES_TRAIT)		
+	
+	if(HAS_TRAIT(H, TRAIT_PSYDONIC_MEDICINE)) //TA EDIT
+		H.adjust_skillrank(/datum/skill/misc/medicine, 2, TRUE) //TA EDIT
 	return TRUE
 
 /proc/apply_voicepacks(mob/living/carbon/human/character, client/player)
@@ -117,6 +126,12 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 		else
 			to_chat(character, "Incorrect Second Virtue parameters! It will not be applied.")
 	if(origin_type)
+		if(istype(origin_type, /datum/virtue/origin/azuria) && SSmapping.config.map_name == "Rockhill")
+			var/pick = alert(character, "Ваш персонаж имеет азурийское происхождение. Хотели бы Вы изменить его на происхождение с Энигмы?", "ПРОШЛОЕ", "Да", "Нет")
+			if(!pick)
+				pick = "Нет"
+			if(pick == "Да")
+				origin_type = new /datum/virtue/origin/enigma
 		if((language_type && language_type != "None"))
 			character.grant_language(language_type)
 		if(origin_type.job_origin == TRUE)

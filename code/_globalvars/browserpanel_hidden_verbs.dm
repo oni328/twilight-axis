@@ -7,6 +7,7 @@ GLOBAL_LIST_INIT(browserpanel_hidden_verbs, list(
 	"/client/proc/cmd_admin_mod_pq" = TRUE,
 	"/client/proc/cmd_change_command_name" = TRUE,
 	"/client/proc/discord_id_manipulation" = TRUE,
+	"/client/proc/dsay" = TRUE,
 	"/client/proc/end_party" = TRUE,
 	"/client/proc/forcerandomrotate" = TRUE,
 	"/client/proc/outfit_manager" = TRUE,

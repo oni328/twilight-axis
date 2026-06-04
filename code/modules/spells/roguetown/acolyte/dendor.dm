@@ -144,7 +144,7 @@
 	for(var/X in GLOB.cardinals)
 		var/turf/TT = get_step(T, X)
 		if(!isclosedturf(TT) && !locate(/obj/structure/glowshroom) in TT)
-			new /obj/structure/glowshroom(TT)
+			new /obj/structure/glowshroom/dendorite(TT) // TA EDIT
 	return TRUE
 
 
