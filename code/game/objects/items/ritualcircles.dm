@@ -976,7 +976,7 @@
 			turf_data[T] = T.type
 			T.ChangeTurf(/turf/open/floor/rogue/dark_ice, flags = CHANGETURF_IGNORE_AIR)
 			playsound(T, 'sound/magic/fleshtostone.ogg', 30, TRUE)
-			sleep(10)
+			stoplag(1 SECONDS)
 
 	end_conversion()
 
@@ -1244,6 +1244,9 @@
 	target.remove_status_effect(/datum/status_effect/debuff/rotted_zombie)
 	target.apply_status_effect(/datum/status_effect/debuff/revived)
 	target.apply_status_effect(/datum/status_effect/buff/healing, 14)
+	#ifdef REVIVE_GRACE
+	target.apply_status_effect(/datum/status_effect/debuff/revive_grace) // TA EDIT
+	#endif
 	target.add_stress(/datum/stressevent/necrarevive)
 	src.coinslot -= 1 // -1 coin, please insert more coins.
 	user.apply_status_effect(/datum/status_effect/debuff/ritesexpended) // only after a succesful revive
@@ -1641,7 +1644,7 @@
 	if(user.has_status_effect(/datum/status_effect/debuff/ritesexpended))
 		to_chat(user,span_warning("I have performed enough rituals for the day... I must rest before communing more."))
 		return
-	var/riteselection = input(user, "Rituals of Transaction", src) as null|anything in matthiosrites
+	var/riteselection = input(user, "Rituals of Brotherhood", src) as null|anything in matthiosrites //TA Lore edit. Можно сделать модульно, но так это будет сложнее мейнтейнить
 	switch(riteselection) // put ur rite selection here
 		if("Rite of Armaments")
 			if(user.has_status_effect(/datum/status_effect/debuff/armamentrites))
@@ -1657,13 +1660,13 @@
 				return
 			if(!do_after(user, 5 SECONDS))
 				return
-			user.say("Gold and Silver, he feeds!!")
+			user.say("Lord of No Realm, heed my call!!") //TA Lore edit.
 			if(!do_after(user, 5 SECONDS))
 				return
-			user.say("Pieces Tens, Hundreds, Thousands. The transactor feeds 'pon them all!!")
+			user.say("The hour draws closer for tyrants to fall!!") //TA Lore edit
 			if(!do_after(user, 5 SECONDS))
 				return
-			user.say("Arms to claim, Arms to take!!")
+			user.say("The arms of freedom, to crush them by nightfall!!") //TA Lore edit
 			if(!do_after(user, 5 SECONDS))
 				return
 			icon_state = "matthios_active"
@@ -1680,13 +1683,13 @@
 		if("Defenestration")
 			if(!do_after(user, 5 SECONDS))
 				return
-			user.say("The window is open, the transaction is made!!")
+			user.say("Father of freedom, pay heed to our litany!!") //TA Lore edit
 			if(!do_after(user, 5 SECONDS))
 				return
-			user.say("Pieces Tens, Hundreds, Thousands. The transactor feeds 'pon them all!!")
+			user.say("To thou we offer - a scion of tyranny!!") //TA Lore edit
 			if(!do_after(user, 5 SECONDS))
 				return
-			user.say("The Transactor, feast upon this gluttonous pig!!")
+			user.say("Ravage their soul, a penance for villainy!!") //TA Lore edit
 			if(!do_after(user, 5 SECONDS))
 				return
 			icon_state = "matthios_active"
@@ -1700,7 +1703,7 @@
 
 /obj/structure/ritualcircle/matthios/proc/matthiosarmaments(mob/living/carbon/human/target)
 	if(!HAS_TRAIT(target, TRAIT_FREEMAN))
-		loc.visible_message(span_cult("THE RITE REJECTS ONE WITHOUT GREED IN THEIR HEART!!"))
+		loc.visible_message(span_cult("THE RITE REJECTS ONES WHO BOW DOWN TO TYRANNY!!")) //TA Lore edit
 		return
 	target.Stun(60)
 	target.Knockdown(60)
@@ -1724,7 +1727,7 @@
 		), list("armor", "shirt", "pants", "shoes", "wrists", "gloves", "head", "neck", "backr"))
 		target.adjust_skillrank_up_to(/datum/skill/combat/whipsflails, SKILL_LEVEL_EXPERT, TRUE)
 		spawn(40)
-			to_chat(target, span_cult("More to the maw, this shall help feed our greed."))
+			to_chat(target, span_cult("Take up these arms, and claim your right.")) //TA Lore edit
 
 /// Performs the de-noblification ritual, which requires a noble character in the center of the circle. TRUE on success, FALSE on failure.
 /obj/structure/ritualcircle/matthios/proc/defenestration()

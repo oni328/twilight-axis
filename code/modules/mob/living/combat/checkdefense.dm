@@ -52,11 +52,22 @@
 							remove_status_effect(/datum/status_effect/debuff/vulnerable)
 							return TRUE
 
+		// TA Edit start - SOUNDBREAKER
+	var/success = FALSE
+
 	switch(d_intent)
 		if(INTENT_PARRY)
-			return attempt_parry(intenty, user)
+			success = attempt_parry(intenty, user)
+			if(success)
+				ronin_on_parry_success(src, user)
 		if(INTENT_DODGE)
-			return attempt_dodge(intenty, user)
+			success = attempt_dodge(intenty, user)
+
+	if(success)
+		soundbreaker_riff_defense_success(src)
+
+	return success
+	// TA Edit end - SOUNDBREAKER
 
 /mob/living/proc/interrupt_climb()
 	if(!mid_climb)
@@ -66,4 +77,3 @@
 	playsound(src, 'sound/combat/swingdelay_disrupted.ogg', 100, TRUE)
 	visible_message(span_warning("[src]'s grip is broken!"), span_warning("My grip is broken!"))
 	return TRUE
-			

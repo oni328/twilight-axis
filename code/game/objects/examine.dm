@@ -68,6 +68,7 @@
 	else if(HAS_TRAIT(user, TRAIT_SEEPRICES_SHITTY))
 		var/real_value = appraise_price()
 		if(real_value > 0)
+			// Shitty price sense fumbles the value by up to 25% either way.
 			var/static/fumbling_seed = text2num(GLOB.rogue_round_id)
 			var/fumbled_value = max(1, round(real_value + (real_value * clamp(noise_hash(real_value, fumbling_seed) - 0.25, -0.25, 0.25)), 1))
 			var/cat_tag = display_cat ? " - <b>[display_cat]</b>" : ""
@@ -169,4 +170,3 @@
 				if(80 to 99)
 					result = span_warning("It's a little damaged.")
 	return result
-	

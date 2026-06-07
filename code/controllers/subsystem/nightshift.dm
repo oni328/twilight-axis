@@ -102,6 +102,15 @@ SUBSYSTEM_DEF(nightshift)
 				apply_status_effect(/datum/status_effect/debuff/sleepytime)
 				add_stress(/datum/stressevent/sleepytime)
 
+	//TA EDIT BEGIN
+	if(todd != "day")
+		if(HAS_TRAIT(src, TRAIT_NOC_LIGHT_BLESSING))
+			apply_status_effect(/datum/status_effect/buff/noc_light_blessing)
+	else 
+		remove_status_effect(/datum/status_effect/buff/noc_light_blessing)
+
+	//TA EDIT END
+
 /mob/living/carbon/human/proc/handle_sleep_triumphs()
 	if(!mind)
 		return

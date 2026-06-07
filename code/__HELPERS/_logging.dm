@@ -168,6 +168,9 @@
 	if (CONFIG_GET(flag/log_vote))
 		WRITE_LOG(GLOB.world_game_log, "\[[logtime]] VOTE: [text]")
 
+/proc/log_telepathy(text)
+	if (CONFIG_GET(flag/log_telepathy))
+		WRITE_LOG(GLOB.world_game_log, "\[[logtime]\] ANTAG TELEPATHY: [text]")
 
 /proc/log_topic(text)
 	WRITE_LOG(GLOB.world_game_log, "\[[logtime]] TOPIC: [text]")
@@ -322,7 +325,7 @@
 		if(C && C.holder && C.holder.fakekey && !include_name)
 			if(include_link)
 				. += "<a href='?priv_msg=[C.findStealthKey()]'>"
-			. += "Administrator"
+			. += C.holder.fakekey // TA EDIT
 		else
 			if(include_link)
 				. += "<a href='?priv_msg=[ckey]'>"

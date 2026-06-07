@@ -22,6 +22,10 @@
 
 /obj/item/clothing/head/roguetown/crown/serpcrown/Initialize()
 	. = ..()
+	if(SSmapping.config.map_name == "Rockhill")
+		name = "Crown of Enigma"
+	else
+		name = "Crown of Azuria"
 	if(SSroguemachine.crown)
 		qdel(src)
 	else
@@ -39,7 +43,7 @@
 	REMOVE_TRAIT(user, TRAIT_GARRISON_ITEM, "[ref(src)]")
 
 /obj/item/clothing/head/roguetown/crown/serpcrown/proc/anti_stall()
-	src.visible_message(span_danger("The Crown of Azuria crumbles to dust, the ashes spiriting away in the direction of the Keep."))
+	src.visible_message(span_danger("The [src.name] crumbles to dust, the ashes spiriting away in the direction of the Keep."))
 	SSroguemachine.scomm_machines -= src
 	SSroguemachine.crown = null //Do not harddel.
 	qdel(src) //Anti-stall

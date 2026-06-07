@@ -7,7 +7,7 @@
 	subclass_languages = list(/datum/language/grenzelhoftian)
 	traits_applied = list(TRAIT_CIVILIZEDBARBARIAN)
 	subclass_stats = list(
-		STATKEY_STR = 2,
+		STATKEY_STR = 3, // TA EDIT
 		STATKEY_CON = 2,
 		STATKEY_WIL = 2,
 		STATKEY_SPD = 2
@@ -123,7 +123,7 @@
 	var/weapon_choice = input(H,"Choose your weapon.", "TAKE UP ARMS") as anything in weapons
 	switch(weapon_choice)
 		if("Discipline - Unarmed")
-			H.adjust_skillrank_up_to(/datum/skill/misc/athletics, SKILL_LEVEL_MASTER, TRUE)
+			H.adjust_skillrank_up_to(/datum/skill/combat/unarmed, SKILL_LEVEL_MASTER, TRUE) // TA EDIT
 			H.put_in_hands(new /obj/item/clothing/gloves/roguetown/bandages/pugilist(H))
 			ADD_TRAIT(H, TRAIT_DODGEEXPERT, TRAIT_GENERIC)
 		if("Katar")
@@ -168,8 +168,8 @@
 	if(H.patron?.type == /datum/patron/divine/dendor)
 		H.adjust_skillrank(/datum/skill/labor/farming, SKILL_LEVEL_NOVICE, TRUE)
 		H.adjust_skillrank(/datum/skill/misc/climbing, SKILL_LEVEL_NOVICE, TRUE)
-		H.adjust_skillrank(/datum/skill/misc/hunting, SKILL_LEVEL_NOVICE, TRUE)
-		ADD_TRAIT(H, TRAIT_EXPERT_HUNTER, TRAIT_GENERIC)
+		H.adjust_skillrank(/datum/skill/misc/hunting, SKILL_LEVEL_NOVICE, TRUE) // TA EDIT
+		ADD_TRAIT(H, TRAIT_EXPERT_HUNTER, TRAIT_GENERIC) // TA EDIT
 	if(H.patron?.type == /datum/patron/divine/noc)
 		H.adjust_skillrank(/datum/skill/misc/reading, SKILL_LEVEL_JOURNEYMAN, TRUE) // Really good at reading... does this really do anything? No. BUT it's soulful.
 		H.adjust_skillrank(/datum/skill/craft/alchemy, SKILL_LEVEL_NOVICE, TRUE)
@@ -195,6 +195,7 @@
 		// see acolyte.dm's eora page. they dont get farming bc they dont have a tree.
 		H.adjust_skillrank(/datum/skill/craft/sewing, SKILL_LEVEL_NOVICE, TRUE)
 		H.adjust_skillrank(/datum/skill/craft/cooking, SKILL_LEVEL_NOVICE, TRUE)
+		H.mind.special_items["Alt Tabard"] = /obj/item/clothing/cloak/templar/eoran/alt // TA EDIT
 	if(H.patron?.type == /datum/patron/divine/malum)
 		ADD_TRAIT(H, TRAIT_SMITHING_EXPERT, TRAIT_GENERIC) // ONE exception for the "no combat role get this" rules
 		H.adjust_skillrank(/datum/skill/craft/blacksmithing, SKILL_LEVEL_NOVICE, TRUE)

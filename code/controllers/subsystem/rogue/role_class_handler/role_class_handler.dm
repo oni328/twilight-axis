@@ -73,6 +73,7 @@ SUBSYSTEM_DEF(role_class_handler)
 
 	//Well that about covers it really.
 
+
 /*
 	We setup the class handler here, aka the menu
 	We will cache it per server session via an assc list with a ckey leading to the datum.
@@ -157,6 +158,7 @@ SUBSYSTEM_DEF(role_class_handler)
 	qdel(related_handler)
 
 	adjust_class_amount(picked_class, 1) // adjust the amount here, we are handling one guy right now.
+
 
 // A dum helper to adjust the class amount, we could do it elsewhere but this will also inform any relevant class handlers open.
 /datum/controller/subsystem/role_class_handler/proc/adjust_class_amount(datum/advclass/target_datum, amount)
