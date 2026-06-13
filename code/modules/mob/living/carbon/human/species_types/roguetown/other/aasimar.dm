@@ -14,7 +14,7 @@
 	Most commonly, Aasimar are similar to Humens, albeit taller, and commonly possess an uncanny beauty. \
 	When compared to the average Humen, they have strangely colored skin and are more physically frail. \
 	Because of their upbringing, they make for natural conduits for godly powers. \
-	Azure Peak's populace holds them with a mixture of uneasy mixture of fear and respect. \
+	Twilight Axis's populace holds them with a mixture of uneasy mixture of fear and respect. \
 	Due to their celestial nature, it is widely believed that an Aasimar's death is a bad omen..."
 
 	max_age = "???"
@@ -60,7 +60,7 @@
 		/datum/customizer/organ/penis/anthro,
 		/datum/customizer/organ/breasts/human,
 		/datum/customizer/organ/vagina/human_anthro,
-		/datum/customizer/organ/wings/anthro,
+		/datum/customizer/organ/wings/aasimar,
 		/datum/customizer/organ/ears/wings,
 		/datum/customizer/organ/horns/wings,
 		/datum/customizer/organ/snout/wings,
@@ -108,6 +108,7 @@
 
 /datum/species/aasimar/get_skin_list()
 	return list(
+		"Archon" = SKIN_COLOR_ARCHON,
 		"Cultor" = SKIN_COLOR_CULTOR,
 		"Spiritus" = SKIN_COLOR_SPIRITUS,
 		"Planetar" = SKIN_COLOR_PLANETAR,

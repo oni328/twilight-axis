@@ -43,6 +43,8 @@
 	var/headshot = ""
 	var/list/img_gallery = list()
 	var/list/nsfw_img_gallery = list()
+	var/ooc_extra_image = ""
+	var/nsfw_ooc_extra_image = ""
 	var/char_name
 	var/song_url
 	var/has_song = FALSE
@@ -62,7 +64,8 @@
 	headshot = fam_pref.familiar_headshot_link[fam.planar_origin]
 	char_name = fam_pref.familiar_names[fam.planar_origin]
 	song_url = fam_pref.familiar_ooc_extra[fam.planar_origin]
-	is_vet = viewing.check_agevet()
+//	is_vet = viewing.check_agevet()
+
 	if(!headshot)
 		headshot = "headshot_red.png"
 
@@ -82,9 +85,11 @@
 		"ooc_notes_nsfw" = ooc_notes_nsfw,
 		"img_gallery" = img_gallery,
 		"nsfw_img_gallery" = nsfw_img_gallery,
+		"ooc_extra_image" = ooc_extra_image,
+		"nsfw_ooc_extra_image" = nsfw_ooc_extra_image,
 		"has_song" = has_song,
 		"is_vet" = is_vet,
-		"is_donator" = is_donator(holder.ckey),
+		"is_donator" = ta_should_show_donor_examine_icon(holder), // TA EDIT
 		"is_naked" = is_naked,
 	)
 
@@ -104,13 +109,17 @@
 	var/ooc_notes = ""
 	var/ooc_notes_nsfw
 	var/headshot = ""
+	var/nsfw_headshot = ""
 	var/list/img_gallery = list()
 	var/list/nsfw_img_gallery = list()
+	var/ooc_extra_image = ""
+	var/nsfw_ooc_extra_image = ""
 	var/char_name
 	var/song_url
 	var/has_song = FALSE
 	var/is_vet = FALSE
 	var/is_naked = FALSE
+	var/nsfw_examine_always = FALSE // TA EDIT
 	var/datum/antagonist/vampire/vampireplayer = user.mind?.has_antag_datum(/datum/antagonist/vampire)
 	var/datum/antagonist/lich/lichplayer = user.mind?.has_antag_datum(/datum/antagonist/lich)
 
@@ -121,11 +130,12 @@
 		obscured = ((!isobserver(user)) && !holder_human.client?.prefs?.masked_examine) && ((holder_human.wear_mask && (holder_human.wear_mask.flags_inv & HIDEFACE)) || (holder_human.head && (holder_human.head.flags_inv & HIDEFACE)))
 		flavor_text = obscured ? "Obscured" : holder_human.flavortext_cached
 		flavor_text_nsfw = obscured ? "Obscured" : holder_human.nsfwflavortext_cached
+		nsfw_examine_always = holder_human.client?.prefs?.nsfw_examine_always // TA EDIT
 		ooc_notes += holder_human.ooc_notes_cached
 		ooc_notes_nsfw += holder_human.erpprefs_cached
 		char_name = holder_human.name
 		song_url = holder_human.ooc_extra
-		is_vet = holder_human.check_agevet()
+//		is_vet = holder_human.check_agevet()
 		if(!obscured)
 			if(vampireplayer && (!SEND_SIGNAL(holder_human, COMSIG_DISGUISE_STATUS))&& !isnull(holder_human.vampire_headshot_link)) //vampire with their disguise down and a valid headshot
 				headshot = holder_human.vampire_headshot_link
@@ -134,8 +144,10 @@
 			else
 				headshot = holder_human.headshot_link
 			img_gallery = holder_human.img_gallery
+			ooc_extra_image = holder_human.ooc_extra_img
 			if(is_naked)
 				nsfw_img_gallery = holder_human.nsfw_img_gallery
+				nsfw_ooc_extra_image = holder_human.nsfw_ooc_extra_img
 		if(!headshot)
 			headshot = "headshot_red.png"
 
@@ -144,6 +156,7 @@
 		obscured = FALSE
 		flavor_text = pref.flavortext_cached
 		flavor_text_nsfw = pref.nsfwflavortext_cached
+		nsfw_examine_always = FALSE // TA EDIT
 		ooc_notes = pref.ooc_notes_cached
 		ooc_notes_nsfw = pref.erpprefs_cached
 		if(vampireplayer && (!SEND_SIGNAL(pref, COMSIG_DISGUISE_STATUS))&& !isnull(pref.vampire_headshot_link)) //vampire with their disguise down and a valid headshot
@@ -153,11 +166,11 @@
 		else
 			headshot = pref.headshot_link
 		img_gallery = pref.img_gallery
-		if(is_naked)
-			nsfw_img_gallery = pref.nsfw_img_gallery
+		nsfw_img_gallery = pref.nsfw_img_gallery
+		ooc_extra_image = pref.ooc_extra_img
+		nsfw_ooc_extra_image = pref.nsfw_ooc_extra_img
 		char_name = pref.real_name
 		song_url = pref.ooc_extra
-		is_vet = viewing.check_agevet()
 		if(!headshot)
 			headshot = "headshot_red.png"
 
@@ -188,12 +201,16 @@
 		// Descriptions, but requiring manual input to see
 		"flavor_text_nsfw" = flavor_text_nsfw,
 		"ooc_notes_nsfw" = ooc_notes_nsfw,
+		"nsfw_headshot" = nsfw_headshot,
 		"img_gallery" = img_gallery,
 		"nsfw_img_gallery" = nsfw_img_gallery,
+		"ooc_extra_image" = ooc_extra_image,
+		"nsfw_ooc_extra_image" = nsfw_ooc_extra_image,
 		"has_song" = has_song,
 		"is_vet" = is_vet,
-		"is_donator" = is_donator(holder.ckey),
+		"is_donator" = ta_should_show_donor_examine_icon(holder), // TA EDIT
 		"is_naked" = is_naked,
+		"nsfw_examine_always" = nsfw_examine_always, // TA EDIT
 		"examine_theme" = char_examine_theme,
 	)
 	return data

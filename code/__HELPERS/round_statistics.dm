@@ -1,6 +1,7 @@
 // Census
 #define STATS_ALIVE_NORTHERN_HUMANS "alive_northern_humans"
 #define STATS_ALIVE_DWARVES "alive_dwarves"
+#define STATS_ALIVE_GNOMES "alinve_gnomes"
 #define STATS_ALIVE_DARK_ELVES "alive_dark_elves"
 #define STATS_ALIVE_WOOD_ELVES "alive_wood_elves"
 #define STATS_ALIVE_SUN_ELVES "alive_sun_elves"
@@ -14,6 +15,7 @@
 #define STATS_ALIVE_HALFKIN "alive_halfkin"
 #define STATS_ALIVE_WILDKIN "alive_wildkin"
 #define STATS_ALIVE_CONSTRUCTS "alive_constructs"
+#define STATS_ALIVE_REVENANTS "alive_revenants"
 #define STATS_ALIVE_VERMINFOLK "alive_verminfolk"
 #define STATS_ALIVE_DRACON "alive_dracon"
 #define STATS_ALIVE_AXIAN "alive_axian"
@@ -21,6 +23,7 @@
 #define STATS_ALIVE_VULPS "alive_vulps"
 #define STATS_ALIVE_LUPIANS "alive_lupians"
 #define STATS_ALIVE_MOTHS "alive_moths"
+#define STATS_ALIVE_AURA "alive_aura"
 
 #define STATS_VAMPIRES "vampires"
 
@@ -232,6 +235,10 @@
 #define STATS_JUNKIES "junkies"
 #define STATS_NYMPHOMANIACS "nymphomaniacs"
 
+#define STATS_KNOTTED "knottings"
+#define STATS_KNOTTED_NOT_LUPIANS "knottings_by_non_lupians"
+
+
 //Matthios
 #define STATS_ITEMS_PICKPOCKETED "items_pickpocketed"
 #define STATS_SHRINE_VALUE "shrine_value"
@@ -339,6 +346,7 @@ GLOBAL_LIST_INIT(azure_round_stats, list(
 	STATS_VOYEURS = 0,
 	STATS_ALIVE_NORTHERN_HUMANS = 0,
 	STATS_ALIVE_DWARVES = 0,
+	STATS_ALIVE_GNOMES = 0,
 	STATS_ALIVE_DARK_ELVES = 0,
 	STATS_ALIVE_HALF_ELVES = 0,
 	STATS_ALIVE_SUN_ELVES = 0,
@@ -351,6 +359,7 @@ GLOBAL_LIST_INIT(azure_round_stats, list(
 	STATS_ALIVE_HALFKIN = 0,
 	STATS_ALIVE_WILDKIN = 0,
 	STATS_ALIVE_CONSTRUCTS = 0,
+	STATS_ALIVE_REVENANTS = 0,
 	STATS_ALIVE_VERMINFOLK = 0,
 	STATS_ALIVE_DRACON = 0,
 	STATS_ALIVE_AXIAN = 0,
@@ -358,6 +367,7 @@ GLOBAL_LIST_INIT(azure_round_stats, list(
 	STATS_ALIVE_VULPS = 0,
 	STATS_ALIVE_LUPIANS = 0,
 	STATS_ALIVE_MOTHS = 0,
+	STATS_ALIVE_AURA = 0,
 	STATS_PEOPLE_DROWNED = 0,
 	STATS_WATER_CONSUMED  = 0,
 	STATS_LIMBS_BITTEN = 0,
@@ -385,6 +395,8 @@ GLOBAL_LIST_INIT(azure_round_stats, list(
 	STATS_ALIVE_TRADESMEN = 0,
 	STATS_LUX_REVIVALS = 0,
 	STATS_PLEASURES = 0,
+	STATS_KNOTTED = 0,
+	STATS_KNOTTED_NOT_LUPIANS = 0,
 	STATS_SKILLS_DREAMED = 0,
 	STATS_REGULAR_VAULT_INCOME = 0,
 	STATS_VAULT_TOTAL_REVENUE = 0,

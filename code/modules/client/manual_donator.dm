@@ -6,13 +6,16 @@ GLOBAL_VAR_INIT(donatorLoaded, 0)
 
 /proc/is_donator(key)
 	key = ckey(key)
+	if(!key) // TA EDIT START
+		return FALSE
+
+	if(check_patreon_lvl(key) > 0)
+		return TRUE // TA EDIT END
 
 	if(!GLOB.donatorLoaded)
 		load_donators()
-	if(LAZYISIN(GLOB.donatorCkeys, key))
-		return TRUE
-	else
-		return FALSE
+
+	return LAZYISIN(GLOB.donatorCkeys, key) // TA EDIT
 
 /proc/donator_addkey(key)
 	var/keyAsCkey = ckey(key)
@@ -73,8 +76,6 @@ GLOBAL_VAR_INIT(donatorLoaded, 0)
 			message_admins("[key_name(usr)] added [key] to the donator list.")
 			log_admin("[key_name(usr)] added [key] to the donator list.")
 			donator_addkey(key)
-			if(CONFIG_GET(string/chat_announce_donator))
-				send2chat(new /datum/tgs_message_content("[key_name(usr)] added [key] to the donator list."), CONFIG_GET(string/chat_announce_donator))
 
 /datum/admins/proc/admin_remove_donator_verb()
 	set name = "BC - Remove Donator Ckey"
@@ -88,5 +89,3 @@ GLOBAL_VAR_INIT(donatorLoaded, 0)
 			message_admins("[key_name(usr)] removed [key] from the donator list.")
 			log_admin("[key_name(usr)] removed [key] from the donator list.")
 			donator_removekey(key)
-			if(CONFIG_GET(string/chat_announce_donator))
-				send2chat(new /datum/tgs_message_content("[key_name(usr)] removed [key] from the donator list."), CONFIG_GET(string/chat_announce_donator))

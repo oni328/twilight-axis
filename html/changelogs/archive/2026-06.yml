@@ -55,6 +55,10 @@
   - rscadd: slowclap emote
   - bugfix: briar's curse now works on onehanded/unwieldable weapons
 2026-06-02:
+  Antoonij:
+  - bugfix: "\u043B\u0438\u0448\u043D\u0438\u0435 \u0437\u0430\u043F\u0440\u0435\u0449\
+      \u0435\u043D\u043D\u044B\u0435 \u0440\u0430\u0441\u044B \u0432 \u0440\u043E\u043B\
+      \u044F\u0445 \u043D\u0430 \u0440\u043E\u043A\u0445\u0438\u043B\u043B\u0435"
   FeniaFox:
   - bugfix: Fixed various helmets not respecting trait locks properly.
   - balance: Squire Errants now spawn with brush and polishing cream instead of tongs.
@@ -147,6 +151,39 @@
       ascendants as I am not privvy to their balance.
   Ryan180602:
   - bugfix: optimise rain
+  SillyMoff:
+  - bugfix: "\u041F\u043E\u0444\u0438\u043A\u0448\u0435\u043D \u0440\u0438\u0442\u0443\
+      \u0430\u043B \u0431\u0430\u043E\u0442\u044B \u0438 \u0441\u043F\u0435\u043B\u043B\
+      \ \u043D\u0430 \u043A\u0440\u0430\u0436\u0443 \u043B\u044E\u043A\u0441\u0430"
+  UEDCommander:
+  - balance: "\u0421\u0432\u0438\u043D\u0446\u043E\u0432\u0430\u044F \u043F\u0443\u043B\
+      \u044F - +20 \u0443\u0440\u043E\u043D\u0430"
+  - balance: "\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u044B\u0439\
+      \ \u0437\u0430\u043F\u0430\u0441 \u043F\u0443\u043B\u044C \u0432 \u0444\u0430\
+      \u0440\u0435\u0442\u0440\u0435 4 -> 6"
+  - balance: "\u0414\u043E\u0431\u0430\u0432\u043B\u0435\u043D \u0432\u0442\u043E\u0440\
+      \u0438\u0447\u043D\u044B\u0439 \u0443\u0440\u043E\u043D \u043E\u0442 \u043E\u0433\
+      \u043D\u044F \u0441\u0432\u0438\u043D\u0446\u043E\u0432\u044B\u043C \u043F\u0443\
+      \u043B\u044F\u043C, \u0441\u0435\u0440\u0435\u0431\u0440\u044F\u043D\u044B\u043C\
+      \ \u043F\u0443\u043B\u044F\u043C, \u043A\u0430\u0440\u0442\u0435\u0447\u0438\
+      . \u041E\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442 \u043E\u0436\u043E\u0433\
+      \u0438 \u0438 \u0441\u043D\u0438\u0436\u0430\u0435\u0442\u0441\u044F \u0437\u0430\
+      \u0449\u0438\u0442\u043E\u0439 \u0431\u0440\u043E\u043D\u0438 \u043E\u0442 \u043E\
+      \u0433\u043D\u044F."
+  - balance: "\u041C\u043D\u043E\u0436\u0438\u0442\u0435\u043B\u044C \u0443\u0440\u043E\
+      \u043D\u0430 \u0443 \u0414\u0443\u043C\u0441\u0434\u0430\u0435 1 -> 1.5"
+  - balance: "\u0420\u0430\u0437\u043C\u0435\u0440 \u043F\u043E\u044F\u0441\u0430\
+      \ \u0441 \u043A\u043E\u0431\u0443\u0440\u043E\u0439 2\u04452 -> 3x3"
+  Vladmar11:
+  - bugfix: "\u0418\u0441\u043F\u0440\u0430\u0432\u043B\u0435\u043D \u043F\u043E\u0444\
+      \u0438\u0433\u0438\u0437\u043C \u043F\u0443\u043B\u044C \u043D\u0430 \u0431\u0440\
+      \u043E\u043D\u044E, \u0431\u0440\u043E\u043D\u044F \u0441\u043D\u043E\u0432\u0430\
+      \ \u0440\u0435\u0436\u0435\u0442 \u0443\u0440\u043E\u043D \u043E\u0442 \u043F\
+      \u0443\u043B\u044C \u0438 \u043F\u043E\u043B\u0443\u0447\u0430\u0435\u0442 \u043E\
+      \u0442 \u043D\u0438\u0445 \u0434\u0430\u043C\u0430\u0433"
+  - rscadd: "HIGH+ \u043F\u0440\u0438\u043E\u0440\u0438\u0442\u0435\u0442 \u0434\u043B\
+      \u044F \u0434\u043E\u043D\u0430\u0442\u0435\u0440\u043E\u0432 \u043E\u0442 \u0422\
+      3"
   WeNeedMorePhoron:
   - rscadd: Renamed and repathed the old "Cooking" book, which was left unfinished,
       to a Brewing book
@@ -185,12 +222,26 @@
   - bugfix: fixed vice tracking, hopefully
   changelingonberry:
   - rscadd: Maestro Bard Wretch class
+  namenlos66:
+  - bugfix: "\u041F\u043E\u0444\u0438\u043A\u0448\u0435\u043D\u0430 \u0430\u043D\u043E\
+      \u043D\u0438\u043C\u043D\u043E\u0441\u0442\u044C \u0430\u0434\u043C\u0438\u043D\
+      \u0438\u0441\u0442\u0440\u0430\u0442\u043E\u0440\u0430 \u0447\u0435\u0440\u0435\
+      \u0437 \u0441\u0442\u0435\u043B\u0441-\u043C\u043E\u0434 \u0438 \u0430\u043D\
+      \u043E\u043D\u0438\u043C\u043D\u043E\u0441\u0442\u044C \u0422\u0413\u0423\u0418\
+      -\u043F\u0430\u043D\u0435\u043B\u044C\u043A\u0438 \u0442\u0438\u043A\u0435\u0442\
+      \u043E\u0432."
   radarseas:
   - balance: portal goblins are slightly tougher, can use specials and always spawn
       with armor.
   - balance: due to respawnability + no shutdown nor cap, latejoin goblins still have
       worse stats.
   - bugfix: no expert skill gobins from latejoining ancient issues. F U C K.
+  sadsadpart-cyber:
+  - bugfix: "\u041F\u043E\u043F\u044B\u0442\u043A\u0430 \u043F\u043E\u0447\u0438\u043D\
+      \u043A\u0438 \u043F\u0435\u043D\u0438\u044F"
+  - bugfix: "\u0410\u043A\u0446\u0435\u043D\u0442\u044B \u0440\u0430\u0431\u043E\u0442\
+      \u0430\u044E\u0442 \u0441\u043E \u0437\u043D\u0430\u043A\u0430\u043C\u0438 \u043F\
+      \u0440\u0435\u043F\u0438\u043D\u0430\u043D\u0438\u044F"
   sakke03:
   - balance: Maneaters are no longer revealed by walking over them in cases where
       they won't attack
@@ -222,6 +273,11 @@
 2026-06-06:
   Ryan180602:
   - bugfix: weeping cross now needs you to be a psydonite to work.
+  Vladmar11:
+  - bugfix: "\u0438\u0441\u043F\u0440\u0430\u0432\u043B\u044F\u0435\u0442 \u0441\u043B\
+      \u043E\u043C\u0430\u043D\u043D\u044B\u0435 \u0432\u0438\u0440\u0442\u0443\u0435\
+      \ \u0432 \u043F\u0440\u0435\u0444\u0435\u043D\u0441\u0430\u0445 \u043F\u0435\
+      \u0440\u0441\u043E\u043D\u0430\u0436\u0435\u0439"
 2026-06-07:
   FeniaFox:
   - rscadd: Added leather helms to tailor silverface as sidegrade vs headbands, trading
@@ -262,6 +318,10 @@
   - rscadd: Added wicker cloak to loadout
   Randall:
   - rscadd: Added the Stecher to Battlemaster's loadout options
+  Vladmar11:
+  - bugfix: "\u0418\u0441\u043F\u0440\u0430\u0432\u043B\u044F\u0435\u0442 \u043D\u0435\
+      \ \u0441\u043E\u0432\u0441\u0435\u043C \u0440\u0430\u0431\u043E\u0447\u0438\u0439\
+      \ \u0431\u0430\u043D \u0430\u043D\u0442\u0430\u0433\u043E\u0432"
   WeNeedMorePhoron:
   - rscadd: Added noc shine as a three steps distillation recipe
   - rscdel: Removed the Z level swim feature and swimming tab. The two test ponds
@@ -363,6 +423,12 @@
       to use them.
   scarrmu:
   - rscadd: light armour option for sojourner + jman sneak
+2026-06-09:
+  Corde50:
+  - rscadd: "\u041A\u0440\u0430\u0441\u043D\u044B\u0435/\u0437\u0435\u043B\u0435\u043D\
+      \u044B\u0435/\u043F\u0443\u0440\u043F\u0443\u0440\u043D\u044B\u0435 \u043D\u0430\
+      \u0441\u0442\u0435\u043D\u043D\u044B\u0435 \u0441\u0432\u0435\u0447\u043A\u0438\
+      \ \u0438 standing fire"
 2026-06-10:
   BurpleBineapple:
   - balance: The longsword's alt-grip intents have been modified. Daze and Impale
@@ -423,6 +489,9 @@
 2026-06-11:
   FreeStylaLT:
   - balance: Wave Animation is now longer
+  Quinalion:
+  - spellcheck: "\u0414\u043E\u0440\u0430\u0431\u043E\u0442\u043A\u0430 \u043F\u0435\
+      \u0440\u0435\u0432\u043E\u0434\u0430."
   Ryan180602:
   - balance: poleaxe stab has 2-tile sweetspot and is delayed. but has 1x damfactor
       instead of 0.9x.
@@ -438,6 +507,10 @@
   - admin: flavor text button in player panel
   kiwedespars:
   - bugfix: miracles properly have cd against someone with an embed
+  namenlos66:
+  - bugfix: "\u0418\u0441\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u043E \u043E\u0442\
+      \u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u0435 \u0441\u043E\u043E\u0431\
+      \u0449\u0435\u043D\u0438\u0439 \u0432 \u0442\u0438\u043A\u0435\u0442\u0435."
 2026-06-12:
   KatTheFox:
   - rscadd: Revenants can now select from skin, fur, scale, feather, or chitin descriptors,
@@ -454,3 +527,76 @@
   - bugfix: Golgatha was instakilling carbon NPCs and not working on simplemobs.
   clumsygoblinoid:
   - qol: made triumph winter dress fit in cosmetic storage
+2026-06-13:
+  FeniaFox:
+  - balance: rebalanced bardiche mam/crafting costs to match its performance as a
+      sidegrade weapon to the steel halberd. Mam costs 45 -> 75, craft costs iron
+      -> steel ingots and apprentice -> journeyman weaponsmithing.
+  KatTheFox:
+  - rscadd: Gem staves now have unique sprites again
+  Ryumi:
+  - qol: The visual presentation of race blurbs has been greatly improved. Now, upon
+      selecting a race, it will display all racial traits and explain (most) mechanics
+      unique to that race. All listed traits come with hover tooltips providing their
+      descriptions.
+  WeNeedMorePhoron:
+  - rscdel: Replaced reference to the non existent Amazonia in chocolate's description,
+      which does not exist and is not full of buff women, with a reference to Etrusca,
+      which does exists and is full of buff men.
+  crunchypretzels:
+  - rscadd: New aasimar skintone.
+  radarseas:
+  - balance: sling ballistiares gets a shield + apprentice skill in shields to fit
+      them into the defensive-choice for ranged where their other picks of bows +
+      crossbow are more-fitted for offensive.
+  - balance: Legionnarie taking sling gets a wooden shield instead of ancient, slightly
+      less durability and 10% less ranged blocking sacrificed for being able to pressure
+      people at a distance poorly and be able to fight up-close.
+  - rscadd: New conjured summon NPCs for necromancers, slightly better skills + guarrenteed
+      gear loadout.
+  - rscadd: Necromancer skeletons can now pick features on summoning as well as their
+      body/name.
+  - rscadd: Necro skele talbards, these are surcoats and jupons without the colors
+      of an Exarch's empire that lich skeles get. Used for seige skeletons, unbound
+      skeletons and necromancer summons + skeletons.
+  - rscadd: Necro skeles can pick their helms + new loadout tuneups.
+  - rscadd: Necro skeles can now fly a cloak/tabard/toga of their choice!
+  - rscadd: Shattered bulwark, a weaker version of Necromancer's previous heavy armor.
+      Tough but shatters fast when the armor does.
+  - balance: Unbound death knight gets another helmet choice.
+  - balance: Unbound death knight gets three armor pick choices.
+  - balance: Lich skeleton spellblade gets bonemend so they don't die from their own
+      gameplay loop, lol.
+  - balance: Unbound skeles no longer get unintended items and poison daggers to do
+      reagent warfare. Play Malpractioner for that.
+  - balance: Most Necromancer skeles are now Medium trained instead of Heavy to substitute
+      for more numbers.
+  - balance: Necromancer sapper is now a proper lesser sapper, even getting some of
+      the lich ver, attire and speccing out a little more towards construction w/out,
+      the QOL/arcayne/wall exploding lich sappers get.
+  - balance: Unbound death knight gets more gilbranze choices for weaponry + slightly
+      better gear.
+  - balance: Unbound skeletons are capped to 10 CON + whatever INT/WIL they started
+      with for statpacks.
+  - balance: Unbound skeletons get additional context on the whole dusting thing,
+      yeah.
+  - balance: Unbound spellblade rag mask -> decrepid hijab for the true Tarichean
+      wannabie style akin to lich's version.
+  - balance: Necromancers now have message + mindlink for QOL of interacting with
+      their minions, or contacting wretches or assocates of whatever form from afar.
+  - balance: unbound skeletons now get salvaged gear + use combat_weird.ogg
+  - balance: Formation is now 3 seconds from 6 seconds to cast, given an extra 5 second
+      to cooldown.
+  - balance: Necromancers get Expert from Journeyman in medicine + misc skills rogue
+      mages previously got.
+  - balance: Conjure Guard is now 6 seconds from 3 seconds, with a 1 minute delay.
+  - balance: Conjured Guards now last 45 from 30 minutes, to make up for a slightly
+      slower summoning time + cooldown.
+  - balance: Necromancers have lost 1 speed point of their stats, a slight reduction
+      in excess combat skills and slightly worse alchemy.
+  - balance: Necromancers get a choice between plain robes and protective, new robes
+      exclusive to them to stand out and aura-farm.
+  - balance: Necromancer Player skeles 2 -> 6 total
+  - balance: 'Necromancer Maximal lux charges 2 -> 3 total
+
+      balance Necromancer Starting lux charges -> Unchanged.'

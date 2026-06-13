@@ -107,7 +107,8 @@
 	// Special case for scissors with snip intent targeting the head or skull
 	if(istype(I, /obj/item/rogueweapon/huntingknife/scissors) && user.used_intent.type == /datum/intent/snip && (user.zone_selected == BODY_ZONE_HEAD || user.zone_selected == BODY_ZONE_PRECISE_SKULL))
 		return I.attack(src, user)
-
+	if(istype(I, /obj/item/leash))
+		return I.attack(src, user)
 	if(!user.cmode)
 		var/try_to_fail = istype(user.rmb_intent, /datum/rmb_intent/strong)
 		var/list/possible_steps = list()
@@ -400,6 +401,17 @@
 	if(!has_status_effect(/datum/status_effect/fire_handler))
 		extinguish_mob(TRUE)
 
+/mob/living/carbon/resist_leash()
+	to_chat(src, span_notice("I reach for the hook on my collar..."))
+	//Determine how long it takes to remove the leash
+	var/deleash = 15
+	if(src.handcuffed)
+		deleash = 60
+	if(move_after(src, deleash, 0, target = src))
+		if(!QDELETED(src))
+			to_chat(src, "<span class='warning'>[src] has removed their leash!</span>")
+			src.remove_status_effect(/datum/status_effect/leash_pet)
+
 /mob/living/carbon/resist_restraints()
 	var/obj/item/I = null
 	var/type = 0
@@ -495,8 +507,18 @@
 		if(has_status_effect(/datum/status_effect/debuff/netted))
 			remove_status_effect(/datum/status_effect/debuff/netted)
 
-	if(cuff_break)
-		. = !((I == handcuffed) || (I == legcuffed))
+	if(cuff_break) //TA EDIT
+		if(I == handcuffed)
+			handcuffed = null
+			update_handcuffed()
+			
+		if(I == legcuffed)
+			legcuffed = null
+			update_inv_legcuffed()
+
+			if(has_status_effect(/datum/status_effect/debuff/netted))
+				remove_status_effect(/datum/status_effect/debuff/netted)
+		
 		qdel(I)
 		return TRUE
 
@@ -724,35 +746,42 @@
 	else
 		remove_movespeed_modifier(MOVESPEED_ID_CARBON_CRAWLING, TRUE)
 
+#define FIRE_HARDCRIT_DIVISOR 106 // 106 = 94.5% burn damage = hardcrit
+#define FIRE_HARDCRIT_DIVISOR_MINDLESS 200 // 200 = 50% burn damage = hardcrit for mindless mobs
+
 //Updates the mob's health from bodyparts and mob damage variables
 /mob/living/carbon/updatehealth()
 	if(status_flags & GODMODE)
 		return
-	var/total_burn = 0
+//	var/total_brute	= 0
 	var/total_stamina = 0
+	var/total_burn_percent = 0
 	var/total_tox = getToxLoss()
 	var/total_oxy = getOxyLoss()
 	var/used_damage = 0
-	// Burn hardcrit - total burn across all bodyparts vs threshold (scales to chest max HP / CON)
-	for(var/obj/item/bodypart/BP as anything in bodyparts)
-		total_burn += BP.burn_dam
-	if(total_burn > 0)
-		var/obj/item/bodypart/chest/C = get_bodypart(BODY_ZONE_CHEST)
-		var/burn_threshold = C ? C.max_damage : FIRE_HARDCRIT_BASE
+
+	var/static/list/lethal_zones = list(
+		BODY_ZONE_HEAD,
+		BODY_ZONE_CHEST,
+	)
+	var/checked_lethal_zones = 0
+
+	for(var/obj/item/bodypart/bodypart as anything in bodyparts)
+		if(!(bodypart.body_zone in lethal_zones))
+			continue
+		
+		total_burn_percent += max(0, bodypart.burn_dam / bodypart.max_damage)
+		checked_lethal_zones++
+
+	if(checked_lethal_zones)
+		var/avg_burn_factor = total_burn_percent / checked_lethal_zones
+		var/hardcrit_divisor = !mind ? FIRE_HARDCRIT_DIVISOR_MINDLESS : FIRE_HARDCRIT_DIVISOR
+
+		used_damage = avg_burn_factor * hardcrit_divisor
+
 		if((HAS_TRAIT(src, TRAIT_NOPAIN) || HAS_TRAIT(src, TRAIT_NOPAINSTUN)) && !HAS_TRAIT(src, TRAIT_NOBURN_RESIST))
-			burn_threshold *= FIRE_HARDCRIT_NOPAIN_MULT
-		var/burn_ratio = total_burn / burn_threshold
-		if(!burn_warning_shown)
-			if(burn_ratio >= 1.0)
-				burn_warning_shown = TRUE
-				balloon_alert_to_viewers("<font color='#bb2b2b'>burnt down!</font>")
-			else if(burn_ratio >= 0.75)
-				burn_warning_shown = TRUE
-				balloon_alert_to_viewers("<font color='#bb2b2b'>burning down!</font>")
-		else if(burn_ratio < 0.75)
-			burn_warning_shown = FALSE
-		var/burn_damage = burn_ratio * maxHealth
-		used_damage = max(used_damage, burn_damage)
+			used_damage /= FIRE_HARDCRIT_NOPAIN_MULT
+
 	if(used_damage < total_tox)
 		used_damage = total_tox
 	if(used_damage < total_oxy)
@@ -767,6 +796,9 @@
 	else
 		remove_movespeed_modifier(MOVESPEED_ID_CARBON_SOFTCRIT, TRUE)
 	SEND_SIGNAL(src, COMSIG_LIVING_HEALTH_UPDATE)
+
+#undef FIRE_HARDCRIT_DIVISOR
+#undef FIRE_HARDCRIT_DIVISOR_MINDLESS
 
 /mob/living/carbon/update_sight()
 	if(!client)
@@ -826,6 +858,15 @@
 		remove_client_colour(/datum/client_colour/nocshaded)
 		clear_fullscreen("inqvision")
 
+	if(HAS_TRAIT(src, TRAIT_VOLF))				//TA-EDIT VOLF
+		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_NOCSHADES)
+		see_in_dark = max(see_in_dark, 12)
+		add_client_colour(/datum/client_colour/volf)
+		overlay_fullscreen("curse1", /atom/movable/screen/fullscreen/volf)
+	else
+		remove_client_colour(/datum/client_colour/volf)
+		clear_fullscreen("curse1")
+
 	if(HAS_TRAIT(src, TRAIT_GILDED_SIGHT))
 		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_NOCSHADES)
 		see_in_dark = max(see_in_dark, 12)
@@ -843,7 +884,10 @@
 
 	if(HAS_TRAIT(src, TRAIT_ZIZOSIGHT))
 		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_ZIZOVISION)
-		see_in_dark = max(see_in_dark, 8)
+		see_in_dark = max(see_in_dark, 14)
+	if(HAS_TRAIT(src, TRAIT_ZIZOEYES))
+		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_ZIZOVISION)
+		see_in_dark = max(see_in_dark, 15)
 
 	if(see_override)
 		see_invisible = see_override
@@ -889,6 +933,9 @@
 		protection += tally[key]
 	protection *= INVERSE(target_zones.len)
 	return protection
+
+/mob/living
+	var/succumb_timer = 0
 
 //this handles hud updates
 /mob/living/carbon/update_damage_hud()
@@ -941,10 +988,14 @@
 			overlay_fullscreen("critvision", /atom/movable/screen/fullscreen/crit/vision, visionseverity)
 		else
 			clear_fullscreen("critvision")
+		if(!succumb_timer)
+			succumb_timer = world.time
 		overlay_fullscreen("crit", /atom/movable/screen/fullscreen/crit, severity)
 		overlay_fullscreen("DD", /atom/movable/screen/fullscreen/crit/death)
 		overlay_fullscreen("DDZ", /atom/movable/screen/fullscreen/crit/zeth)
 	else
+		if(succumb_timer)
+			succumb_timer = 0
 		clear_fullscreen("crit")
 		clear_fullscreen("critvision")
 		clear_fullscreen("DD")
@@ -1324,7 +1375,7 @@
 			return
 		cure_all_traumas(TRAUMA_RESILIENCE_ABSOLUTE)
 		log_admin("[key_name(usr)] has cured all traumas from [key_name(src)].")
-		message_admins("<span class='notice'>[key_name_admin(usr)] has cured all traumas from [key_name_admin(src)].</span>")
+		message_admins("<span class='notice'>[key_name_admin(usr)] has cured all traumas from [key_name(src)].</span>")
 	if(href_list[VV_HK_HALLUCINATION])
 		if(!check_rights(NONE))
 			return
@@ -1363,6 +1414,16 @@
 	if(istype(loc, /turf/open/water) && !(mobility_flags & MOBILITY_STAND))
 		return FALSE
 
+/mob/living/carbon/resist_leash()
+	to_chat(src, span_notice("I reach for the hook on my collar..."))
+	//Determine how long it takes to remove the leash
+	var/deleash = 5 SECONDS
+	if(src.handcuffed)
+		deleash = 20 SECONDS
+	if(move_after(src, deleash, 0, target = src))
+		if(!QDELETED(src))
+			to_chat(src, "<span class='warning'>[src] has removed their leash!</span>")
+			src.remove_status_effect(/datum/status_effect/leash_pet)
 
 /mob/living/carbon/can_buckle()
 	if((cmode) && (mind) && (!handcuffed) && (stat == CONSCIOUS))

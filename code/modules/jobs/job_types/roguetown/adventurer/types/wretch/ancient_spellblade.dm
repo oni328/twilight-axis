@@ -7,11 +7,13 @@
 	class_select_category = CLASS_CAT_ACCURSED
 	category_tags = list(CTAG_WRETCH)
 	maximum_possible_slots = 2 // Two so that the gimmick isn't overdone
+	min_pq = 30 // TA EDIT
 	applies_post_equipment = TRUE
 	traits_applied = list(TRAIT_MEDIUMARMOR, TRAIT_SHATTER_KILL, TRAIT_ARCYNE, TRAIT_DUSTABLE, TRAIT_BLOODLOSS_IMMUNE)
 	subclass_stats = list(
 		STATKEY_INT = 2,
 		STATKEY_WIL = 2,
+		STATKEY_CON = -3, // ta edit
 		STATKEY_PER = 1,
 		STATKEY_SPD = -1,
 		STATKEY_STR = -1,
@@ -22,7 +24,7 @@
 		/datum/skill/combat/wrestling = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/combat/unarmed = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/misc/athletics = SKILL_LEVEL_JOURNEYMAN,
-		/datum/skill/misc/climbing = SKILL_LEVEL_APPRENTICE,
+		/datum/skill/misc/climbing = SKILL_LEVEL_JOURNEYMAN, // ta edit
 		/datum/skill/magic/arcane = SKILL_LEVEL_APPRENTICE,
 	)
 	adv_stat_ceiling = list(STAT_INTELLIGENCE = 12, STAT_CONSTITUTION = 10, STAT_WILLPOWER = 12) //infinite fatigue + spellblade fuckery vs vamp
@@ -45,7 +47,7 @@
 	H.become_skeleton()
 
 	// Skeleton antag datum + patron (matching greater_skeleton setup)
-	H.set_patron(/datum/patron/inhumen/zizo)
+	// H.set_patron(/datum/patron/inhumen/zizo) TA EDIT
 	if(H.mind)
 		H.mind.add_antag_datum(new /datum/antagonist/skeleton())
 

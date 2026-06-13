@@ -365,17 +365,38 @@
 /datum/status_effect/buff/vitae
 	id = "druqks"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/vitae
-	effectedstats = list(STATKEY_LCK = 2)
+	effectedstats = list(STATKEY_LCK = 2, STATKEY_WIL = 1, STATKEY_INT = 1)
 	duration = 1 MINUTES
 
 /datum/status_effect/buff/vitae/on_apply()
 	. = ..()
 	owner.add_stress(/datum/stressevent/high)
 	SEND_SIGNAL(owner, COMSIG_LUX_TASTED)
+	ADD_TRAIT(owner, TRAIT_DRUQK, id)
+	owner.overlay_fullscreen("lux", /atom/movable/screen/fullscreen/weedsm)
+	owner.overlay_fullscreen("lux_1", /atom/movable/screen/fullscreen/druqks)
+	if(owner?.client)
+		if(owner.client.screen && owner.client.screen.len)
+			var/atom/movable/screen/plane_master/game_world/PM = locate(/atom/movable/screen/plane_master/game_world) in owner.client.screen
+			PM.backdrop(owner)
+			PM = locate(/atom/movable/screen/plane_master/game_world_fov_hidden) in owner.client.screen
+			PM.backdrop(owner)
+			PM = locate(/atom/movable/screen/plane_master/game_world_above) in owner.client.screen
+			PM.backdrop(owner)
 
 /datum/status_effect/buff/vitae/on_remove()
 	owner.remove_stress(/datum/stressevent/high)
-
+	REMOVE_TRAIT(owner, TRAIT_DRUQK, id)
+	owner.clear_fullscreen("lux")
+	owner.clear_fullscreen("lux_1")
+	if(owner?.client)
+		if(owner.client.screen && owner.client.screen.len)
+			var/atom/movable/screen/plane_master/game_world/PM = locate(/atom/movable/screen/plane_master/game_world) in owner.client.screen
+			PM.backdrop(owner)
+			PM = locate(/atom/movable/screen/plane_master/game_world_fov_hidden) in owner.client.screen
+			PM.backdrop(owner)
+			PM = locate(/atom/movable/screen/plane_master/game_world_above) in owner.client.screen
+			PM.backdrop(owner)
 	. = ..()
 
 /datum/status_effect/buff/abyss //for smokes
