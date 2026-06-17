@@ -3774,67 +3774,67 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	name = "Cloth"
 	category = list("Разное", "Триумфы")
 	path = /obj/item/natural/cloth
-	triumph_cost = 2
+	triumph_cost = 3
 
 /datum/loadout_item/psicross/noc/bronze
 	name = "Bronze Amulet of Noc"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/noc/bronze
-	triumph_cost = 1
+	triumph_cost = 2
 
 /datum/loadout_item/psicross/ravox/bronze
 	name = "Bronze Amulet of Ravox"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/ravox/bronze
-	triumph_cost = 1
+	triumph_cost = 2
 
 /datum/loadout_item/psicross/astrata/bronze
 	name = "Bronze Amulet of Astrata"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/astrata/bronze
-	triumph_cost = 1
+	triumph_cost = 2
 
 /datum/loadout_item/psicross/malum/bronze
 	name = "Bronze Amulet of Malum"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/malum/bronze
-	triumph_cost = 1
+	triumph_cost = 2
 
 /datum/loadout_item/psicross/inhumen/graggar/bronze
 	name = "Bronze Amulet of Graggar"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/inhumen/graggar/bronze
-	triumph_cost = 1
+	triumph_cost = 2
 
 /datum/loadout_item/psicross/bronze
 	name = "Bronze Psycross"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/bronze
-	triumph_cost = 1
+	triumph_cost = 2
 
 /datum/loadout_item/psicross/inhumen/bronze
 	name = "Bronze Inverted Psycross"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/inhumen/bronze
-	triumph_cost = 1
+	triumph_cost = 2
 
 /datum/loadout_item/psicross/paalloy
 	name = "Ancient Psycross"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/paalloy
-	triumph_cost = 1
+	triumph_cost = 2
 
 /datum/loadout_item/psicross/inhumen/paalloy
 	name = "Ancient Inverted Psycross"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/inhumen/paalloy
-	triumph_cost = 1
+	triumph_cost = 2
 
 /datum/loadout_item/psicross/noc/paalloy
 	name = "Ancient Amulet of Noc"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/noc/paalloy
-	triumph_cost = 1
+	triumph_cost = 2
 
 /datum/loadout_item/triumph_winterdress
 	name = "Winter Dress"
@@ -3846,107 +3846,106 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	name = "Belt of Steel"
 	category = list("Триумфы")
 	path = /obj/item/storage/belt/rogue/leather/steel
-	triumph_cost = 3
+	triumph_cost = 5
 
 /datum/loadout_item/triumph_plaquesilverbelt
 	name = "Belt of Plaque, Silver"
 	category = list("Триумфы")
 	path = /obj/item/storage/belt/rogue/leather/plaquesilver
-	triumph_cost = 3
+	triumph_cost = 5
 
 /datum/loadout_item/triumph_reformpsycross
 	name = "Golden Reformist Psycross, Ornate"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/reform/g/triumph
-	triumph_cost = 12
+	triumph_cost = 13
 
 /datum/loadout_item/triumph_noccross
 	name = "Golden Noccian Amulet, Ornate"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/noc/g/triumph
-	triumph_cost = 12
+	triumph_cost = 13
 
 /datum/loadout_item/triumph_abyssorcross
 	name = "Golden Abyssorian Amulet, Ornate"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/abyssor/g/triumph
-	triumph_cost = 12
+	triumph_cost = 13
 
 /datum/loadout_item/triumph_dendorcross
 	name = "Golden Dendorian Amulet, Ornate"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/dendor/g/triumph
-	triumph_cost = 12
+	triumph_cost = 13
 
 /datum/loadout_item/triumph_necracross
 	name = "Golden Necran Amulet, Ornate"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/necra/g/triumph
-	triumph_cost = 12
+	triumph_cost = 13
 
 /datum/loadout_item/triumph_pestracross
 	name = "Golden Pestran Amulet, Ornate"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/pestra/g/triumph
-	triumph_cost = 12
+	triumph_cost = 13
 
 /datum/loadout_item/triumph_ravoxcross
 	name = "Golden Ravoxian Amulet, Ornate"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/ravox/g/triumph
-	triumph_cost = 12
+	triumph_cost = 13
 
 /datum/loadout_item/triumph_malumcross
 	name = "Golden Malum Amulet, Ornate"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/malum/g/triumph
-	triumph_cost = 12
+	triumph_cost = 13
 
 /datum/loadout_item/triumph_eoracross
 	name = "Golden Eoran Amulet, Ornate"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/eora/g/triumph
-	triumph_cost = 12
+	triumph_cost = 13
 
 /datum/loadout_item/triumph_xylixcross
 	name = "Golden Xylixian Amulet, Ornate"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/xylix/g/triumph
-	triumph_cost = 12
+	triumph_cost = 13
 
 /datum/loadout_item/triumph_graggarcross
 	name = "Golden Graggarite Amulet, Ornate"
 	category = list("Триумфы")
 	path = /obj/item/clothing/neck/roguetown/psicross/inhumen/graggar/g/triumph
-	triumph_cost = 12
+	triumph_cost = 13
 
 /datum/loadout_item/triumph_tassetsteelbelt
 	name = "Belt of Steel, Tasseted"
 	category = list("Триумфы")
 	path = /obj/item/storage/belt/rogue/leather/steel/tasset
-	triumph_cost = 5
+	triumph_cost = 7
 
 /datum/loadout_item/triumph_plaquegoldenbelt
 	name = "Belt of Plaque, Golden"
 	category = list("Триумфы")
 	path = /obj/item/storage/belt/rogue/leather/plaquegold
-	triumph_cost = 5
+	triumph_cost = 7
 
 /datum/loadout_item/triumph_buttpack
 	name = "Belted Satchel"
 	category = list("Триумфы")
 	path = /obj/item/storage/backpack/rogue/satchel/beltpack
-	triumph_cost = 7
+	triumph_cost = 8
 
 /datum/loadout_item/triumph_scabbardroyal
 	name = "Decorated Scabbard, Golden"
 	category = list("Триумфы")
 	path = /obj/item/rogueweapon/scabbard/sword/royal
-	triumph_cost = 12
+	triumph_cost = 13
 
 /datum/loadout_item/triumph_sheathroyal
 	name = "Decorated Sheath, Golden"
 	category = list("Триумфы")
 	path = /obj/item/rogueweapon/scabbard/sheath/royal
-	triumph_cost = 12
-
+	triumph_cost = 13
