@@ -283,15 +283,6 @@
 		prefs.save_preferences()
 	to_chat(src, "You will[prefs.combat_toggles & XP_TEXT ? "" : " not"] see XP pop ups.")
 
-/client/verb/vocal_barks()
-	set name = "Toggle Vocal Barks"
-	set category = "Preferences.Options"
-	set desc = ""
-	if(prefs)
-		prefs.mute_barks = !prefs.mute_barks
-		prefs.save_preferences()
-	to_chat(src, "You will [prefs.mute_barks ? "not " : ""]hear vocal barks.")
-
 /client/verb/toggle_hitzonetext() // Whether the user can see a text popup for where they got hit.
 	set category = "Preferences.Options"
 	set name = "Toggle Hitzone Text"
