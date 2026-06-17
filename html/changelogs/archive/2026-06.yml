@@ -775,3 +775,11 @@
   - balance: necro legion gets flail skill
   - bugfix: fixed necro legion NOT getting maces skill AT ALL despite getting a pick
       for maces.
+2026-06-17:
+  Ketrai:
+  - bugfix: Removeallspells proc removes all spells again
+  nauticall:
+  - bugfix: Stairs are now properly buildable again.
+  - bugfix: Leaning on walls on RUN intent no longer builds Athletics XP.
+  - bugfix: Morphing elixirs on fencer's cuirasses (for Freifetchers) no longer compromise
+      Freifetcher dexterity.

@@ -291,6 +291,7 @@
 		/obj/item/clothing/suit/roguetown/armor/chainmail/hauberk						= /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/donator
 	)
 	result_item = null
+	icon_loadout = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/donator
 
 /obj/item/enchantingkit/gothicironarmor
 	name = "'Gothic Iron Armor' morphing elixir"
@@ -301,6 +302,7 @@
 		/obj/item/clothing/suit/roguetown/armor/plate/full/iron			= /obj/item/clothing/suit/roguetown/armor/plate/full/iron/donator_gothic
 	)
 	result_item = null
+	icon_loadout = /obj/item/clothing/suit/roguetown/armor/plate/cuirass/donator_gothic
 
 /obj/item/enchantingkit/gothicsteelarmor
 	name = "'Gothic Steel Armor' morphing elixir"
@@ -312,6 +314,7 @@
 		/obj/item/clothing/suit/roguetown/armor/plate/full				= /obj/item/clothing/suit/roguetown/armor/plate/full/donator_gothic
 	)
 	result_item = null
+	icon_loadout = /obj/item/clothing/suit/roguetown/armor/plate/full/donator_gothic
 
 /obj/item/enchantingkit/croppedhaubergeon
 	name = "'Cropped Haubergeon' morphing elixir"
@@ -321,6 +324,7 @@
 		/obj/item/clothing/suit/roguetown/armor/chainmail				= /obj/item/clothing/suit/roguetown/armor/chainmail/donator
 	)
 	result_item = null
+	icon_loadout = /obj/item/clothing/suit/roguetown/armor/chainmail/donator
 
 /obj/item/enchantingkit/heartplate
 	name = "'Heartplate' morphing elixir"
@@ -332,6 +336,7 @@
 		/obj/item/clothing/suit/roguetown/armor/leather						= /obj/item/clothing/suit/roguetown/armor/leather/donator
 	)
 	result_item = null
+	icon_loadout = /obj/item/clothing/suit/roguetown/armor/plate/cuirass/donator
 
 /obj/item/enchantingkit/plackart
 	name = "'Plackart' morphing elixir"
@@ -343,6 +348,7 @@
 		/obj/item/clothing/suit/roguetown/armor/leather						= /obj/item/clothing/suit/roguetown/armor/leather/donator_girdle
 	)
 	result_item = null
+	icon_loadout = /obj/item/clothing/suit/roguetown/armor/plate/cuirass/donator_girdle
 
 /obj/item/enchantingkit/elvenchainmail
 	name = "'Elven Haubergeon' morphing elixir"
@@ -352,6 +358,7 @@
 		/obj/item/clothing/suit/roguetown/armor/chainmail			= /obj/item/clothing/suit/roguetown/armor/chainmail/donator_elven
 	)
 	result_item = null
+	icon_loadout = /obj/item/clothing/suit/roguetown/armor/chainmail/donator_elven
 
 /obj/item/enchantingkit/heroicleathercuirass
 	name = "'Heroic Leather Cuirass' morphing elixir"
@@ -363,6 +370,7 @@
 		/obj/item/clothing/suit/roguetown/armor/leather/studded/psyaltrist 	= /obj/item/clothing/suit/roguetown/armor/leather/studded/psyaltrist/donator_cuirass
 	)
 	result_item = null
+	icon_loadout = /obj/item/clothing/suit/roguetown/armor/leather/studded/psyaltrist/donator_cuirass
 
 /obj/item/enchantingkit/cackledagger
 	name = "'Cackledagger' morphing elixir"
@@ -372,6 +380,7 @@
 		/obj/item/rogueweapon/huntingknife/idagger/steel/decorated			= /obj/item/rogueweapon/huntingknife/idagger/steel/decorated/donator
 	)
 	result_item = null
+	icon_loadout = /obj/item/rogueweapon/huntingknife/idagger/steel/decorated/donator
 
 /obj/item/enchantingkit/beltleather
 	name = "'Belt of Caped Leather' morphing elixir"
@@ -421,6 +430,7 @@
 		/obj/item/clothing/mask/rogue/facemask/carved/jademask		= /obj/item/clothing/mask/rogue/facemask/carved/jademask/donator
 	)
 	result_item = null
+	icon_loadout = /obj/item/clothing/mask/rogue/facemask/steel/donator
 
 
 /////////////////////////////
