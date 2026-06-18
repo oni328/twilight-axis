@@ -12,7 +12,7 @@
 /datum/storyteller/gamemode/extended
 	name = "Extended"
 	vote_desc = "Возможно, настоящими антагонистами всё это время были мы сами."
-	desc = "Без основных антагонистов, без легких антагонистов (wretchs/гноллы/ассасины), без dreamwalkers. Hag присутствует."
+	desc = "Без основных антагонистов, без легких антагонистов (wretches/гноллы/ассасины), без dreamwalkers. Hag присутствует."
 	welcome_text = "Умеренный ветер прокатывается по тихим улицам.."
 	color_theme = "#80ced8"
 	preset_pool = GAMEMODE_POOL_EXTENDED
@@ -88,7 +88,7 @@
 /datum/storyteller/gamemode/guaranteed_antag
 	name = "High Intensity"
 	vote_desc = "Гарантированный основной антагонист. Часть легких антагонистов остаётся."
-	desc = "Гарантированный раундстартовый основной антагонист. До 9 wretchs. До 2 гноллов. Hag присутствует. Могут появиться dreamwalkers."
+	desc = "Гарантированный раундстартовый основной антагонист. До 9 wretches. До 2 гноллов. Hag присутствует. Могут появиться dreamwalkers."
 	welcome_text = "Леденящий страх опускается на город.."
 	color_theme = "#a43c3c"
 	preset_pool = GAMEMODE_POOL_GUARANTEED
@@ -104,7 +104,7 @@
 /datum/storyteller/gamemode/guaranteed_antag/low_wretch
 	name = "Medium Intensity"
 	vote_desc = "Гарантированный основной антагонист случайного типа. Также присутствует несколько легких антагонистов."
-	desc = "Гарантированный раундстартовый основной антагонист с более агрессивным масштабированием от онлайна. До 4 wretchs. До 1 гнолла. Hag присутствует."
+	desc = "Гарантированный раундстартовый основной антагонист с более агрессивным масштабированием от онлайна. До 4 wretches. До 1 гнолла. Hag присутствует."
 	color_theme = "#7a1f1f"
 	hard_mult = 2
 	block_soft = FALSE
@@ -118,7 +118,7 @@
 /datum/storyteller/gamemode/no_antag	// DEFAULT
 	name = "Standard Intensity"
 	vote_desc = "Без основных антагонистов. Легкие антагонисты масштабируются умеренно."
-	desc = "Без основных антагонистов. wretchs масштабируются обычно (от 5 до 12). До 3 гноллов. Hag присутствует. dreamwalker может появиться."
+	desc = "Без основных антагонистов. wretches масштабируются обычно (от 5 до 12). До 3 гноллов. Hag присутствует. dreamwalker может появиться."
 	welcome_text = "Тёплый дневной свет пробуждает вас ото сна.."
 	color_theme = "#2b8c87"
 	preset_pool = GAMEMODE_POOL_NOANTAG

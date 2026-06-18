@@ -953,9 +953,9 @@ SUBSYSTEM_DEF(gamemode)
 		if(preset.hard_mult > 1)
 			misc += "Основные антагонисты масштабируются по онлайну в [preset.hard_mult]x сильнее"
 	if(preset.block_soft)
-		misc += "Малые антагонисты отключены (wretchs, гноллы, ассасины)"
+		misc += "Малые антагонисты отключены (wretches, гноллы, ассасины)"
 	else
-		misc += "Лимит wretchs: [preset.wretch_slot_cap][preset.wretch_slot_cap > 5 ? " (масштабируется)" : " (фиксированный)"]"
+		misc += "Лимит wretches: [preset.wretch_slot_cap][preset.wretch_slot_cap > 5 ? " (масштабируется)" : " (фиксированный)"]"
 	misc += "Слоты Hag: [preset.hag_slots]"
 	misc += "dreamwalker: [preset.allow_dreamwalker ? "может выпасть" : "отключён"]"
 	return misc
