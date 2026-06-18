@@ -781,6 +781,14 @@
 	body_parts_covered = CHEST | VITALS | LEGS
 	max_integrity = ARMOR_INT_CHEST_MEDIUM_STEEL
 
+/obj/item/clothing/suit/roguetown/armor/plate/cuirass/fluted/holysee
+	name = "holy see cuirass"
+	desc = "A blessed steel cuirass, fitted with tassets for additional coverage. Noc's holy silver, and Astratan gold are woven into the fluting. \
+			When the world was ending, and hunger of the nite ravenous, Templars one and all remember the radiance of the blessed metals, \
+			and the warmth of home. Then and forever, the Ten have not forgotten their faithful."
+	icon_state = "seecuirass"
+	item_state = "seecuirass"
+
 /obj/item/clothing/suit/roguetown/armor/plate/cuirass/fluted/gold
 	name = "golden cuirass"
 	icon_state = "goldcuirass"

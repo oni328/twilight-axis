@@ -3938,12 +3938,6 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	path = /obj/item/storage/belt/rogue/leather/plaquegold
 	triumph_cost = 7
 
-/datum/loadout_item/triumph_buttpack
-	name = "Belted Satchel"
-	category = list("Триумфы")
-	path = /obj/item/storage/backpack/rogue/satchel/beltpack
-	triumph_cost = 8
-
 /datum/loadout_item/triumph_scabbardroyal
 	name = "Decorated Scabbard, Golden"
 	category = list("Триумфы")
