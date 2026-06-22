@@ -1100,6 +1100,9 @@
       - though they don't get the other traits
   - bugfix: The description text for TRAIT_MARRIAGE_CAPABLE now properly reflects
       how it works
+  Ollanius:
+  - bugfix: Olympus7's donator kit doesn't give the full sword, now. Oops.
+  - rscadd: Adds a greatsword-related reskin for a donator, Olympus7.
   WeNeedMorePhoron:
   - bugfix: Fur now accepts subtypes
   bearrrrrrrr:
@@ -1110,3 +1113,6 @@
   - balance: Decreases the cooldown of Mammonite from 45 to 25 seconds.
   - bugfix: Fixed a weird oversight that made Mammonite force you to get a bank account.
   - refactor: Polishes Mammonite's code, removing oddities and redundancies.
+  eirenxiv:
+  - bugfix: 'excluded constructs from: Black Oaks, Grudgebearer an Anthraxi'
+  - bugfix: excluded gnomes from Grudgebearers

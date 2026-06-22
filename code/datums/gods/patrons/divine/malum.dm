@@ -25,7 +25,10 @@
 
 	storyteller = /datum/storyteller/malum
 
-	titles = list() // people just kinda call him malum
+	titles = list(
+		"Forgefather",
+		"Mamuke"
+	) // people just kinda call him malum. And forgefather. I think.
 
 // Near a smelter, hearth, cross, within the smithy, or within the church
 /datum/patron/divine/malum/can_pray(mob/living/follower)

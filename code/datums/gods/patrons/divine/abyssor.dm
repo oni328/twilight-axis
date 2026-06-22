@@ -24,7 +24,8 @@
 	)
 	titles = list(
 		"Dreamer",
-		"Forgotten One"
+		"Forgotten One",
+		"Abysawa"
 	)
 
 	storyteller = /datum/storyteller/abyssor

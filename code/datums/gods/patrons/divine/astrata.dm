@@ -27,6 +27,7 @@
 		"Tyrant",
 		"Overtyrant",
 		"Sun", // should match any sort of Sun(x) title
+		"Aisata"
 	)
 
 // In daylight, church, cross, or ritual chalk.

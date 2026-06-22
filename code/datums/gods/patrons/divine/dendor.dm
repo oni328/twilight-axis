@@ -25,7 +25,8 @@
 	storyteller = /datum/storyteller/dendor
 	titles = list(
 		"Treefather",
-		"Tree-Father"
+		"Tree-Father",
+		"Denno"
 	)
 
 // In grove, bog, cross, or ritual chalk 

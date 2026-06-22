@@ -28,7 +28,8 @@
 
 	titles = list(
 		"Nite-Scholar",
-		"Moon" // should match a bunch of variant titles like Brother Moon
+		"Moon", // should match a bunch of variant titles like Brother Moon
+		"Noishi"
 	)
 
 // In moonlight, church, cross, or ritual chalk

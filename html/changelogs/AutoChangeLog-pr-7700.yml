@@ -1,0 +1,4 @@
+author: "Ratvarr"
+delete-after: True
+changes:
+  - rscadd: "Kazengunite god-names now work for prayers! + A few others"
