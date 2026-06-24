@@ -198,8 +198,8 @@ GLOBAL_LIST_EMPTY(chosen_names)
 	var/family = FAMILY_NONE
 
 	var/crt = FALSE
-	var/grain = TRUE
-	var/icon_scaling = TRUE
+	var/grain = FALSE
+	var/icon_scaling = FALSE
 	var/dnr_pref = FALSE
 	var/qsr_pref = FALSE
 
